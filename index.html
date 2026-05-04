@@ -210,7 +210,7 @@ textarea::placeholder{color:var(--muted);}
   <div class="hdr">
     <div class="hdr-top">
       <div class="hdr-date" id="hdr-date"></div>
-      <div class="hdr-ver" onclick="switchTab('settings')">v3.9 ⚙️</div>
+      <div class="hdr-ver" onclick="switchTab('settings')">v4.0 ⚙️</div>
     </div>
     <div class="hdr-title">充實的一天</div>
     <div class="hdr-sub">Every Day Counts</div>
@@ -376,7 +376,7 @@ textarea::placeholder{color:var(--muted);}
     </div>
     <div class="set-card">
       <div class="set-t">關於這款 APP</div>
-      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>資料存在手機 localStorage<br>版本 v3.9 · GitHub Pages</span></div>
+      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>資料存在手機 localStorage<br>版本 v4.0 · GitHub Pages</span></div>
     </div>
   </div>
 </div>
@@ -450,28 +450,53 @@ function refreshKst(){
 }
 
 function init(){
-  var sp = document.getElementById('splash');
-  sp.style.cursor = 'pointer';
-  var gone = false;
+  try{
+    var sp = document.getElementById('splash');
+    if(!sp){ startAfterSplash(); return; }
+    sp.style.cursor='pointer';
+    var gone=false;
 
-  function goNext(){
-    if(gone) return;
-    gone = true;
-    // 直接強制隱藏，不用動畫
-    sp.style.display = 'none';
+    function goNext(e){
+      if(e) e.preventDefault();
+      if(gone) return;
+      gone=true;
+      try{
+        sp.style.opacity='0';
+        sp.style.pointerEvents='none';
+        setTimeout(function(){
+          sp.style.display='none';
+          startAfterSplash();
+        },400);
+      }catch(err){
+        sp.style.display='none';
+        startAfterSplash();
+      }
+    }
+
+    sp.onclick=goNext;
+    sp.ontouchstart=function(){};
+    sp.ontouchend=goNext;
+    setTimeout(goNext,3000);
+
+  }catch(e){
+    startAfterSplash();
+  }
+}
+
+function startAfterSplash(){
+  try{
+    var setup=document.getElementById('setup');
+    var app=document.getElementById('app');
     if(!gk()){
-      document.getElementById('setup').classList.add('show');
+      if(setup) setup.classList.add('show');
     } else {
       startApp();
     }
+  }catch(e){
+    // 最後手段：直接顯示app
+    var app=document.getElementById('app');
+    if(app) app.classList.add('show');
   }
-
-  // 點擊立即進入
-  sp.addEventListener('click', goNext);
-  sp.addEventListener('touchend', goNext);
-
-  // 3秒自動進入
-  setTimeout(goNext, 3000);
 }
 
 function startApp(){
