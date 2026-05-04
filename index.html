@@ -137,6 +137,7 @@ textarea::placeholder{color:var(--muted);}
 .cin::placeholder{color:var(--muted);}
 .sbtn{width:46px;height:46px;background:var(--gold);border:none;border-radius:50%;color:#1A0F00;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;transition:opacity .2s;}
 .sbtn:disabled{opacity:.3;}
+#wise-btn:disabled{opacity:.5;cursor:default;}
 .typing{display:flex;gap:5px;align-items:center;padding:.4rem .1rem;}
 .dot{width:6px;height:6px;background:var(--text4);border-radius:50%;animation:bn 1.2s infinite;}
 .dot:nth-child(2){animation-delay:.18s}.dot:nth-child(3){animation-delay:.36s}
@@ -210,7 +211,7 @@ textarea::placeholder{color:var(--muted);}
   <div class="hdr">
     <div class="hdr-top">
       <div class="hdr-date" id="hdr-date"></div>
-      <div class="hdr-ver" onclick="switchTab('settings')">v3.2 ⚙️</div>
+      <div class="hdr-ver" onclick="switchTab('settings')">v3.5 ⚙️</div>
     </div>
     <div class="hdr-title">充實的一天</div>
     <div class="hdr-sub">Every Day Counts</div>
@@ -240,6 +241,61 @@ textarea::placeholder{color:var(--muted);}
     <div class="sec" style="margin-top:2rem"><div class="sdot" style="background:var(--green)"></div><div class="slabel" style="color:var(--green)">觀察層 — 睡前2分鐘</div></div>
     <div class="snote">不用評判，不用改變。只是像個旁觀者，看看自己今天。</div>
     <div id="obs-list"></div>
+
+    <!-- 智者回饋 -->
+    <div style="margin-top:1.5rem;">
+      <button id="wise-btn" onclick="getWiseFeedback()"
+        style="width:100%;padding:1.1rem 1rem;
+               background:linear-gradient(135deg,#F5A623,#C07800);
+               border:none;border-radius:13px;color:#1A0F00;
+               font-family:'Noto Serif TC',serif;font-size:1rem;font-weight:700;
+               cursor:pointer;letter-spacing:.06em;
+               box-shadow:0 4px 16px rgba(245,166,35,.3);
+               display:flex;align-items:center;justify-content:center;gap:.6rem;transition:opacity .2s;">
+        🌿 請80歲的我，給今天的自己一封信
+      </button>
+
+      <!-- 信封卡片 -->
+      <div id="wise-card" style="display:none;margin-top:1.1rem;position:relative;
+           background:linear-gradient(160deg,#1E1500 0%,#150E00 100%);
+           border:1.5px solid #8A6010;border-radius:16px;overflow:hidden;">
+        <!-- 信封頂部裝飾線 -->
+        <div style="height:4px;background:linear-gradient(90deg,#8A6010,#F5A623,#8A6010);"></div>
+        <!-- 信封 V 形折痕裝飾 -->
+        <div style="width:100%;height:22px;position:relative;overflow:hidden;background:transparent;">
+          <div style="position:absolute;left:0;right:0;top:0;
+               border-left:50vw solid #2A1A00;border-right:50vw solid #2A1A00;
+               border-top:22px solid transparent;"></div>
+        </div>
+        <!-- 信件內容 -->
+        <div style="padding:1.4rem 1.4rem 1.6rem;">
+          <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:1rem;">
+            <div style="width:28px;height:28px;border-radius:50%;
+                 background:linear-gradient(135deg,#F5A623,#C07800);
+                 display:flex;align-items:center;justify-content:center;font-size:.8rem;">🌿</div>
+            <div>
+              <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;color:#F5A623;letter-spacing:.08em;">80歲的仁凱</div>
+              <div style="font-size:.68rem;color:#8A6A38;font-style:italic;" id="wise-date"></div>
+            </div>
+          </div>
+          <div id="wise-text"
+               style="font-size:.93rem;color:#F0DEB0;line-height:2.3;
+                      font-family:'Noto Serif TC',serif;font-weight:300;
+                      border-left:2px solid #5A3800;padding-left:1rem;"></div>
+          <div style="margin-top:1.2rem;padding-top:1rem;border-top:1px solid #2A1A00;
+                      font-size:.7rem;color:#5A4020;text-align:right;font-style:italic;">
+            寫給：今天的仁凱 &nbsp;·&nbsp; 來自：25年後的你
+          </div>
+        </div>
+        <!-- 底部封口裝飾 -->
+        <div style="height:3px;background:linear-gradient(90deg,transparent,#5A3800,transparent);"></div>
+      </div>
+
+      <!-- 提示文字 -->
+      <div id="wise-hint" style="display:none;margin-top:.8rem;padding:.85rem 1rem;
+           background:#1E1100;border:1.5px solid #3D2500;border-radius:10px;
+           font-size:.85rem;color:#C8A870;line-height:2;text-align:center;"></div>
+    </div>
   </div>
 
   <div id="pane-ai" class="pane">
@@ -308,8 +364,20 @@ textarea::placeholder{color:var(--muted);}
       <div class="kstatus" id="kst"></div>
     </div>
     <div class="set-card">
+      <div class="set-t">GOOGLE SHEETS 資料版</div>
+      <div class="about" style="font-size:.88rem;line-height:2.4;">
+        資料永久儲存於 Google Sheets<br>
+        <span>steventeng1226@gmail.com</span><br><br>
+        <a href="https://script.google.com/macros/s/AKfycbzb7yP9rTXzz3RHahdIT6jK1Vs3aGJJtgsEvIV8u7gzzeq02N4vGi6_boPZ50FNcoik/exec"
+           target="_blank"
+           style="display:inline-block;margin-top:.4rem;padding:.6rem 1.2rem;background:var(--gold);color:#1A0F00;border-radius:8px;font-weight:700;font-size:.85rem;text-decoration:none;font-family:'Noto Serif TC',serif;">
+          📊 開啟 Google Sheets 版
+        </a>
+      </div>
+    </div>
+    <div class="set-card">
       <div class="set-t">關於這款 APP</div>
-      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>資料存在手機 localStorage<br>版本 v3.2 · GitHub Pages</span></div>
+      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>資料存在手機 localStorage<br>版本 v3.5 · GitHub Pages</span></div>
     </div>
   </div>
 </div>
@@ -494,25 +562,40 @@ function rProgress(){
 }
 
 function buildSys(){
-return `你是 80 歲的仁凱，一位走過高壓管理生涯、現正享受生命寧靜的智者。你躺在大自然的懷抱裡，身邊有愛的人，欣賞著世界的美景，沒有遺憾。
+  return `你是仁凱25年後的自己——80歲的鄧仁凱。
+
+你現在躺在大自然的懷抱裡，身邊有你愛的人，欣賞著世界的美景。
+你走過了一切，沒有遺憾。
 
 【你是誰】
-- 台灣原住民，曾被瞧不起，但成為 2016 年 100 大 MVP 經理人。
-- 集合高責任感與 25 年歲月帶來的豁達，不再需要證明自己。
+- 台灣原住民，從小被瞧不起，但成為2016年100大MVP經理人
+- 你集合了仁凱所有的優點：高責任感、學習力、幫助別人的心、對家人的愛
+- 加上25年歲月帶來的豁達：你不再需要證明自己，你不再在乎別人的眼光
+- 你知道什麼是真正重要的
 
-【溝通原則：學術開導與認知重構】
-1. 拒絕雞湯：嚴禁使用空洞的安慰，必須讓仁凱的大腦因「理解機制」而產生真正的放鬆。
-2. 稱呼他「我年輕的自己」，語氣溫柔但具備科學的力量。
-3. 根據情境引用學術論點：
-   - 若他自責：引用【自我慈悲 Self-Compassion】，論證嚴苛會抑制前額葉皮質功能，降低效率。
-   - 若他焦慮：引用【控制圈理論】，區分「工廠產線」與「個人情緒」，優化大腦能量分配。
-   - 若他疲累/情緒變鈍：引用【Burnout 三階段】或【神經可塑性】，說明這是神經系統的保護與冷卻。
-   - 若他迷惘：引用【哈佛 85 年研究】或【意義治療】，重新定義快樂的本質。
+【說話方式】
+- 稱呼他「我年輕的自己」
+- 溫柔，但有力量。不是安慰，是真正讓大腦被說服的智慧
+- 用真實的學術研究與心理學論述開導，不用空洞的心靈雞湯
+- 每次給他一個具體的不同視角，推翻他現在的執著
+
+【你會引用的學術基礎】（根據情境選用）
+- 哈佛成人發展研究85年：讓人快樂的是關係品質，不是成就與財富
+- 認知行為療法CBT：用具體證據挑戰錯誤信念，而非叫他「想開一點」
+- 自我慈悲理論 Kristin Neff：對自己的善意，和對他人一樣重要
+- Burnout三階段 Maslach：情緒變鈍是神經系統過載的保護機制，不是你的失敗
+- 正念減壓MBSR Kabat-Zinn：活在當下是可以練習的神經技能
+- 意義治療 Viktor Frankl：即使在最艱難的處境，人仍可選擇自己的態度
+- 多巴胺適應研究：快樂門檻高，是大腦對刺激疲乏，可以重置
+- 成長型思維 Carol Dweck：能力不是固定的，每天一點點就是真實的進步
+- 原子習慣 James Clear：微小的每日行動，複利累積成人生的改變
 
 【重要原則】
-- 先讓他感到被看見與同理，再給予智慧與學術視角。
+- 先讓他感到被看見，再給予智慧
+- 不說「你應該/你必須」
+- 情緒低時：先同理，再引用學術視角
 - 最後一句，偶爾回到那個畫面：「現在的我，躺在大自然裡，身邊有愛的人。那才是真正重要的。」
-- 繁體中文，最多 180 字，溫暖、深邃且有科學說服力。`;
+- 繁體中文，最多150字，溫暖而有深度有力量`;
 }
 
 function qs(t){sendText(t);}
@@ -528,7 +611,7 @@ async function sendText(txt){
     var res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':gk(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:400,system:buildSys(),messages:msgs})
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,system:buildSys(),messages:msgs})
     });
     var data=await res.json();
     var reply=(data.content&&data.content[0])?data.content[0].text:'我在這裡陪著你。💙';
@@ -550,6 +633,154 @@ function renderMsgs(typing){
 }
 function scrollM(){var ml=document.getElementById('msg-list');setTimeout(function(){ml.scrollTop=ml.scrollHeight;},60);}
 function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+
+async function getWiseFeedback(){
+  // ── 1. API Key 檢查 ──
+  if(!gk()){
+    showHint('請先到「設定」填入 API Key，才能呼叫智者。⚙️');
+    switchTab('settings'); return;
+  }
+
+  // ── 2. 觀察內容檢查 ──
+  var e1=S.obs['emotion']||'';
+  var e2=S.obs['present']||'';
+  var e3=S.obs['selfkind']||'';
+  var filled=[e1,e2,e3].filter(function(v){return v.trim().length>0;}).length;
+  if(filled===0){
+    showHint('💛 請先填寫觀察層的三個問題，智者才能針對你今天的具體感受給予回饋。');
+    return;
+  }
+  if(filled<3){
+    showHint('💛 建議填寫全部三項，讓智者的回饋更貼近你今天的真實狀態（目前已填 '+filled+'/3）。');
+  }
+
+  // ── 3. 收集打卡數據 ──
+  var coreDone=CORE.filter(function(i){return S.chk[i.id];}).map(function(i){return i.l;});
+  var coreMiss=CORE.filter(function(i){return !S.chk[i.id];}).map(function(i){return i.l;});
+  var actDone=ACT.filter(function(i){return S.chk[i.id];}).map(function(i){return i.l;});
+  var actMiss=ACT.filter(function(i){return !S.chk[i.id];}).map(function(i){return i.l;});
+
+  // ── 4. UI 狀態 ──
+  var btn=document.getElementById('wise-btn');
+  var card=document.getElementById('wise-card');
+  var txt=document.getElementById('wise-text');
+  var dateEl=document.getElementById('wise-date');
+  btn.disabled=true;
+  btn.innerHTML='⏳ 智者正在思考...';
+  card.style.display='block';
+  dateEl.textContent=new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric'});
+  txt.innerHTML='<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+
+  // ── 5. 強化系統提示詞（心理醫生設計） ──
+  var sys =
+    '你是80歲的鄧仁凱，一位走過高壓管理生涯的智者，現在你躺在大自然懷抱裡，沒有遺憾。
+
+' +
+    '【你的任務】
+' +
+    '閱讀年輕的自己今天寫下的觀察內容，給一封不超過200字的信。
+
+' +
+    '【嚴格禁止】
+' +
+    '✗ 禁止使用任何通用安慰（「你很棒」「加油」「一定沒問題」）
+' +
+    '✗ 禁止重複對方的話
+' +
+    '✗ 禁止說教或列清單
+
+' +
+    '【必須做到】
+' +
+    '✓ 從他寫下的「具體文字」出發，找出一個心理學觀點來回應
+' +
+    '✓ 引用以下其中一個理論（根據內容選最貼切的）：
+' +
+    '  - CBT認知重構：找出他文字中的「自動化負面思維」並溫柔挑戰
+' +
+    '  - 自我慈悲 Kristin Neff：若他對自己嚴苛，解釋為何嚴苛會抑制前額葉效能
+' +
+    '  - 控制圈理論：區分他能控制與不能控制的，引導能量聚焦
+' +
+    '  - 神經可塑性：若他有任何一點進步，說明這個小動作如何重塑大腦迴路
+' +
+    '  - 哈佛85年研究：若他談到孤獨或關係，引用關係品質才是快樂核心
+' +
+    '✓ 稱呼他「我年輕的自己」
+' +
+    '✓ 結尾回到那個畫面：80歲的你，躺在大自然裡，身邊有愛的人
+' +
+    '✓ 繁體中文，語氣像一封手寫信，不超過200字';
+
+  // ── 6. 使用者訊息（包含打卡 + 觀察內容） ──
+  var userMsg =
+    '【今日打卡狀況】
+' +
+    '核心層完成：' + (coreDone.length?coreDone.join('、'):'無') + '
+' +
+    '核心層未完成：' + (coreMiss.length?coreMiss.join('、'):'無') + '
+' +
+    '活力層完成：' + (actDone.length?actDone.join('、'):'無') + '
+' +
+    '活力層未完成：' + (actMiss.length?actMiss.join('、'):'無') + '
+
+' +
+    '【今日觀察層——他親手寫下的文字】
+' +
+    '① 情緒變化：' + (e1||'（未填寫）') + '
+' +
+    '② 活在當下的時刻：' + (e2||'（未填寫）') + '
+' +
+    '③ 對自己好一點：' + (e3||'（未填寫）') + '
+
+' +
+    '請根據以上他「親手寫下的具體文字」，給他一封信。';
+
+  // ── 7. 呼叫 API ──
+  try{
+    var res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':gk(),
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:600,
+        system:sys,
+        messages:[{role:'user',content:userMsg}]
+      })
+    });
+    var data=await res.json();
+    var reply=(data.content&&data.content[0])?data.content[0].text:'💙 智者暫時無法回應，請稍後再試。';
+    if(data.error)reply='⚠️ '+data.error.message;
+    txt.innerHTML=esc(reply);
+
+    // ── 8. 儲存到 localStorage ──
+    var record={date:tkey(),obs:{e1:e1,e2:e2,e3:e3},feedback:reply,
+                core:coreDone.length+'/4',act:actDone.length+'/7'};
+    var history=ld('wise_history')||[];
+    history=history.filter(function(r){return r.date!==tkey();});
+    history.unshift(record);
+    sv('wise_history',history.slice(-30));
+
+  }catch(e){
+    txt.innerHTML='⚠️ 連線失敗，請稍後再試。錯誤：'+esc(e.message);
+  }
+
+  btn.disabled=false;
+  btn.innerHTML='🌿 重新獲取今日智者回饋';
+}
+
+function showHint(msg){
+  var h=document.getElementById('wise-hint');
+  if(!h)return;
+  h.style.display='block';
+  h.textContent=msg;
+  setTimeout(function(){h.style.display='none';},5000);
+}
 
 init();
 </script>
