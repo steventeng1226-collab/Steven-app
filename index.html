@@ -199,7 +199,7 @@ textarea::placeholder{color:var(--muted);}
   <div class="hdr">
     <div class="hdr-top">
       <div class="hdr-date" id="hdr-date"></div>
-      <div class="hdr-ver" onclick="switchTab('settings')">v4.2 ⚙️</div>
+      <div class="hdr-ver" onclick="switchTab('settings')">v4.3 ⚙️</div>
     </div>
     <div class="hdr-title">充實的一天</div>
     <div class="hdr-sub">Every Day Counts</div>
@@ -365,7 +365,7 @@ textarea::placeholder{color:var(--muted);}
     </div>
     <div class="set-card">
       <div class="set-t">關於這款 APP</div>
-      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>資料存在手機 localStorage<br>版本 v4.2 · GitHub Pages</span></div>
+      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>資料存在手機 localStorage<br>版本 v4.3 · GitHub Pages</span></div>
     </div>
   </div>
 </div>
@@ -621,32 +621,13 @@ function scrollM(){var ml=document.getElementById('msg-list');setTimeout(functio
 function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
 
 async function getWiseFeedback(){
-  // ── 1. API Key 檢查 ──
-  if(!gk()){
-    showHint('請先到「設定」填入 API Key，才能呼叫智者。⚙️');
-    switchTab('settings'); return;
-  }
-
-  // ── 2. 觀察內容檢查 ──
+  if(!gk()){alert('請先到「設定」填入 API Key');switchTab('settings');return;}
   var e1=S.obs['emotion']||'';
   var e2=S.obs['present']||'';
   var e3=S.obs['selfkind']||'';
-  var filled=[e1,e2,e3].filter(function(v){return v.trim().length>0;}).length;
-  if(filled===0){
-    showHint('💛 請先填寫觀察層的三個問題，智者才能針對你今天的具體感受給予回饋。');
-    return;
-  }
-  if(filled<3){
-    showHint('💛 建議填寫全部三項，讓智者的回饋更貼近你今天的真實狀態（目前已填 '+filled+'/3）。');
-  }
-
-  // ── 3. 收集打卡數據 ──
+  if(!e1&&!e2&&!e3){showHint('💛 請先填寫觀察層的三個問題，智者才能給予回饋。');return;}
   var coreDone=CORE.filter(function(i){return S.chk[i.id];}).map(function(i){return i.l;});
-  var coreMiss=CORE.filter(function(i){return !S.chk[i.id];}).map(function(i){return i.l;});
   var actDone=ACT.filter(function(i){return S.chk[i.id];}).map(function(i){return i.l;});
-  var actMiss=ACT.filter(function(i){return !S.chk[i.id];}).map(function(i){return i.l;});
-
-  // ── 4. UI 狀態 ──
   var btn=document.getElementById('wise-btn');
   var card=document.getElementById('wise-card');
   var txt=document.getElementById('wise-text');
@@ -654,111 +635,32 @@ async function getWiseFeedback(){
   btn.disabled=true;
   btn.innerHTML='⏳ 智者正在思考...';
   card.style.display='block';
-  dateEl.textContent=new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric'});
+  if(dateEl) dateEl.textContent=new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric'});
   txt.innerHTML='<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-
-  // ── 5. 強化系統提示詞（心理醫生設計） ──
-  var sys =
-    '你是80歲的鄧仁凱，一位走過高壓管理生涯的智者，現在你躺在大自然懷抱裡，沒有遺憾。
-
-' +
-    '【你的任務】
-' +
-    '閱讀年輕的自己今天寫下的觀察內容，給一封不超過200字的信。
-
-' +
-    '【嚴格禁止】
-' +
-    '✗ 禁止使用任何通用安慰（「你很棒」「加油」「一定沒問題」）
-' +
-    '✗ 禁止重複對方的話
-' +
-    '✗ 禁止說教或列清單
-
-' +
-    '【必須做到】
-' +
-    '✓ 從他寫下的「具體文字」出發，找出一個心理學觀點來回應
-' +
-    '✓ 引用以下其中一個理論（根據內容選最貼切的）：
-' +
-    '  - CBT認知重構：找出他文字中的「自動化負面思維」並溫柔挑戰
-' +
-    '  - 自我慈悲 Kristin Neff：若他對自己嚴苛，解釋為何嚴苛會抑制前額葉效能
-' +
-    '  - 控制圈理論：區分他能控制與不能控制的，引導能量聚焦
-' +
-    '  - 神經可塑性：若他有任何一點進步，說明這個小動作如何重塑大腦迴路
-' +
-    '  - 哈佛85年研究：若他談到孤獨或關係，引用關係品質才是快樂核心
-' +
-    '✓ 稱呼他「我年輕的自己」
-' +
-    '✓ 結尾回到那個畫面：80歲的你，躺在大自然裡，身邊有愛的人
-' +
-    '✓ 繁體中文，語氣像一封手寫信，不超過200字';
-
-  // ── 6. 使用者訊息（包含打卡 + 觀察內容） ──
-  var userMsg =
-    '【今日打卡狀況】
-' +
-    '核心層完成：' + (coreDone.length?coreDone.join('、'):'無') + '
-' +
-    '核心層未完成：' + (coreMiss.length?coreMiss.join('、'):'無') + '
-' +
-    '活力層完成：' + (actDone.length?actDone.join('、'):'無') + '
-' +
-    '活力層未完成：' + (actMiss.length?actMiss.join('、'):'無') + '
-
-' +
-    '【今日觀察層——他親手寫下的文字】
-' +
-    '① 情緒變化：' + (e1||'（未填寫）') + '
-' +
-    '② 活在當下的時刻：' + (e2||'（未填寫）') + '
-' +
-    '③ 對自己好一點：' + (e3||'（未填寫）') + '
-
-' +
-    '請根據以上他「親手寫下的具體文字」，給他一封信。';
-
-  // ── 7. 呼叫 API ──
+  var sys='你是80歲的鄧仁凱，走過高壓管理生涯的智者，躺在大自然懷抱裡，沒有遺憾。\n\n【你的任務】\n閱讀年輕的自己今天寫下的觀察內容，給一封不超過200字的信。\n\n【嚴格禁止】\n✗ 禁止空洞安慰（「你很棒」「加油」）\n✗ 禁止重複對方的話\n✗ 禁止說教\n\n【必須做到】\n✓ 從他的具體文字出發，選一個心理學理論回應：CBT認知重構、自我慈悲、控制圈理論、神經可塑性、哈佛85年研究\n✓ 稱呼「我年輕的自己」\n✓ 結尾回到畫面：80歲的你，躺在大自然，身邊有愛的人\n✓ 繁體中文，像手寫信，不超過200字';
+  var userMsg='【今日打卡】核心完成：'+(coreDone.length?coreDone.join('、'):'無')+'\n活力完成：'+(actDone.length?actDone.join('、'):'無')+'\n\n【今日觀察——親手寫下的文字】\n①情緒變化：'+(e1||'未填')+'\n②活在當下：'+(e2||'未填')+'\n③對自己好：'+(e3||'未填')+'\n\n請根據他親手寫下的具體文字給他一封信。';
   try{
     var res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key':gk(),
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
-      body:JSON.stringify({
-        model:'claude-sonnet-4-6',
-        max_tokens:600,
-        system:sys,
-        messages:[{role:'user',content:userMsg}]
-      })
+      headers:{'Content-Type':'application/json','x-api-key':gk(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:600,system:sys,messages:[{role:'user',content:userMsg}]})
     });
     var data=await res.json();
-    var reply=(data.content&&data.content[0])?data.content[0].text:'💙 智者暫時無法回應，請稍後再試。';
+    var reply=(data.content&&data.content[0])?data.content[0].text:'💙 請稍後再試。';
     if(data.error)reply='⚠️ '+data.error.message;
     txt.innerHTML=esc(reply);
-
-    // ── 8. 儲存到 localStorage ──
-    var record={date:tkey(),obs:{e1:e1,e2:e2,e3:e3},feedback:reply,
-                core:coreDone.length+'/4',act:actDone.length+'/7'};
-    var history=ld('wise_history')||[];
-    history=history.filter(function(r){return r.date!==tkey();});
-    history.unshift(record);
-    sv('wise_history',history.slice(-30));
-
+    var rec={date:tkey(),obs:{e1:e1,e2:e2,e3:e3},feedback:reply};
+    var hist=ld('wise_history')||[];
+    hist=hist.filter(function(r){return r.date!==tkey();});
+    hist.unshift(rec);
+    sv('wise_history',hist.slice(-30));
   }catch(e){
-    txt.innerHTML='⚠️ 連線失敗，請稍後再試。錯誤：'+esc(e.message);
+    txt.innerHTML='⚠️ 連線失敗：'+esc(e.message);
   }
-
   btn.disabled=false;
   btn.innerHTML='🌿 重新獲取今日智者回饋';
 }
+
 
 function showHint(msg){
   var h=document.getElementById('wise-hint');
