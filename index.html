@@ -22,14 +22,7 @@
 html,body{height:100%;background:var(--bg);}
 body{font-family:'Noto Serif TC',serif;color:var(--text1);max-width:430px;margin:0 auto;position:relative;overflow-x:hidden;font-size:1.05rem;}
 
-/* SPLASH */
-#splash{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2.5rem;text-align:center;transition:opacity .6s ease;}
-#splash.out{opacity:0;pointer-events:none;}
-.sp-label{font-family:'Cormorant Garamond',serif;font-size:.85rem;color:var(--text4);letter-spacing:.5em;text-transform:uppercase;margin-bottom:2rem;animation:up .8s .1s both;}
-.sp-title{font-family:'Cormorant Garamond',serif;font-size:3.2rem;color:var(--gold);font-weight:400;line-height:1.1;margin-bottom:2.2rem;animation:up .8s .35s both;}
-.sp-line{font-size:1.05rem;color:#FFFFFF;line-height:3.4;font-weight:300;animation:up .8s .65s both;}
-.sp-line strong{color:var(--gold);font-weight:600;}
-@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+/* Splash removed */
 
 /* SETUP */
 #setup{position:fixed;inset:0;background:var(--bg);z-index:990;display:none;align-items:center;justify-content:center;padding:2rem;}
@@ -186,11 +179,7 @@ textarea::placeholder{color:var(--muted);}
 </head>
 <body>
 
-<div id="splash">
-  <div class="sp-label">Every Day Counts</div>
-  <div class="sp-title">充實的一天</div>
-  <div class="sp-line">我年輕的自己，<br>我走過來了。<br>讓我用<strong>走過的智慧</strong><br>陪你走今天。</div>
-</div>
+
 
 <div id="setup">
   <div class="sw">
@@ -210,7 +199,7 @@ textarea::placeholder{color:var(--muted);}
   <div class="hdr">
     <div class="hdr-top">
       <div class="hdr-date" id="hdr-date"></div>
-      <div class="hdr-ver" onclick="switchTab('settings')">v4.0 ⚙️</div>
+      <div class="hdr-ver" onclick="switchTab('settings')">v4.1 ⚙️</div>
     </div>
     <div class="hdr-title">充實的一天</div>
     <div class="hdr-sub">Every Day Counts</div>
@@ -376,7 +365,7 @@ textarea::placeholder{color:var(--muted);}
     </div>
     <div class="set-card">
       <div class="set-t">關於這款 APP</div>
-      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>資料存在手機 localStorage<br>版本 v4.0 · GitHub Pages</span></div>
+      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>資料存在手機 localStorage<br>版本 v4.1 · GitHub Pages</span></div>
     </div>
   </div>
 </div>
@@ -450,48 +439,13 @@ function refreshKst(){
 }
 
 function init(){
-  try{
-    var sp = document.getElementById('splash');
-    if(!sp){ startAfterSplash(); return; }
-    sp.style.cursor='pointer';
-    var gone=false;
-
-    function goNext(e){
-      if(e) e.preventDefault();
-      if(gone) return;
-      gone=true;
-      try{
-        sp.style.opacity='0';
-        sp.style.pointerEvents='none';
-        setTimeout(function(){
-          sp.style.display='none';
-          startAfterSplash();
-        },400);
-      }catch(err){
-        sp.style.display='none';
-        startAfterSplash();
-      }
-    }
-
-    sp.onclick=goNext;
-    sp.ontouchstart=function(){};
-    sp.ontouchend=goNext;
-    setTimeout(goNext,3000);
-
-  }catch(e){
-    startAfterSplash();
+  if(!gk()){
+    document.getElementById('setup').classList.add('show');
+  } else {
+    startApp();
   }
 }
 
-function startAfterSplash(){
-  try{
-    var setup=document.getElementById('setup');
-    var app=document.getElementById('app');
-    if(!gk()){
-      if(setup) setup.classList.add('show');
-    } else {
-      startApp();
-    }
   }catch(e){
     // 最後手段：直接顯示app
     var app=document.getElementById('app');
