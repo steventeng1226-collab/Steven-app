@@ -528,7 +528,7 @@ async function sendText(txt){
     var res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':gk(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,system:buildSys(),messages:msgs})
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:400,system:buildSys(),messages:msgs})
     });
     var data=await res.json();
     var reply=(data.content&&data.content[0])?data.content[0].text:'我在這裡陪著你。💙';
