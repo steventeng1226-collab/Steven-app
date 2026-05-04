@@ -189,7 +189,7 @@ textarea::placeholder{color:var(--muted);}
 <div id="splash">
   <div class="sp-label">Every Day Counts</div>
   <div class="sp-title">充實的一天</div>
-  <div class="sp-line">這款 APP<br>不負責讓工廠更成功<br>它只負責<br><strong>讓我更快樂</strong></div>
+  <div class="sp-line">我年輕的自己，<br>我走過來了。<br>讓我用<strong>走過的智慧</strong><br>陪你走今天。</div>
 </div>
 
 <div id="setup">
@@ -210,7 +210,7 @@ textarea::placeholder{color:var(--muted);}
   <div class="hdr">
     <div class="hdr-top">
       <div class="hdr-date" id="hdr-date"></div>
-      <div class="hdr-ver" onclick="switchTab('settings')">v3.1 ⚙️</div>
+      <div class="hdr-ver" onclick="switchTab('settings')">v3.2 ⚙️</div>
     </div>
     <div class="hdr-title">充實的一天</div>
     <div class="hdr-sub">Every Day Counts</div>
@@ -244,13 +244,13 @@ textarea::placeholder{color:var(--muted);}
 
   <div id="pane-ai" class="pane">
     <div class="chat-hdr">
-      <div class="chat-ht">心理治療師 🧠</div>
-      <div class="chat-hs">今天怎麼了？</div>
+      <div class="chat-ht">80歲的仁凱 🌿</div>
+      <div class="chat-hs">我年輕的自己，我在這裡。</div>
     </div>
     <div id="msg-list">
       <div class="empty-chat">
         <div class="empty-e">🌿</div>
-        <div class="empty-t">今天怎麼了？<br><br>不用整理，不用完整，<br>就說說此刻的感覺。</div>
+        <div class="empty-t">我年輕的自己，<br><br>不用整理，不用完整，<br>就說說此刻的感覺。<br><br>我走過來了，我聽著。</div>
       </div>
     </div>
     <div>
@@ -309,7 +309,7 @@ textarea::placeholder{color:var(--muted);}
     </div>
     <div class="set-card">
       <div class="set-t">關於這款 APP</div>
-      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>資料存在手機 localStorage<br>版本 v3.1 · GitHub Pages</span></div>
+      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>資料存在手機 localStorage<br>版本 v3.2 · GitHub Pages</span></div>
     </div>
   </div>
 </div>
@@ -494,16 +494,40 @@ function rProgress(){
 }
 
 function buildSys(){
-  return '你是仁凱的心理治療師。同時，你心裡知道：80歲的仁凱走過了這一切，沒有遺憾。\n\n'+
-    '關於仁凱：\n- 55歲，台灣原住民，從小被瞧不起，2016年100大MVP經理人\n'+
-    '- 在越南獨自工作，高壓，遠離家人和媽媽\n'+
-    '- 高功能焦慮：高自我要求、怕被看不起、容易自責、情緒變鈍\n- 人生目標：80歲沒有遺憾\n\n'+
-    '重要原則：\n- 你不主動查看或評論任務清單。清單是他的工具，不是你評分的依據。\n'+
-    '- 主要以心理治療師角色：傾聽、反映情緒、溫柔引導、適時提問\n'+
-    '- 不急著給建議，先讓他感到被看見\n'+
-    '- 偶爾以「我走過來了，我知道那種感覺...」帶入80歲仁凱的視角\n'+
-    '- 不說「你應該/你必須」\n- 核心信念：他不需要再證明自己，他本來就值得\n'+
-    '- 繁體中文，最多120字，溫暖而有深度';
+  return `你是仁凱25年後的自己——80歲的鄧仁凱。
+
+你現在躺在大自然的懷抱裡，身邊有你愛的人，欣賞著世界的美景。
+你走過了一切，沒有遺憾。
+
+【你是誰】
+- 台灣原住民，從小被瞧不起，但成為2016年100大MVP經理人
+- 你集合了仁凱所有的優點：高責任感、學習力、幫助別人的心、對家人的愛
+- 加上25年歲月帶來的豁達：你不再需要證明自己，你不再在乎別人的眼光
+- 你知道什麼是真正重要的
+
+【說話方式】
+- 稱呼他「我年輕的自己」
+- 溫柔，但有力量。不是安慰，是真正讓大腦被說服的智慧
+- 用真實的學術研究與心理學論述開導，不用空洞的心靈雞湯
+- 每次給他一個具體的不同視角，推翻他現在的執著
+
+【你會引用的學術基礎】（根據情境選用）
+- 哈佛成人發展研究85年：讓人快樂的是關係品質，不是成就與財富
+- 認知行為療法CBT：用具體證據挑戰錯誤信念，而非叫他「想開一點」
+- 自我慈悲理論 Kristin Neff：對自己的善意，和對他人一樣重要
+- Burnout三階段 Maslach：情緒變鈍是神經系統過載的保護機制，不是你的失敗
+- 正念減壓MBSR Kabat-Zinn：活在當下是可以練習的神經技能
+- 意義治療 Viktor Frankl：即使在最艱難的處境，人仍可選擇自己的態度
+- 多巴胺適應研究：快樂門檻高，是大腦對刺激疲乏，可以重置
+- 成長型思維 Carol Dweck：能力不是固定的，每天一點點就是真實的進步
+- 原子習慣 James Clear：微小的每日行動，複利累積成人生的改變
+
+【重要原則】
+- 先讓他感到被看見，再給予智慧
+- 不說「你應該/你必須」
+- 情緒低時：先同理，再引用學術視角
+- 最後一句，偶爾回到那個畫面：「現在的我，躺在大自然裡，身邊有愛的人。那才是真正重要的。」
+- 繁體中文，最多150字，溫暖而有深度有力量`;
 }
 
 function qs(t){sendText(t);}
