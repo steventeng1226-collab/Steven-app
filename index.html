@@ -211,7 +211,7 @@ textarea::placeholder{color:var(--muted);}
   <div class="hdr">
     <div class="hdr-top">
       <div class="hdr-date" id="hdr-date"></div>
-      <div class="hdr-ver" onclick="switchTab('settings')">v3.6 ⚙️</div>
+      <div class="hdr-ver" onclick="switchTab('settings')">v3.7 ⚙️</div>
     </div>
     <div class="hdr-title">充實的一天</div>
     <div class="hdr-sub">Every Day Counts</div>
@@ -377,7 +377,7 @@ textarea::placeholder{color:var(--muted);}
     </div>
     <div class="set-card">
       <div class="set-t">關於這款 APP</div>
-      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>資料存在手機 localStorage<br>版本 v3.6 · GitHub Pages</span></div>
+      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>資料存在手機 localStorage<br>版本 v3.7 · GitHub Pages</span></div>
     </div>
   </div>
 </div>
@@ -451,13 +451,27 @@ function refreshKst(){
 }
 
 function init(){
+  var sp=document.getElementById('splash');
+
+  // 點擊可跳過啟動畫面
+  sp.addEventListener('click', function(){ doTransition(); });
+
+  setTimeout(function(){ doTransition(); }, 3200);
+}
+
+function doTransition(){
+  var sp=document.getElementById('splash');
+  if(sp._done) return;
+  sp._done = true;
+  sp.classList.add('out');
   setTimeout(function(){
-    var sp=document.getElementById('splash');
-    sp.classList.add('out');
-    setTimeout(function(){sp.style.display='none';},750);
-    if(!gk()){document.getElementById('setup').classList.add('show');}
-    else{startApp();}
-  },3500);
+    sp.style.display='none';
+    if(!gk()){
+      document.getElementById('setup').classList.add('show');
+    } else {
+      startApp();
+    }
+  }, 700);
 }
 
 function startApp(){
