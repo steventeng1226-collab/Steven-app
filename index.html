@@ -199,7 +199,7 @@ textarea::placeholder{color:var(--muted);}
   <div class="hdr">
     <div class="hdr-top">
       <div class="hdr-date" id="hdr-date"></div>
-      <div class="hdr-ver" onclick="switchTab('settings')">v4.3 ⚙️</div>
+      <div class="hdr-ver" onclick="switchTab('settings')">v4.4 ⚙️</div>
     </div>
     <div class="hdr-title">充實的一天</div>
     <div class="hdr-sub">Every Day Counts</div>
@@ -365,7 +365,7 @@ textarea::placeholder{color:var(--muted);}
     </div>
     <div class="set-card">
       <div class="set-t">關於這款 APP</div>
-      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>資料存在手機 localStorage<br>版本 v4.3 · GitHub Pages</span></div>
+      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>資料存在手機 localStorage<br>版本 v4.4 · GitHub Pages</span></div>
     </div>
   </div>
 </div>
@@ -420,10 +420,10 @@ function saveSetup(){
   var k=document.getElementById('sk0').value.trim();
   if(!k){alert('請輸入 API Key');return;}
   localStorage.setItem('apiKey',k);
-  // 強制隱藏 splash 和 setup，避免覆蓋 app
   var sp=document.getElementById('splash');
-  sp.style.display='none';
-  document.getElementById('setup').classList.remove('show');
+  if(sp) sp.style.display='none';
+  var setup=document.getElementById('setup');
+  if(setup) setup.style.display='none';
   startApp();
 }
 function saveApp(){
