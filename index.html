@@ -199,7 +199,7 @@ textarea::placeholder{color:var(--muted);}
   <div class="hdr">
     <div class="hdr-top">
       <div class="hdr-date" id="hdr-date"></div>
-      <div class="hdr-ver" onclick="switchTab('settings')">v4.1 ⚙️</div>
+      <div class="hdr-ver" onclick="switchTab('settings')">v4.2 ⚙️</div>
     </div>
     <div class="hdr-title">充實的一天</div>
     <div class="hdr-sub">Every Day Counts</div>
@@ -365,7 +365,7 @@ textarea::placeholder{color:var(--muted);}
     </div>
     <div class="set-card">
       <div class="set-t">關於這款 APP</div>
-      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>資料存在手機 localStorage<br>版本 v4.1 · GitHub Pages</span></div>
+      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>資料存在手機 localStorage<br>版本 v4.2 · GitHub Pages</span></div>
     </div>
   </div>
 </div>
@@ -439,27 +439,35 @@ function refreshKst(){
 }
 
 function init(){
-  if(!gk()){
-    document.getElementById('setup').classList.add('show');
-  } else {
-    startApp();
-  }
-}
-
-  }catch(e){
-    // 最後手段：直接顯示app
-    var app=document.getElementById('app');
-    if(app) app.classList.add('show');
+  try {
+    var setup = document.getElementById('setup');
+    var app = document.getElementById('app');
+    if(!gk()){
+      if(setup){ setup.style.display='flex'; }
+    } else {
+      if(app){ app.style.display='block'; }
+      loadState();
+      buildUI();
+      var hd=document.getElementById('hdr-date');
+      if(hd) hd.textContent=new Date().toLocaleDateString('zh-TW',{month:'long',day:'numeric',weekday:'long'});
+      var ki=document.getElementById('sk1'); if(ki) ki.value=gk();
+      refreshKst();
+    }
+  } catch(e) {
+    // 強制顯示 setup
+    var s=document.getElementById('setup');
+    if(s) s.style.display='flex';
   }
 }
 
 function startApp(){
-  // 第一步先顯示 app，避免任何後續錯誤造成黑屏
-  document.getElementById('app').classList.add('show');
+  var app=document.getElementById('app');
+  if(app){ app.style.display='block'; }
   loadState();
   buildUI();
-  document.getElementById('hdr-date').textContent=new Date().toLocaleDateString('zh-TW',{month:'long',day:'numeric',weekday:'long'});
-  var ki=document.getElementById('sk1');if(ki)ki.value=gk();
+  var hd=document.getElementById('hdr-date');
+  if(hd) hd.textContent=new Date().toLocaleDateString('zh-TW',{month:'long',day:'numeric',weekday:'long'});
+  var ki=document.getElementById('sk1'); if(ki) ki.value=gk();
   refreshKst();
 }
 
