@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="80%">
+      <stop offset="0%" stop-color="#231300"/>
+      <stop offset="100%" stop-color="#0C0600"/>
+    </radialGradient>
+    <linearGradient id="ringGold" x1="25%" y1="10%" x2="75%" y2="90%">
+      <stop offset="0%" stop-color="#FFE080"/>
+      <stop offset="45%" stop-color="#F5A623"/>
+      <stop offset="100%" stop-color="#9A5E00"/>
+    </linearGradient>
+    <linearGradient id="sproutGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFD97A"/>
+      <stop offset="100%" stop-color="#E09020"/>
+    </linearGradient>
+    <radialGradient id="budGlow" cx="38%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#FFF0C0"/>
+      <stop offset="60%" stop-color="#F5A623"/>
+      <stop offset="100%" stop-color="#C07800"/>
+    </radialGradient>
+    <radialGradient id="innerFill" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#F5A623" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#F5A623" stop-opacity="0.01"/>
+    </radialGradient>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="tinyGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="512" height="512" rx="110" fill="url(#bg)"/>
+
+  <!-- ── Ambient halo ── -->
+  <circle cx="256" cy="265" r="210" fill="#F5A623" opacity="0.035"/>
+
+  <!-- ── Outer dashed ring (decorative) ── -->
+  <circle cx="256" cy="265" r="196"
+    fill="none" stroke="#F5A623" stroke-width="1.5"
+    stroke-dasharray="7 9" opacity="0.13"/>
+
+  <!-- ── Coin body ── -->
+  <circle cx="256" cy="265" r="162" fill="#140D00"/>
+
+  <!-- ── Coin ring (main, gradient) ── -->
+  <circle cx="256" cy="265" r="162"
+    fill="none" stroke="url(#ringGold)" stroke-width="13"/>
+
+  <!-- ── Coin inner ring (subtle) ── -->
+  <circle cx="256" cy="265" r="144"
+    fill="none" stroke="#F5A623" stroke-width="1.8" opacity="0.22"/>
+
+  <!-- ── Coin surface shimmer ── -->
+  <circle cx="256" cy="265" r="150" fill="url(#innerFill)"/>
+
+  <!-- ── Plant stem ── -->
+  <path d="M256 330 C253 293 254 258 256 208"
+    stroke="url(#sproutGold)" stroke-width="13"
+    fill="none" stroke-linecap="round" filter="url(#tinyGlow)"/>
+
+  <!-- ── Left leaf (lower) ── -->
+  <path d="M254 284 C237 270 214 266 206 246
+           C227 252 249 265 254 284"
+    fill="url(#sproutGold)" filter="url(#tinyGlow)"/>
+
+  <!-- ── Right leaf (upper) ── -->
+  <path d="M258 254 C275 239 298 233 306 214
+           C285 220 263 234 258 254"
+    fill="url(#sproutGold)" filter="url(#tinyGlow)"/>
+
+  <!-- ── Left small leaf (top) ── -->
+  <path d="M254 232 C241 224 227 222 221 208
+           C235 212 249 221 254 232"
+    fill="#F5A623" opacity="0.75"/>
+
+  <!-- ── Bud outer glow ── -->
+  <circle cx="256" cy="198" r="27" fill="#F5A623" opacity="0.25" filter="url(#softGlow)"/>
+
+  <!-- ── Bud ── -->
+  <circle cx="256" cy="198" r="21" fill="url(#budGlow)" filter="url(#tinyGlow)"/>
+
+  <!-- ── Bud inner highlight ── -->
+  <circle cx="250" cy="193" r="8" fill="#FFF8DC" opacity="0.55"/>
+
+  <!-- ── Root dots (growth foundation) ── -->
+  <circle cx="243" cy="335" r="5.5" fill="#F5A623" opacity="0.4"/>
+  <circle cx="256" cy="339" r="4.5" fill="#F5A623" opacity="0.33"/>
+  <circle cx="269" cy="334" r="5.5" fill="#F5A623" opacity="0.4"/>
+</svg>
