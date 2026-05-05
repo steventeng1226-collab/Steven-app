@@ -28,8 +28,6 @@ body{font-family:'Noto Serif TC',serif;color:var(--text1);max-width:430px;margin
 .tabs{display:flex;background:var(--bg);border-bottom:2px solid var(--border);position:sticky;top:0;z-index:80;}
 .pane{display:none;padding:1.4rem 1.4rem calc(6rem + env(safe-area-inset-bottom,0px));}
 .pane.on{display:block;}
-#pane-ai{display:none;flex-direction:column;padding:1rem 1.4rem calc(1rem + env(safe-area-inset-bottom,0px));height:calc(100dvh - 126px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));}
-#pane-ai.on{display:flex;}
 /* ── Setup / App shell ── */
 #setup{position:fixed;inset:0;background:var(--bg);z-index:990;display:none;align-items:center;justify-content:center;padding:2rem;}
 #setup.show{display:flex;}
@@ -45,7 +43,7 @@ body{font-family:'Noto Serif TC',serif;color:var(--text1);max-width:430px;margin
 #app{display:none;min-height:100vh;}
 .hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;}
 .hdr-date{font-size:.8rem;color:var(--text2);letter-spacing:.08em;}
-.hdr-ver{font-size:.65rem;color:var(--muted);background:var(--bg3);border:2px solid var(--border);border-radius:5px;padding:.13rem .45rem;cursor:pointer;}
+.hdr-ver{font-size:.65rem;color:var(--gold);background:var(--bg3);border:2px solid var(--border2);border-radius:5px;padding:.13rem .45rem;cursor:pointer;font-weight:700;}
 .hdr-title{font-family:'Cormorant Garamond',serif;font-size:2.5rem;color:var(--gold);font-weight:400;line-height:1;}
 .hdr-sub{font-size:.75rem;color:var(--text2);font-style:italic;margin-top:.25rem;}
 .spill{display:inline-flex;align-items:center;gap:.5rem;margin-top:1rem;background:var(--bg3);border:2px solid var(--border2);border-radius:30px;padding:.42rem 1.1rem;font-size:.82rem;color:#FFF;}
@@ -85,22 +83,24 @@ body{font-family:'Noto Serif TC',serif;color:var(--text1);max-width:430px;margin
 textarea{width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:9px;padding:.7rem .9rem;color:#FFF;font-family:'Noto Serif TC',serif;font-size:.95rem;resize:none;min-height:68px;line-height:1.9;outline:none;}
 textarea:focus{border-color:var(--gold3);}
 textarea::placeholder{color:var(--muted);}
-.chat-hdr{text-align:center;padding-bottom:.8rem;border-bottom:2px solid var(--border);margin-bottom:.8rem;flex-shrink:0;}
-.chat-ht{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--gold);}
-.chat-hs{font-size:.76rem;color:var(--text2);font-style:italic;margin-top:.25rem;}
-#msg-list{flex:1;overflow-y:auto;padding:.35rem 0;scrollbar-width:none;}
+#pane-ai{display:none;flex-direction:column;padding:0;height:calc(100dvh - env(safe-area-inset-top,0px) - 110px);overflow:hidden;}
+#pane-ai.on{display:flex;}
+.chat-hdr{text-align:center;padding:.65rem 1.4rem .55rem;border-bottom:1.5px solid var(--border);flex-shrink:0;}
+.chat-ht{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--gold);}
+.chat-hs{font-size:.72rem;color:var(--text2);font-style:italic;margin-top:.15rem;}
+#msg-list{flex:1;overflow-y:auto;padding:.5rem 1.4rem;scrollbar-width:none;min-height:0;}
 #msg-list::-webkit-scrollbar{display:none;}
-.msg{margin-bottom:.9rem;animation:fi .25s ease;}
+.empty-chat{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:0 1rem;}
+.empty-e{font-size:1.6rem;margin-bottom:.55rem;}
+.empty-t{color:var(--text2);font-size:.88rem;line-height:2.4;text-align:center;}
+.qrow{display:flex;flex-wrap:wrap;gap:.4rem;padding:.5rem 1.4rem .3rem;flex-shrink:0;}
+.qp{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:.35rem .8rem;font-family:'Noto Serif TC',serif;font-size:.74rem;color:#FFF;cursor:pointer;}
+.cbar{display:flex;gap:.55rem;padding:.45rem 1.4rem calc(.55rem + env(safe-area-inset-bottom,0px));border-top:1.5px solid var(--border);flex-shrink:0;}
+.msg{margin-bottom:.8rem;animation:fi .25s ease;}
 .msg.user{text-align:right;}
-.bubble{display:inline-block;max-width:86%;padding:.76rem 1.05rem;border-radius:16px;font-size:.95rem;line-height:2.0;}
+.bubble{display:inline-block;max-width:86%;padding:.7rem 1rem;border-radius:16px;font-size:.92rem;line-height:1.95;}
 .msg.user .bubble{background:var(--bg3);color:#FFF;border-bottom-right-radius:3px;}
 .msg.assistant .bubble{background:var(--card);border:2px solid var(--border);color:#FFF;border-bottom-left-radius:3px;text-align:left;}
-.empty-chat{text-align:center;padding:2.5rem .5rem;}
-.empty-e{font-size:1.9rem;margin-bottom:.9rem;}
-.empty-t{color:var(--text2);font-size:.95rem;line-height:2.7;}
-.qrow{display:flex;flex-wrap:wrap;gap:.48rem;margin-bottom:.75rem;flex-shrink:0;}
-.qp{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:.42rem .88rem;font-family:'Noto Serif TC',serif;font-size:.77rem;color:#FFF;cursor:pointer;}
-.cbar{display:flex;gap:.6rem;padding-top:.78rem;border-top:2px solid var(--border);flex-shrink:0;}
 .cin{flex:1;background:var(--card);border:2px solid var(--border);border-radius:24px;padding:.75rem 1.05rem;color:#FFF;font-family:'Noto Serif TC',serif;font-size:.95rem;outline:none;}
 .sbtn{width:46px;height:46px;background:var(--gold);border:none;border-radius:50%;color:#1A0F00;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;}
 .sbtn:disabled{opacity:.3;}
@@ -225,7 +225,7 @@ textarea::placeholder{color:var(--muted);}
   <div class="hdr">
     <div class="hdr-top">
       <div class="hdr-date" id="hdr-date"></div>
-      <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v5.4 ☁️</div>
+      <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v5.5 ☁️</div>
     </div>
     <div class="hdr-title">充實的一天</div>
     <div class="hdr-sub">Every Day Counts</div>
@@ -294,18 +294,16 @@ textarea::placeholder{color:var(--muted);}
       <div class="chat-hs">我年輕的自己，我在這裡。</div>
     </div>
     <div id="msg-list"></div>
-    <div>
-      <div class="qrow">
-        <button class="qp" onclick="qs('今天有點累')">今天有點累</button>
-        <button class="qp" onclick="qs('今天做到了！')">今天做到了！</button>
-        <button class="qp" onclick="qs('壓力很大')">壓力很大</button>
-        <button class="qp" onclick="qs('想說說話')">想說說話</button>
-        <button class="qp" onclick="qs('幫助了別人')">幫助了別人</button>
-      </div>
-      <div class="cbar">
-        <input class="cin" id="cin" placeholder="說說今天的感受..." onkeypress="if(event.key==='Enter')send()">
-        <button class="sbtn" id="sbtn" onclick="send()">➤</button>
-      </div>
+    <div class="qrow">
+      <button class="qp" onclick="qs('今天有點累')">今天有點累</button>
+      <button class="qp" onclick="qs('今天做到了！')">今天做到了！</button>
+      <button class="qp" onclick="qs('壓力很大')">壓力很大</button>
+      <button class="qp" onclick="qs('想說說話')">想說說話</button>
+      <button class="qp" onclick="qs('幫助了別人')">幫助了別人</button>
+    </div>
+    <div class="cbar">
+      <input class="cin" id="cin" placeholder="說說今天的感受..." onkeypress="if(event.key==='Enter')send()">
+      <button class="sbtn" id="sbtn" onclick="send()">➤</button>
     </div>
   </div>
 
