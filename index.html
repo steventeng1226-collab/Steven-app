@@ -21,13 +21,14 @@
   --red:#FF7055;--green:#6FBF73;--border:#3D2500;--border2:#5A3800;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;background:var(--bg);}
+html,body{height:100%;background:var(--bg);overflow:hidden;}
 body{font-family:'Noto Serif TC',serif;color:var(--text1);max-width:430px;margin:0 auto;overflow-x:hidden;font-size:1.05rem;}
 /* ── Safe area ── */
-.hdr{background:var(--bg);padding:calc(1.5rem + env(safe-area-inset-top,0px)) 1.4rem 1rem;border-bottom:2px solid var(--border);}
-.tabs{display:flex;background:var(--bg);border-bottom:2px solid var(--border);position:sticky;top:0;z-index:80;}
-.pane{display:none;padding:1.4rem 1.4rem calc(6rem + env(safe-area-inset-bottom,0px));}
+.hdr{background:var(--bg);padding:calc(1rem + env(safe-area-inset-top,0px)) 1.4rem .8rem;border-bottom:2px solid var(--border);flex-shrink:0;}
+.tabs{display:flex;background:var(--bg);border-bottom:2px solid var(--border);flex-shrink:0;}
+.pane{display:none;padding:1.2rem 1.4rem calc(5rem + env(safe-area-inset-bottom,0px));height:100%;overflow-y:auto;}
 .pane.on{display:block;}
+#content-wrap{flex:1;overflow:hidden;position:relative;}
 /* ── Setup / App shell ── */
 #setup{position:fixed;inset:0;background:var(--bg);z-index:990;display:none;align-items:center;justify-content:center;padding:2rem;}
 #setup.show{display:flex;}
@@ -40,7 +41,7 @@ body{font-family:'Noto Serif TC',serif;color:var(--text1);max-width:430px;margin
 .eyebtn{width:48px;background:var(--bg3);border:2px solid var(--border2);border-radius:10px;color:var(--text2);cursor:pointer;font-size:1.15rem;display:flex;align-items:center;justify-content:center;}
 .pbtn{width:100%;padding:1rem;background:var(--gold);border:none;border-radius:12px;color:#1A0F00;font-family:'Noto Serif TC',serif;font-size:1.05rem;font-weight:700;cursor:pointer;margin-top:.4rem;}
 .hint{font-size:.75rem;color:var(--muted);margin-top:1rem;line-height:2;text-align:center;}
-#app{display:none;min-height:100vh;}
+#app{display:none;height:100dvh;flex-direction:column;overflow:hidden;}
 .hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;}
 .hdr-date{font-size:.8rem;color:var(--text2);letter-spacing:.08em;}
 .hdr-ver{font-size:.65rem;color:var(--gold);background:var(--bg3);border:2px solid var(--border2);border-radius:5px;padding:.13rem .45rem;cursor:pointer;font-weight:700;}
@@ -80,10 +81,10 @@ body{font-family:'Noto Serif TC',serif;color:var(--text1);max-width:430px;margin
 .gdb-s{font-size:.85rem;color:#FFF;font-style:italic;line-height:2.4;}
 .obs-card{background:var(--card);border:2px solid var(--border);border-radius:13px;padding:1.2rem;margin-bottom:.7rem;}
 .obs-q{font-size:1rem;color:#FFF;margin-bottom:.7rem;line-height:1.85;}
-textarea{width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:9px;padding:.7rem .9rem;color:#FFF;font-family:'Noto Serif TC',serif;font-size:.95rem;resize:none;min-height:68px;line-height:1.9;outline:none;}
-textarea:focus{border-color:var(--gold3);}
-textarea::placeholder{color:var(--muted);}
-#pane-ai{display:none;flex-direction:column;padding:0;height:calc(100dvh - env(safe-area-inset-top,0px) - 110px);overflow:hidden;}
+textarea{width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:9px;padding:.75rem 1rem;color:#FFF;font-family:'Noto Serif TC',serif;font-size:.95rem;resize:none;min-height:88px;line-height:1.95;outline:none;-webkit-appearance:none;touch-action:manipulation;}
+textarea:focus{border-color:var(--gold3);box-shadow:0 0 0 2px rgba(192,120,0,0.15);}
+textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
+#pane-ai{display:none;flex-direction:column;height:100%;overflow:hidden;padding:0;}
 #pane-ai.on{display:flex;}
 .chat-hdr{text-align:center;padding:.65rem 1.4rem .55rem;border-bottom:1.5px solid var(--border);flex-shrink:0;}
 .chat-ht{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--gold);}
@@ -221,11 +222,11 @@ textarea::placeholder{color:var(--muted);}
   </div>
 </div>
 
-<div id="app">
+<div id="app" style="display:none;flex-direction:column;">
   <div class="hdr">
     <div class="hdr-top">
       <div class="hdr-date" id="hdr-date"></div>
-      <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v5.5 ☁️</div>
+      <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v5.7 ☁️</div>
     </div>
     <div class="hdr-title">充實的一天</div>
     <div class="hdr-sub">Every Day Counts</div>
@@ -233,7 +234,7 @@ textarea::placeholder{color:var(--muted);}
     <div id="rest-bar"></div>
   </div>
 
-  <div id="echo-bar" onclick="toggleEcho()">
+  <div id="echo-bar" onclick="toggleEcho()" style="flex-shrink:0;">
     <div style="display:flex;align-items:flex-start;gap:.65rem;">
       <div style="font-size:1rem;flex-shrink:0;margin-top:.1rem;">🌅</div>
       <div style="flex:1;">
@@ -253,6 +254,7 @@ textarea::placeholder{color:var(--muted);}
     <button class="tab" onclick="switchTab('settings')">設定</button>
   </div>
 
+  <div id="content-wrap">
   <div id="pane-today" class="pane on">
     <div class="sec"><div class="sdot" style="background:var(--red)"></div><div class="slabel" style="color:var(--red)">核心層 — 每天必做</div><div class="scount" id="cc">0 / 4</div></div>
     <div class="pbar"><div class="pfill" id="cpbar" style="width:0%;background:var(--red)"></div></div>
@@ -380,9 +382,10 @@ textarea::placeholder{color:var(--muted);}
     </div>
     <div class="set-card">
       <div class="set-t">關於這款 APP</div>
-      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>版本 v5.3 · GitHub Pages · ☁️ 雲端備份 · 全螢幕</span></div>
+      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>版本 v5.6 · GitHub Pages · ☁️ 雲端備份</span></div>
     </div>
   </div>
+  </div><!-- /content-wrap -->
 </div>
 
 <div id="letter-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:600;align-items:flex-start;justify-content:center;padding:1.5rem;overflow-y:auto;">
@@ -434,10 +437,10 @@ var ACT=[
   {id:'sleep',e:'😴',l:'11點前準備睡覺',d:'休息是明天最好的準備'}
 ];
 var OBS=[
-  {id:'emotion',q:'今天有沒有注意到自己的情緒變化？',p:'不用評判，只是注意到就好...'},
-  {id:'present',q:'今天有沒有一刻，真正活在當下？',p:'哪怕只有5秒鐘也算...'},
-  {id:'selfkind',q:'今天，我有沒有對自己好一點？',p:'哪怕一件很小的事...'},
-  {id:'microlight',q:'✨ 今天的微光：寫下一件好事',p:'不論多小，只要是真實的光...',special:true}
+  {id:'emotion',q:'今天有沒有注意到自己的情緒變化？',p:'身體哪裡有感覺？胸口緊？肩膀重？還是莫名輕鬆？'},
+  {id:'present',q:'今天有沒有一刻，真正活在當下？',p:'那一刻，你用哪個感官接收到它？光線？聲音？溫度？'},
+  {id:'selfkind',q:'今天，我有沒有對自己好一點？',p:'那件事做完，身體的哪個部位最先放鬆？'},
+  {id:'microlight',q:'✨ 今天的微光：寫下一件好事',p:'試著加上一個感官細節：我看見、我聽見、我皮膚感受到...',special:true}
 ];
 var WKQ=[
   {id:'w1',q:'這週我發現自己一個新的模式或反應？'},
@@ -550,7 +553,14 @@ function refreshKst(){
 
 function startApp(){
   var app=document.getElementById('app');
-  if(app)app.style.display='block';
+  if(app){app.style.display='flex';}
+  // Android 鍵盤彈出時不跳版
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',function(){
+      var app=document.getElementById('app');
+      if(app)app.style.height=window.visualViewport.height+'px';
+    });
+  }  
   loadState();
   buildUI();
   var hd=document.getElementById('hdr-date');
@@ -784,7 +794,8 @@ function buildSys(){
     sys+='【今日模式：智慧陪伴】給予溫暖且有學術根據的回應。\n\n';
   }
   sys+='【罪惡感偵測——最高優先級】若偵測到「心虛、對不起自己、應該、又沒做到、怎麼可以、不夠勤快、偷懶」，必須立即引用【前額葉皮質恢復理論】：休息是大腦的主動修復期，將選擇休息框架為「最聰明的自律」。\n\n';
-  sys+='【三層防護——嚴格執行】①禁止說教（不用「你應該」「你要記得」）②禁止雞湯（不用空洞的正能量句子）③必須從微光或具體行為出發，不可用泛論開頭。\n\n';
+  sys+='【感官覺察偵測——高價值回應】若文字中含有具體的感官描述（眼睛看見的畫面、耳朵聽見的聲音、皮膚的溫度觸感、鼻子的氣味、舌尖的味道、陽光的麻感、橄欖油的草本香、部屬眼神的閃爍等任何身體感知細節），你必須：①先品味那個感官瞬間，像在與我一起重新活過那一刻；②點名這個具體細節；③從「細緻化覺察（Granular Awareness）」的神經科學角度說明：這種精細感知如何讓大腦從「管理模式」切換到「存在模式（Being Mode）」，降低杏仁核焦慮反應，並強化當下記憶的編碼。語氣要細膩、有畫面感，像80歲的智者在品酒一樣慢慢品味。\n\n';
+  sys+='【三層防護——嚴格執行】①禁止說教（不用「你應該」「你要記得」）②禁止雞湯（不用空洞的正能量句子）③必須從微光或具體感官細節出發，不可用泛論開頭。\n\n';
   sys+='【結尾畫面】最後一句話必須引導回到這個畫面：80歲的仁凱，躺在大自然的樹蔭下，聽風聲，身邊有愛的人，臉上帶著微笑。\n\n';
   sys+='【溝通原則】稱呼「我年輕的自己」。自我慈悲→嚴苛抑制前額葉；控制圈→區分工廠與個人情緒；哈佛85年→關係品質才是幸福核心。先同理再給智慧。繁體中文，最多180字。';
   return sys;
@@ -797,7 +808,7 @@ function scrollM(){var ml=document.getElementById('msg-list');if(ml)setTimeout(f
 function renderMsgs(typing){
   var ml=document.getElementById('msg-list');if(!ml)return;
   if(!S.msgs.length&&!typing){
-    ml.innerHTML='<div class="empty-chat"><div class="empty-e">🌿</div><div class="empty-t">我年輕的自己，<br><br>不用整理，不用完整，<br>就說說此刻的感覺。<br><br>我走過來了，我聽著。</div></div>';
+    ml.innerHTML='<div class="empty-chat"><div class="empty-e">🌿</div><div class="empty-t">我年輕的自己，<br>不用整理，不用完整，<br>就說說此刻的感覺。<br>我走過來了，我聽著。</div></div>';
     return;
   }
   var h=S.msgs.map(function(m){return '<div class="msg '+m.role+'"><div class="bubble">'+esc(m.content)+'</div></div>';}).join('');
@@ -848,7 +859,7 @@ async function getWiseFeedback(){
   if(dateEl)dateEl.textContent=new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric'});
   if(txt)txt.innerHTML='<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
   var sys='你是80歲的仁凱，走過高壓管理生涯的智者。不超過200字的信。禁止空洞安慰，必須從他親手寫下的具體文字出發，選一個心理學理論回應（CBT、自我慈悲、控制圈、神經可塑性、哈佛研究）。稱呼「我年輕的自己」。繁體中文。';
-  var userMsg='【今日打卡】核心:'+coreDone.join('、')+'\n活力:'+actDone.join('、')+'\n\n【觀察層】\n①情緒:'+(e1||'未填')+'\n②當下:'+(e2||'未填')+'\n③善待:'+(e3||'未填')+'\n④今日微光:'+(e4||'未填')+'\n\n請根據具體文字給他一封信。';
+  var userMsg='【今日打卡】核心:'+coreDone.join('、')+'\n活力:'+actDone.join('、')+'\n\n【觀察層】\n①情緒（身體感知）:'+(e1||'未填')+'\n②活在當下（感官）:'+(e2||'未填')+'\n③善待自己（身體）:'+(e3||'未填')+'\n\n【今日微光——感謝信核心素材，最高優先級】\n「'+(e4||'未填')+'」\n\n請從微光出發，給他一封信。若微光中含有感官描述，必須點名這個細節並從「細緻化覺察（Granular Awareness）」的角度深度回應。';
   try{
     var res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
@@ -862,7 +873,7 @@ async function getWiseFeedback(){
     sv('last_feedback',{date:tkey(),text:reply});
     var hist=ld('wise_history')||[];
     hist=hist.filter(function(r){return r.date!==tkey();});
-    hist.unshift({date:tkey(),obs:{e1:e1,e2:e2,e3:e3},feedback:reply});
+    hist.unshift({date:tkey(),obs:{e1:e1,e2:e2,e3:e3,e4:e4},feedback:reply});
     sv('wise_history',hist.slice(-30));
   }catch(e){if(txt)txt.innerHTML='⚠️ '+esc(e.message);}
   if(btn){btn.disabled=false;btn.innerHTML='🌿 重新獲取今日智者回饋';}
@@ -904,7 +915,12 @@ async function openLetter(){
   var coreDone=CORE.filter(function(i){return S.chk[i.id];}).map(function(i){return i.l;});
   var sysLines=['你是80歲的仁凱，走過高壓管理生涯的智者，躺在大自然懷抱裡，身邊有愛的人，沒有遗憐。現在你要寫一封感謝信絤55歲的自己。','【這封信的靈魂】將「55歲的具體行動」轉化為「80歲正在享受的生命品質」。','必須包含：「因為當年的你，學會了對自己溫柔。這才是一切的根源。」','具體場景：健康奶昔和運動→身體健康；對家人的警訊→家庭圓滿；觀察自己→內心平靜；不放棄英文→某個美好時刻。','禁止空洞讃美。格式：以「我年輕的自己」開頭，以「愛你的，80歲的仁凱」結尾。繁體中文，200-250字。'];
   var sys=sysLines.join(' ');
-  var userMsg='我已經累積了'+total+'天的人生存款（每日核心習慣＋觀察自己）。這是我到達第'+milestone+'天的里程碑。請寫一封感謝信給我。';
+  var recentMicrolight=[];
+  var hist=ld('wise_history')||[];
+  hist.slice(0,7).forEach(function(r){
+    if(r.obs&&r.obs.e4&&r.obs.e4.trim().length>3)recentMicrolight.push(r.date+'：「'+r.obs.e4.trim()+'」');
+  });
+  var userMsg='我已經累積了'+total+'天的人生存款（每日核心習慣＋觀察自己）。這是我到達第'+milestone+'天的里程碑。\n\n'+(recentMicrolight.length?'【近期微光記錄——感謝信的靈魂，請從這些具體瞬間出發】\n'+recentMicrolight.join('\n')+'\n\n':'')+'請寫一封感謝信給我。感謝信的靈魂是這些微小但真實的感官瞬間，80歲的你最珍視的正是這些。';
   try{
     if(!gk()){if(body)body.textContent='請先到設定填入 API Key';return;}
     var res=await fetch('https://api.anthropic.com/v1/messages',{
@@ -945,11 +961,11 @@ if(document.readyState==='loading'){
 setTimeout(function(){
   var app=document.getElementById('app');
   var setup=document.getElementById('setup');
-  var appOk=app&&app.style.display==='block';
+  var appOk=app&&(app.style.display==='block'||app.style.display==='flex');
   var setupOk=setup&&setup.style.display==='flex';
   if(!appOk&&!setupOk){
     if(!gk()){if(setup)setup.style.display='flex';}
-    else{if(app){app.style.display='block';loadState();buildUI();}}
+    else{if(app){app.style.display='flex';loadState();buildUI();}}
   }
 },2000);
 </script>
