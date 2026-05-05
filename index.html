@@ -225,7 +225,7 @@ textarea::placeholder{color:var(--muted);}
   <div class="hdr">
     <div class="hdr-top">
       <div class="hdr-date" id="hdr-date"></div>
-      <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v5.3 ☁️</div>
+      <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v5.4 ☁️</div>
     </div>
     <div class="hdr-title">充實的一天</div>
     <div class="hdr-sub">Every Day Counts</div>
@@ -257,7 +257,7 @@ textarea::placeholder{color:var(--muted);}
     <div class="sec"><div class="sdot" style="background:var(--red)"></div><div class="slabel" style="color:var(--red)">核心層 — 每天必做</div><div class="scount" id="cc">0 / 4</div></div>
     <div class="pbar"><div class="pfill" id="cpbar" style="width:0%;background:var(--red)"></div></div>
     <div id="core-list"></div>
-    <div class="sec"><div class="sdot" style="background:var(--gold)"></div><div class="slabel" style="color:var(--gold)">活力層 — 完成5項就是好的一天</div><div class="scount" id="ac">0 / 7</div></div>
+    <div class="sec"><div class="sdot" style="background:var(--gold)"></div><div class="slabel" style="color:var(--gold)">活力層 — 完成5項就是好的一天</div><div class="scount" id="ac">0 / 8</div></div>
     <div class="pbar"><div class="pfill" id="apbar" style="width:0%;background:var(--gold)"></div></div>
     <div id="act-list"></div>
     <div id="gdb" style="display:none" class="gdb">
@@ -420,12 +420,13 @@ textarea::placeholder{color:var(--muted);}
 
 <script>
 var CORE=[
-  {id:'smoothie',e:'🥤',l:'健康奶昔早餐',d:'為身體補充最好的能量'},
+  {id:'smoothie',e:'🥤',l:'頂級能量早餐（含5g橄欖油）',d:'2蛋、酪梨180g、蘋果、堅果奶昔、橄欖油5g。為大腦精準合成神經傳導物質。'},
   {id:'water',e:'💧',l:'喝水 2000CC',d:'身體是你最重要的資產'},
   {id:'english',e:'📖',l:'英文學習 5分鐘',d:'哪怕只聽一句也算，你從未放棄'},
   {id:'exercise',e:'💪',l:'運動，哪怕10分鐘',d:'壓力的最好出口'}
 ];
 var ACT=[
+  {id:'sunshine',e:'☀️',l:'陽光直射儀式（10分鐘）',d:'開窗、脫掉負擔，讓最原始的光重塑血清素與生物鐘。'},
   {id:'reading',e:'📚',l:'讀書20分鐘＋覆誦練口才',d:'一個動作，三種成長'},
   {id:'family',e:'📱',l:'聯繫家人或媽媽',d:'一句話也是愛，距離不是阻礙'},
   {id:'help',e:'🤝',l:'今天幫助了一個人',d:'你的影響力每天都在發生'},
@@ -437,7 +438,8 @@ var ACT=[
 var OBS=[
   {id:'emotion',q:'今天有沒有注意到自己的情緒變化？',p:'不用評判，只是注意到就好...'},
   {id:'present',q:'今天有沒有一刻，真正活在當下？',p:'哪怕只有5秒鐘也算...'},
-  {id:'selfkind',q:'今天，我有沒有對自己好一點？',p:'哪怕一件很小的事...'}
+  {id:'selfkind',q:'今天，我有沒有對自己好一點？',p:'哪怕一件很小的事...'},
+  {id:'microlight',q:'✨ 今天的微光：寫下一件好事',p:'不論多小，只要是真實的光...',special:true}
 ];
 var WKQ=[
   {id:'w1',q:'這週我發現自己一個新的模式或反應？'},
@@ -567,6 +569,12 @@ function buildUI(){
   var al=document.getElementById('act-list');if(al)al.innerHTML=ACT.map(ihtml).join('');
   var ol=document.getElementById('obs-list');
   if(ol)ol.innerHTML=OBS.map(function(i){
+    if(i.special){
+      return '<div class="obs-card" id="microlight-card" style="border:2px solid var(--border);transition:border-color .35s,box-shadow .35s;">'+
+        '<div class="obs-q" style="color:var(--gold2);">'+i.q+'</div>'+
+        '<textarea id="o_'+i.id+'" placeholder="'+i.p+'" oninput="oChg(\''+i.id+'\',this.value)" style="border-color:var(--border);transition:border-color .35s,box-shadow .35s;"></textarea>'+
+        '</div>';
+    }
     return '<div class="obs-card"><div class="obs-q">'+i.q+'</div><textarea id="o_'+i.id+'" placeholder="'+i.p+'" oninput="oChg(\''+i.id+'\',this.value)"></textarea></div>';
   }).join('');
   var wl=document.getElementById('weekly-list');
@@ -590,6 +598,29 @@ function tog(id){
   S.chk[id]=!S.chk[id];
   var el=document.getElementById('it_'+id);
   if(el){el.classList.toggle('on',S.chk[id]);el.classList.add('pop');setTimeout(function(){el.classList.remove('pop');},350);}
+  // 微光高亮 + 震動
+  if(id==='goodthing'&&S.chk[id]){
+    var mc=document.getElementById('microlight-card');
+    var mt=document.getElementById('o_microlight');
+    if(mc){
+      mc.style.borderColor='var(--gold)';
+      mc.style.boxShadow='0 0 0 3px rgba(245,166,35,0.18)';
+    }
+    if(mt){
+      mt.style.borderColor='var(--gold3)';
+      mt.style.boxShadow='0 0 0 2px rgba(245,166,35,0.15)';
+    }
+    if(navigator.vibrate)navigator.vibrate([40,30,40]);
+    setTimeout(function(){
+      var obs=document.getElementById('obs-list');
+      if(obs)obs.scrollIntoView({behavior:'smooth',block:'nearest'});
+    },300);
+  } else if(id==='goodthing'&&!S.chk[id]){
+    var mc2=document.getElementById('microlight-card');
+    var mt2=document.getElementById('o_microlight');
+    if(mc2){mc2.style.borderColor='';mc2.style.boxShadow='';}
+    if(mt2){mt2.style.borderColor='';mt2.style.boxShadow='';}
+  }
   rToday();saveD();
   var cc=CORE.filter(function(i){return S.chk[i.id];}).length;
   var ac=ACT.filter(function(i){return S.chk[i.id];}).length;
@@ -601,14 +632,14 @@ function rToday(){
   var ac=ACT.filter(function(i){return S.chk[i.id];}).length;
   var e;
   e=document.getElementById('cc');if(e)e.textContent=cc+' / 4';
-  e=document.getElementById('ac');if(e)e.textContent=ac+' / 7';
+  e=document.getElementById('ac');if(e)e.textContent=ac+' / 8';
   e=document.getElementById('cpbar');if(e)e.style.width=(cc/4*100)+'%';
-  e=document.getElementById('apbar');if(e){e.style.width=(ac/7*100)+'%';e.style.background=ac>=5?'var(--green)':'var(--gold)';}
+  e=document.getElementById('apbar');if(e){e.style.width=(ac/8*100)+'%';e.style.background=ac>=5?'var(--green)':'var(--gold)';}
   e=document.getElementById('gdb');if(e)e.style.display=(cc===4&&ac>=5)?'block':'none';
   var total=Object.keys(S.hist).length;
   var good=cc===4&&ac>=5;
   e=document.getElementById('spill');
-  if(e)e.innerHTML='💰 人生存款 <b>'+total+'</b> 天&nbsp;·&nbsp;'+(good?'<b>✨ 今天也存入了</b>':'核心 <b>'+cc+'</b>/4 · 活力 <b>'+ac+'</b>/7');
+  if(e)e.innerHTML='💰 人生存款 <b>'+total+'</b> 天&nbsp;·&nbsp;'+(good?'<b>✨ 今天也存入了</b>':'核心 <b>'+cc+'</b>/4 · 活力 <b>'+ac+'</b>/8');
 }
 
 function recordGood(){
@@ -742,15 +773,22 @@ function linkTheories(text){
 function buildSys(){
   var dayCount=Object.keys(S.hist).length;
   var reflectMode=(dayCount>0&&dayCount%3===0);
+  var microlight=S.obs['microlight']||'';
   var sys='你是80歲的鄧仁凱，走過高壓管理生涯的智者，躺在大自然懷抱裡，身邊有愛的人，沒有遺憾。\n\n';
   sys+='【你是誰】台灣原住民，曾被瞧不起，但成為2016年100大MVP經理人。不再需要證明自己。\n\n';
+  sys+='【我每天的晨間儀式】早晨進行「無玻璃阻礙的陽光直射10分鐘」——這直接啟動血清素合成、校正生物鐘、提升日間皮質醇節律。同時攝取精確的頂級能量早餐：2顆蛋、酪梨180g、蘋果、堅果奶昔、5g橄欖油——提供大腦合成多巴胺與血清素所需的色氨酸、酪氨酸與Omega-3。當我提到「陽光」「奶昔」「橄欖油」「早餐」「儀式」，你必須從神經科學（血清素、HPA軸）或營養心理學角度具體肯定這些行為的生理機制，不可泛泛稱讚。\n\n';
+  if(microlight){
+    sys+='【今日微光——最重要的起點】我今天寫下的微光是：「'+microlight+'」。你的回應必須從這個具體的微光出發，不可忽略，不可替換為泛論。\n\n';
+  }
   if(reflectMode){
     sys+='【今日模式：反思提問】不給肯定，提出一個深層問題：「我年輕的自己，如果今天的工作壓力是一個隱喻，它想教會80歲的你什麼？」問完即止。\n\n';
   }else{
     sys+='【今日模式：智慧陪伴】給予溫暖且有學術根據的回應。\n\n';
   }
   sys+='【罪惡感偵測——最高優先級】若偵測到「心虛、對不起自己、應該、又沒做到、怎麼可以、不夠勤快、偷懶」，必須立即引用【前額葉皮質恢復理論】：休息是大腦的主動修復期，將選擇休息框架為「最聰明的自律」。\n\n';
-  sys+='【溝通原則】1.拒絕雞湯，用學術機制讓大腦真正放鬆。2.稱呼「我年輕的自己」。3.自我慈悲→嚴苛抑制前額葉；控制圈→區分工廠與個人情緒；哈佛85年→關係品質才是幸福核心。4.先同理再給智慧。5.繁體中文，最多180字。';
+  sys+='【三層防護——嚴格執行】①禁止說教（不用「你應該」「你要記得」）②禁止雞湯（不用空洞的正能量句子）③必須從微光或具體行為出發，不可用泛論開頭。\n\n';
+  sys+='【結尾畫面】最後一句話必須引導回到這個畫面：80歲的仁凱，躺在大自然的樹蔭下，聽風聲，身邊有愛的人，臉上帶著微笑。\n\n';
+  sys+='【溝通原則】稱呼「我年輕的自己」。自我慈悲→嚴苛抑制前額葉；控制圈→區分工廠與個人情緒；哈佛85年→關係品質才是幸福核心。先同理再給智慧。繁體中文，最多180字。';
   return sys;
 }
 
@@ -802,8 +840,8 @@ function showHint(msg){
 
 async function getWiseFeedback(){
   if(!gk()){alert('請先到設定填入 API Key');switchTab('settings');return;}
-  var e1=S.obs['emotion']||'',e2=S.obs['present']||'',e3=S.obs['selfkind']||'';
-  if(!e1&&!e2&&!e3){showHint('💛 請先填寫觀察層的三個問題，智者才能給予回饋。');return;}
+  var e1=S.obs['emotion']||'',e2=S.obs['present']||'',e3=S.obs['selfkind']||'',e4=S.obs['microlight']||'';
+  if(!e1&&!e2&&!e3&&!e4){showHint('💛 請先填寫觀察層的問題，智者才能給予回饋。');return;}
   var coreDone=CORE.filter(function(i){return S.chk[i.id];}).map(function(i){return i.l;});
   var actDone=ACT.filter(function(i){return S.chk[i.id];}).map(function(i){return i.l;});
   var btn=document.getElementById('wise-btn'),card=document.getElementById('wise-card'),txt=document.getElementById('wise-text'),dateEl=document.getElementById('wise-date');
@@ -812,7 +850,7 @@ async function getWiseFeedback(){
   if(dateEl)dateEl.textContent=new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric'});
   if(txt)txt.innerHTML='<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
   var sys='你是80歲的仁凱，走過高壓管理生涯的智者。不超過200字的信。禁止空洞安慰，必須從他親手寫下的具體文字出發，選一個心理學理論回應（CBT、自我慈悲、控制圈、神經可塑性、哈佛研究）。稱呼「我年輕的自己」。繁體中文。';
-  var userMsg='【今日打卡】核心:'+coreDone.join('、')+'\n活力:'+actDone.join('、')+'\n\n【觀察層】\n①情緒:'+(e1||'未填')+'\n②當下:'+(e2||'未填')+'\n③善待:'+(e3||'未填')+'\n\n請根據具體文字給他一封信。';
+  var userMsg='【今日打卡】核心:'+coreDone.join('、')+'\n活力:'+actDone.join('、')+'\n\n【觀察層】\n①情緒:'+(e1||'未填')+'\n②當下:'+(e2||'未填')+'\n③善待:'+(e3||'未填')+'\n④今日微光:'+(e4||'未填')+'\n\n請根據具體文字給他一封信。';
   try{
     var res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
