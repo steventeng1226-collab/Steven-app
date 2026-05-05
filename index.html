@@ -5,7 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="充實">
 <meta name="theme-color" content="#120A00">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" id="ati" href="icon.svg">
 <title>充實的一天</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
@@ -18,6 +23,14 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;background:var(--bg);}
 body{font-family:'Noto Serif TC',serif;color:var(--text1);max-width:430px;margin:0 auto;overflow-x:hidden;font-size:1.05rem;}
+/* ── Safe area ── */
+.hdr{background:var(--bg);padding:calc(1.5rem + env(safe-area-inset-top,0px)) 1.4rem 1rem;border-bottom:2px solid var(--border);}
+.tabs{display:flex;background:var(--bg);border-bottom:2px solid var(--border);position:sticky;top:0;z-index:80;}
+.pane{display:none;padding:1.4rem 1.4rem calc(6rem + env(safe-area-inset-bottom,0px));}
+.pane.on{display:block;}
+#pane-ai{display:none;flex-direction:column;padding:1rem 1.4rem calc(1rem + env(safe-area-inset-bottom,0px));height:calc(100dvh - 126px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));}
+#pane-ai.on{display:flex;}
+/* ── Setup / App shell ── */
 #setup{position:fixed;inset:0;background:var(--bg);z-index:990;display:none;align-items:center;justify-content:center;padding:2rem;}
 #setup.show{display:flex;}
 .sw{width:100%;max-width:350px;}
@@ -30,7 +43,6 @@ body{font-family:'Noto Serif TC',serif;color:var(--text1);max-width:430px;margin
 .pbtn{width:100%;padding:1rem;background:var(--gold);border:none;border-radius:12px;color:#1A0F00;font-family:'Noto Serif TC',serif;font-size:1.05rem;font-weight:700;cursor:pointer;margin-top:.4rem;}
 .hint{font-size:.75rem;color:var(--muted);margin-top:1rem;line-height:2;text-align:center;}
 #app{display:none;min-height:100vh;}
-.hdr{background:var(--bg);padding:1.5rem 1.4rem 1rem;border-bottom:2px solid var(--border);}
 .hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;}
 .hdr-date{font-size:.8rem;color:var(--text2);letter-spacing:.08em;}
 .hdr-ver{font-size:.65rem;color:var(--muted);background:var(--bg3);border:2px solid var(--border);border-radius:5px;padding:.13rem .45rem;cursor:pointer;}
@@ -40,13 +52,8 @@ body{font-family:'Noto Serif TC',serif;color:var(--text1);max-width:430px;margin
 .spill b{color:var(--gold);font-weight:700;}
 #rest-bar{display:none;margin-top:.6rem;padding:.5rem 1rem;background:#1A1500;border:1px solid #3D2500;border-radius:20px;font-size:.78rem;color:#C8A870;font-style:italic;}
 #echo-bar{display:none;margin:0;background:#1A1000;border-bottom:1px solid #3D2500;padding:.75rem 1.4rem;cursor:pointer;}
-.tabs{display:flex;background:var(--bg);border-bottom:2px solid var(--border);position:sticky;top:0;z-index:80;}
 .tab{flex:1;padding:.9rem .1rem;background:none;border:none;border-bottom:3px solid transparent;color:var(--text4);font-family:'Noto Serif TC',serif;font-size:.73rem;cursor:pointer;transition:all .2s;}
 .tab.on{color:var(--gold);border-bottom-color:var(--gold);}
-.pane{display:none;padding:1.4rem 1.4rem 6rem;}
-.pane.on{display:block;}
-#pane-ai{display:none;flex-direction:column;padding:1rem 1.4rem;height:calc(100dvh - 126px);}
-#pane-ai.on{display:flex;}
 .sec{display:flex;align-items:center;gap:.65rem;margin:1.9rem 0 .7rem;}
 .sec:first-child{margin-top:0;}
 .sdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
@@ -137,6 +144,66 @@ textarea::placeholder{color:var(--muted);}
 .about{font-size:.9rem;color:#FFF;line-height:2.6;}
 .about span{color:var(--text4);font-size:.78rem;}
 </style>
+<script>
+// ── 動態產生 apple-touch-icon（iOS 加到主畫面用）──
+(function(){
+  function makeIcon(size){
+    var c=document.createElement('canvas');c.width=c.height=size;
+    var x=c.getContext('2d');var s=size/512;
+    // BG
+    var bg=x.createRadialGradient(size*.5,size*.42,0,size*.5,size*.5,size*.8);
+    bg.addColorStop(0,'#231300');bg.addColorStop(1,'#0C0600');
+    x.beginPath();roundRect(x,0,0,size,size,size*.215);x.fillStyle=bg;x.fill();
+    // Ambient glow
+    x.beginPath();x.arc(size*.5,size*.517,size*.41,0,Math.PI*2);
+    x.fillStyle='rgba(245,166,35,0.04)';x.fill();
+    // Coin body
+    x.beginPath();x.arc(size*.5,size*.517,size*.316,0,Math.PI*2);
+    x.fillStyle='#140D00';x.fill();
+    // Coin ring
+    var cg=x.createLinearGradient(size*.25,size*.1,size*.75,size*.9);
+    cg.addColorStop(0,'#FFE080');cg.addColorStop(.45,'#F5A623');cg.addColorStop(1,'#9A5E00');
+    x.beginPath();x.arc(size*.5,size*.517,size*.316,0,Math.PI*2);
+    x.strokeStyle=cg;x.lineWidth=size*.025;x.stroke();
+    // Inner ring
+    x.beginPath();x.arc(size*.5,size*.517,size*.281,0,Math.PI*2);
+    x.strokeStyle='rgba(245,166,35,0.2)';x.lineWidth=size*.003;x.stroke();
+    // Stem
+    x.beginPath();x.moveTo(size*.5,size*.645);
+    x.bezierCurveTo(size*.495,size*.572,size*.496,size*.502,size*.5,size*.406);
+    x.strokeStyle='#F5A623';x.lineWidth=size*.025;x.lineCap='round';x.stroke();
+    // Left leaf
+    x.beginPath();x.moveTo(size*.496,size*.554);
+    x.quadraticCurveTo(size*.420,size*.527,size*.402,size*.480);
+    x.quadraticCurveTo(size*.452,size*.492,size*.496,size*.554);
+    x.fillStyle='#F5A623';x.fill();
+    // Right leaf
+    x.beginPath();x.moveTo(size*.504,size*.496);
+    x.quadraticCurveTo(size*.580,size*.467,size*.598,size*.418);
+    x.quadraticCurveTo(size*.548,size*.430,size*.504,size*.496);
+    x.fillStyle='#F5A623';x.fill();
+    // Bud glow
+    var bg2=x.createRadialGradient(size*.488,size*.376,0,size*.5,size*.387,size*.055);
+    bg2.addColorStop(0,'#FFF8DC');bg2.addColorStop(.5,'#F5A623');bg2.addColorStop(1,'#C07800');
+    x.beginPath();x.arc(size*.5,size*.387,size*.043,0,Math.PI*2);
+    x.fillStyle=bg2;x.fill();
+    return c;
+  }
+  function roundRect(ctx,x,y,w,h,r){
+    ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+  }
+  window.addEventListener('load',function(){
+    try{
+      var png=makeIcon(192).toDataURL('image/png');
+      var el=document.getElementById('ati');
+      if(el)el.href=png;
+    }catch(e){}
+  });
+})();
+</script>
 </head>
 <body>
 
@@ -158,7 +225,7 @@ textarea::placeholder{color:var(--muted);}
   <div class="hdr">
     <div class="hdr-top">
       <div class="hdr-date" id="hdr-date"></div>
-      <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v5.2 ☁️</div>
+      <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v5.3 ☁️</div>
     </div>
     <div class="hdr-title">充實的一天</div>
     <div class="hdr-sub">Every Day Counts</div>
@@ -315,7 +382,7 @@ textarea::placeholder{color:var(--muted);}
     </div>
     <div class="set-card">
       <div class="set-t">關於這款 APP</div>
-      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>版本 v5.2 · GitHub Pages · ☁️ 雲端備份</span></div>
+      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>版本 v5.3 · GitHub Pages · ☁️ 雲端備份 · 全螢幕</span></div>
     </div>
   </div>
 </div>
