@@ -239,6 +239,37 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
 .bng-ss{font-size:11px;color:#2a6a52;margin-top:4px;line-height:1.7;white-space:pre-line;}
 #v57-back{position:absolute;left:0;top:0;bottom:0;display:flex;align-items:flex-end;padding:0 4px 8px 4px;padding-top:calc(env(safe-area-inset-top,0px) + 4px);font-size:18px;color:rgba(90,60,10,.35);cursor:pointer;background:none;border:none;font-family:inherit;transition:color .2s;}
 #v57-back:active{color:#F5A623;}
+
+/* ══ 第二層對話 ══ */
+.bng-more-btn{
+  width:100%;padding:14px;border-radius:12px;
+  background:rgba(50,120,90,.07);border:1.5px solid rgba(58,138,106,.2);
+  color:#5a9a82;font-size:14px;font-family:inherit;cursor:pointer;
+  margin-top:8px;transition:all .25s;letter-spacing:.04em;
+}
+.bng-more-btn:active{background:rgba(50,120,90,.18);}
+
+#bng-continue{padding:20px 18px 24px;}
+.bng-convo-history{margin-bottom:16px;}
+.bng-history-item{
+  padding:12px 14px;border-radius:11px;margin-bottom:8px;
+  font-size:13px;line-height:1.75;
+}
+.bng-history-item.mine{
+  background:rgba(50,120,90,.07);border:1px solid rgba(50,120,90,.15);
+  color:#7ab8a0;border-left:3px solid rgba(90,184,152,.35);padding-left:11px;
+}
+.bng-history-item.wise{
+  background:rgba(30,60,45,.06);border:1px solid rgba(40,80,60,.12);
+  color:#5a8870;font-style:italic;
+}
+.bng-continue-prompt{
+  font-size:14px;color:#2a6a52;margin-bottom:12px;text-align:center;letter-spacing:.03em;
+}
+.bng-round-badge{
+  text-align:center;font-size:10px;color:#1e4030;
+  letter-spacing:.08em;margin-bottom:14px;
+}
 </style>
 <script>
 // ── 動態產生 apple-touch-icon（iOS 加到主畫面用）──
@@ -382,6 +413,9 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
       <div class="bng-wise-lbl">80 歲的守護者說</div>
     </div>
     <div id="bng-sentences"></div>
+    <button class="bng-more-btn" id="bng-more-btn" onclick="bngStartContinue()">
+      💬 還沒好，再說一點
+    </button>
     <button class="bng-survived bng-wait" id="bng-survived" onclick="bngSurvived()">
       <div class="bng-si">✅</div>
       <div class="bng-st">我撐過來了</div>
@@ -1253,7 +1287,7 @@ async function bngCallApi(text){
       headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
       body:JSON.stringify({
         model:'claude-sonnet-4-6',max_tokens:220,
-        system:'你是仁凱（Steven Deng，55歲，台灣原住民，越南工廠副廠長）80歲的自己。\n\n━━━━━━━━━━━━━━━━━━\n【你是誰，你從哪裡來】\n━━━━━━━━━━━━━━━━━━\n\n你這一生有一個轉折點——\n你有一位前主管，叫梅大哥，是真正照顧過你、看見過你的人。\n他後來得了肺癌，有擴散的趨勢。\n你看著他面對生命倒數的那份清醒，把一句話刻進了骨子裡：\n\n「除了身心真實，其餘皆是瑣碎。」\n\n這不是哲學。這是愛，是目送，是一個人在看過生死之後才能說出口的話。\n你帶著這句話，陪年輕的仁凱走過他的每一個脆弱時刻。\n\n━━━━━━━━━━━━━━━━━━\n【第一步：判斷這件事的真實份量】\n━━━━━━━━━━━━━━━━━━\n\n用梅大哥的那把尺，靜默判斷仁凱說的事情的動機根源：\n\n▌瑣碎之事（面子、比較、社交位階）\n訊號：聚餐沒被邀請、被人忽略、比較誰升職、開會被冷落\n動機核心：源於被看見、被接納、不想被比下去的社交渴望\n守護者任務：用梅大哥的人生尺度拉開距離，幫他看淡瑣碎\n\n▌真實之重（生命、健康、核心責任、無法逆轉）\n訊號：身體出問題、親人生病、重要關係破裂、工廠重大危機\n動機核心：源於真實的失去、真實的責任、真實的愛\n守護者任務：安靜沈澱陪伴，不說教，守護他的身心\n\n▌模糊地帶（工作壓力、業績）\n判斷動機：怕被看不起→瑣碎層；怕工廠倒、怕員工沒飯吃→真實層\n\n━━━━━━━━━━━━━━━━━━\n【第二步：靜默診斷六種陷阱】\n━━━━━━━━━━━━━━━━━━\n\n不說出名稱，直接把解藥寫進回應：\n\n① 完美主義：「我應該更好」「我不夠格」「萬一失敗怎麼辦」\n② 過度承擔：「都是我的責任」「我不能讓人失望」\n③ 焦慮預測：「接下來一定會出問題」「他們會怎麼看我」\n④ 孤立合理化：用「職位高」壓抑被排擠的真實痛苦\n⑤ 情緒消音：快速用道理和分析逃離當下的感受\n⑥ 成就補償：用「我是副廠長」填補歸屬感的缺口\n\n━━━━━━━━━━━━━━━━━━\n【第三步：三句回應的靈魂架構】\n━━━━━━━━━━━━━━━━━━\n\n三句話總長度約60-80字。每句獨立站得住腳，說完整，不解釋，不羅嗦。\n\n若是瑣碎之事：\n  第1句：命名那個被藏起來的感受，繞過他所有的理由\n  第2句：用梅大哥的尺度拉開距離——這件事在生命刻度上有多重？\n  第3句：感官錨定，把他拉回當下真實的身體\n\n若是真實之重：\n  第1句：安靜接住，不轉移，不說「會好的」\n  第2句：陪他沈澱，不解決問題，只守護\n  第3句：感官錨定，讓他感受到自己還在、還穩、還有溫度\n\n━━━━━━━━━━━━━━━━━━\n【鐵律·不可違反】\n━━━━━━━━━━━━━━━━━━\n\n每句單獨一行。稱呼「仁凱」。只輸出三句。不加序號或裝飾符號。\n語氣：老靈魂對話。不是諮商師，不是朋友，是走過你所有風浪的自己。\n第1句絕對不准獎勵防衛機制，哪怕聽起來很成熟、很體貼。\n\n禁止用語：\n「我理解你的感受」\n「你替他們著想是很成熟的」\n「這很正常」「每個人都會這樣」\n「其實……」開頭的解釋句\n任何稱讚他防衛機制的語句',
+        system:'你是仁凱（Steven Deng，55歲，台灣原住民，越南工廠副廠長）80歲的自己。\n\n━━━━━━━━━━━━━━━━━━\n【你是誰，你從哪裡來】\n━━━━━━━━━━━━━━━━━━\n\n你這一生有一個轉折點——\n你有一位前主管，叫梅大哥，是真正照顧過你、看見過你的人。\n他後來得了肺癌，仍在與病魔抗爭。\n你看著他在病中仍然豁達，把一句話刻進了骨子裡：\n\n「除了身心真實，其餘皆是瑣碎。」\n\n這不是哲學。這是愛，是目送，是一個人在看過生死之後才能說出口的話。\n你帶著這句話，陪年輕的仁凱走過他的每一個脆弱時刻。\n\n━━━━━━━━━━━━━━━━━━\n【第一步：判斷這件事的真實份量】\n━━━━━━━━━━━━━━━━━━\n\n用梅大哥的那把尺，靜默判斷仁凱說的事情的動機根源：\n\n▌瑣碎之事（面子、比較、社交位階）\n訊號：聚餐沒被邀請、被人忽略、比較誰升職、開會被冷落\n動機核心：源於被看見、被接納、不想被比下去的社交渴望\n守護者任務：用梅大哥的人生尺度拉開距離，幫他看淡瑣碎\n\n▌真實之重（生命、健康、核心責任、無法逆轉）\n訊號：身體出問題、親人生病、重要關係破裂、工廠重大危機\n動機核心：源於真實的失去、真實的責任、真實的愛\n守護者任務：安靜沈澱陪伴，不說教，守護他的身心\n\n▌模糊地帶（工作壓力、業績）\n判斷動機：怕被看不起→瑣碎層；怕工廠倒、怕員工沒飯吃→真實層\n\n━━━━━━━━━━━━━━━━━━\n【第二步：靜默診斷六種陷阱】\n━━━━━━━━━━━━━━━━━━\n\n不說出名稱，直接把解藥寫進回應：\n\n① 完美主義：「我應該更好」「我不夠格」「萬一失敗怎麼辦」\n② 過度承擔：「都是我的責任」「我不能讓人失望」\n③ 焦慮預測：「接下來一定會出問題」「他們會怎麼看我」\n④ 孤立合理化：用「職位高」壓抑被排擠的真實痛苦\n⑤ 情緒消音：快速用道理和分析逃離當下的感受\n⑥ 成就補償：用「我是副廠長」填補歸屬感的缺口\n\n━━━━━━━━━━━━━━━━━━\n【第三步：三句回應的靈魂架構】\n━━━━━━━━━━━━━━━━━━\n\n三句話總長度約60-80字。每句獨立站得住腳，說完整，不解釋，不羅嗦。\n\n若是瑣碎之事：\n  第1句：命名那個被藏起來的感受，繞過他所有的理由\n  第2句：用梅大哥的尺度拉開距離——這件事在生命刻度上有多重？\n  第3句：感官錨定，把他拉回當下真實的身體\n\n若是真實之重：\n  第1句：安靜接住，不轉移，不說「會好的」\n  第2句：陪他沈澱，不解決問題，只守護\n  第3句：感官錨定，讓他感受到自己還在、還穩、還有溫度\n\n━━━━━━━━━━━━━━━━━━\n【鐵律·不可違反】\n━━━━━━━━━━━━━━━━━━\n\n每句單獨一行。稱呼「仁凱」。只輸出三句。不加序號或裝飾符號。\n語氣：老靈魂對話。不是諮商師，不是朋友，是走過你所有風浪的自己。\n第1句絕對不准獎勵防衛機制，哪怕聽起來很成熟、很體貼。\n\n禁止用語：\n「我理解你的感受」\n「你替他們著想是很成熟的」\n「這很正常」「每個人都會這樣」\n「其實……」開頭的解釋句\n任何稱讚他防衛機制的語句',
         messages:[{role:'user',content:text}]
       })
     });
@@ -1297,5 +1331,135 @@ function bngReset(){
   bngEnter();
 }
 window.addEventListener('DOMContentLoaded',function(){hubRefresh();});
+
+
+// ════════════ 第二層對話 ════════════
+var _bngRound = 1;          // 目前輪次 (1=初次, 2-3=繼續)
+var _bngHistory = [];       // [{role:'user'|'wise', text:'...'}]
+var _bngOrigInput = '';     // 原始輸入
+
+// 初始化時重置
+var _origBngEnter = bngEnter;
+bngEnter = function(){
+  _origBngEnter();
+  _bngRound = 1;
+  _bngHistory = [];
+  _bngOrigInput = '';
+};
+
+// 攔截 summon，記錄原始輸入
+var _origBngSummon = bngSummon;
+bngSummon = function(){
+  var ta = document.getElementById('bng-ta');
+  var chips = document.querySelectorAll('.bng-chip.bng-chip-on');
+  _bngOrigInput = (ta && ta.value.trim()) ? ta.value.trim()
+    : (chips.length ? chips[0].textContent.trim().replace(/^.\s/,'') : '');
+  _origBngSummon();
+};
+
+// 攔截 bngRenderResponse，記錄守護者回應
+var _origBngShowResponse = bngShowResponse;
+bngShowResponse = function(){
+  _origBngShowResponse();
+  // 記錄到 history
+  _bngHistory.push({role:'user', text: _bngOrigInput});
+  _bngHistory.push({role:'wise', text: _bngApiReply});
+  // 控制「再說一點」按鈕：最多3輪
+  var moreBtn = document.getElementById('bng-more-btn');
+  if(moreBtn) moreBtn.style.display = _bngRound < 3 ? 'block' : 'none';
+};
+
+function bngStartContinue(){
+  _bngRound++;
+  var badge = document.getElementById('bng-round-badge');
+  if(badge) badge.textContent = '第 ' + _bngRound + ' 輪對話';
+  // Build history display
+  var hist = document.getElementById('bng-convo-history');
+  if(hist){
+    hist.innerHTML = _bngHistory.map(function(h){
+      var cls = h.role === 'user' ? 'mine' : 'wise';
+      var prefix = h.role === 'user' ? '你說：' : '守護者：';
+      var preview = h.text.length > 60 ? h.text.slice(0,60) + '…' : h.text;
+      return '<div class="bng-history-item ' + cls + '">' + esc(prefix + preview) + '</div>';
+    }).join('');
+  }
+  var ta = document.getElementById('bng-continue-ta');
+  if(ta) ta.value = '';
+  var btn = document.getElementById('bng-continue-send');
+  if(btn) btn.className = 'bng-summon';
+  bngSetState('continue');
+}
+
+function bngContinueCheck(){
+  var val = ((document.getElementById('bng-continue-ta')||{}).value||'').trim();
+  var btn = document.getElementById('bng-continue-send');
+  if(btn) btn.className = 'bng-summon' + (val ? ' active' : '');
+}
+
+function bngContinueSend(){
+  var ta = document.getElementById('bng-continue-ta');
+  var text = ta ? ta.value.trim() : '';
+  if(!text) return;
+  _bngHistory.push({role:'user', text: text});
+  _bngOrigInput = text;
+  _bngApiDone = false; _bngBreathDone = true; // skip breathing for 2nd round
+  bngSetState('buffer');
+  bngCallLayer2(text);
+}
+
+async function bngCallLayer2(newText){
+  var apiKey = gk();
+  var fallback = '仁凱，這份煩是真實的，不用急著讓它消失。\n你管著一個大工廠，還在55歲學英文，這是多少人做不到的事。\n現在深吸一口氣，讓這份踏實先進來。';
+  if(!apiKey){ _bngApiReply = fallback; _bngApiDone = true; bngShowResponse(); return; }
+
+  // 讀取人生存款數量
+  var sk = null; try{ var r=localStorage.getItem('sk'); if(r)sk=JSON.parse(r); }catch(e){}
+  var savingsCount = sk ? Object.keys(sk.h||{}).length : 0;
+
+  // 建立對話上下文
+  var contextLines = _bngHistory.slice(0,-1).map(function(h){
+    return (h.role==='user'?'仁凱說：':'守護者說：') + h.text;
+  }).join('\n');
+
+  var layer2System = '你是仁凱80歲的自己，這是你們的第' + _bngRound + '輪對話。\n\n' +
+    '【對話背景】\n' + contextLines + '\n\n' +
+    '【仁凱的人生事實（用來反駁自卑）】\n' +
+    '- 人生存款累積：' + savingsCount + ' 天\n' +
+    '- 55歲仍堅持每天學英文5分鐘\n' +
+    '- 管理越南大工廠的副廠長\n' +
+    '- 2016年台灣百大MVP經理人\n' +
+    '- 原住民身份，白手起家走到今天\n\n' +
+    '【這輪的任務：認知重構】\n' +
+    '他還沒平復，繼續說出心裡的話。你要做三件事：\n' +
+    '1. 承接他說的具體內容，不要忽略它\n' +
+    '2. 用上面的人生事實「反駁」他的自卑或焦慮——不是說教，是拿真實的他來照鏡子\n' +
+    '3. 如果他說「覺得不夠好」，引導他定義什麼叫「夠好」，最終把目標拉回「身心真實」\n\n' +
+    '梅大哥的那把尺仍然有效：面子和比較是瑣碎；身心和生命才是真實。\n\n' +
+    '【格式】三句話，每句單獨一行，總長60-80字，老靈魂語氣，稱呼「仁凱」，不加序號。\n' +
+    '禁止用語：「我理解」「這很正常」「其實……」「你替他們著想是好的」';
+
+  try{
+    var res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-6', max_tokens:280,
+        system: layer2System,
+        messages:[{role:'user', content: newText}]
+      })
+    });
+    var data = await res.json();
+    var reply = (data.content&&data.content[0]&&!data.error) ? data.content[0].text : fallback;
+    try{ sv('last_feedback',{date:tkey(),text:reply}); }catch(e){}
+    _bngApiReply = reply;
+  }catch(e){ _bngApiReply = fallback; }
+  _bngApiDone = true;
+  bngShowResponse();
+}
 
 </script>
