@@ -448,6 +448,16 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
     </div>
     <button class="pbtn" onclick="saveSetup()">💾 儲存並開始使用</button>
     <div class="hint">Key 存在手機 localStorage · 完全離線</div>
+
+    <div style="margin-top:1.2rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.08);">
+      <div class="fl" style="color:#5ab898;margin-bottom:.4rem;">🟢 或使用 Gemini（免費）</div>
+      <div style="font-size:.75rem;color:#3a6a4a;margin-bottom:.6rem;line-height:1.6;">
+        去 aistudio.google.com → Get API Key
+      </div>
+      <input class="finput" id="gemini-setup-input" type="password" placeholder="AIzaSy...">
+      <button class="pbtn" style="margin-top:.5rem;background:#0e3028;border-color:#5ab898;color:#5ab898;"
+        onclick="saveGeminiSetup()">💾 儲存 Gemini Key 並開始</button>
+    </div>
     <button onclick="goBackToHub()" style="margin-top:.8rem;background:none;border:none;color:#5A4020;font-family:'Noto Serif TC',serif;font-size:.85rem;cursor:pointer;width:100%;padding:.5rem;text-decoration:underline;">← 返回首頁</button>
   </div>
 </div>
@@ -588,6 +598,29 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
 
   <div id="pane-settings" class="pane">
     <div class="set-h">設定</div>
+
+    <div class="set-card" style="border:1.5px solid rgba(90,184,152,.35);background:rgba(40,100,76,.08);">
+      <div class="set-t" style="color:#5ab898;">🟢 GEMINI API KEY（免費）</div>
+      <div style="font-size:.76rem;color:#3a7a5a;margin:.4rem 0 .6rem;line-height:1.65;">
+        免費取得：去 <b style="color:#5ab898;">aistudio.google.com</b> → Get API Key<br>
+        每天 1500 次，不消耗 Claude token
+      </div>
+      <div class="frow">
+        <input class="finput" id="gemini-key-input" type="password" placeholder="AIzaSy...">
+        <button class="eyebtn" onclick="toggleGeminiEye()">👁</button>
+      </div>
+      <button class="pbtn" style="margin-top:.6rem;background:#0e3028;border-color:#5ab898;color:#5ab898;"
+        onclick="saveGeminiKeyV2()">💾 儲存 Gemini Key</button>
+      <div id="gemini-engine-row" style="display:flex;gap:8px;margin-top:.6rem;">
+        <button class="pbtn" id="btn-gemini-on"
+          style="flex:1;font-size:.8rem;background:#0e3028;border-color:#5ab898;color:#5ab898;"
+          onclick="setAiEngineV2('gemini')">✅ 使用 Gemini</button>
+        <button class="pbtn" id="btn-claude-on"
+          style="flex:1;font-size:.8rem;background:#1a1200;border-color:#c9960e;color:#c9960e;"
+          onclick="setAiEngineV2('claude')">切換 Claude</button>
+      </div>
+      <div id="gemini-status" style="font-size:.76rem;margin-top:.5rem;text-align:center;color:#3a7a5a;"></div>
+    </div>
     <div class="set-card">
       <div class="set-t">ANTHROPIC API KEY</div>
       <div class="frow">
@@ -1656,6 +1689,84 @@ window.addEventListener('DOMContentLoaded',function(){
       localStorage.setItem('aiEngine','gemini');
     }
   }
+});
+
+
+function saveGeminiKeyV2(){
+  var v = document.getElementById('gemini-key-input').value.trim();
+  if(!v || v==='●●●●●●●●'){ alert('請先貼上 Gemini Key'); return; }
+  localStorage.setItem('geminiKey', v);
+  updateGeminiStatus();
+  alert('✅ Gemini Key 已儲存！');
+}
+
+function saveGeminiSetup(){
+  var v = (document.getElementById('gemini-setup-input')||{}).value||'';
+  v = v.trim();
+  if(!v){ alert('請先貼上 Gemini Key'); return; }
+  localStorage.setItem('geminiKey', v);
+  localStorage.setItem('aiEngine','gemini');
+  // 關閉 setup，進入 app
+  var setup = document.getElementById('setup');
+  if(setup) setup.classList.remove('show');
+  hubGo('doing');
+}
+
+function toggleGeminiEye(){
+  var inp = document.getElementById('gemini-key-input');
+  if(!inp) return;
+  inp.type = inp.type==='password' ? 'text' : 'password';
+}
+
+function setAiEngineV2(engine){
+  localStorage.setItem('aiEngine', engine);
+  updateGeminiStatus();
+  var msg = engine==='gemini' ? '✅ 已切換到 Gemini（免費）' : '✅ 已切換到 Claude';
+  alert(msg);
+}
+
+function updateGeminiStatus(){
+  var el = document.getElementById('gemini-status');
+  if(!el) return;
+  var engine = getAiEngine();
+  var hasKey = !!getGeminiKey();
+  if(engine==='gemini' && hasKey){
+    el.textContent = '✅ Gemini 啟用中 · 免費模式';
+    el.style.color = '#5ab898';
+  } else if(engine==='claude'){
+    el.textContent = '目前使用 Claude';
+    el.style.color = '#c9960e';
+  } else if(!hasKey){
+    el.textContent = '⚠️ 尚未輸入 Gemini Key';
+    el.style.color = '#8a6030';
+  }
+  // 更新按鈕外觀
+  var bg = document.getElementById('btn-gemini-on');
+  var bc = document.getElementById('btn-claude-on');
+  if(bg && bc){
+    if(engine==='gemini'){
+      bg.style.opacity='1'; bc.style.opacity='.5';
+    } else {
+      bc.style.opacity='1'; bg.style.opacity='.5';
+    }
+  }
+  // 填入已存的 key
+  var ki = document.getElementById('gemini-key-input');
+  if(ki && getGeminiKey()) ki.value = '●●●●●●●●';
+}
+
+// 覆蓋 switchTab 以更新 Gemini status
+var _origSwitchTab = typeof switchTab !== 'undefined' ? switchTab : null;
+if(_origSwitchTab){
+  window.switchTab = function(name){
+    _origSwitchTab(name);
+    if(name==='settings') setTimeout(updateGeminiStatus, 100);
+  };
+}
+
+// DOMContentLoaded: 初始化 status
+document.addEventListener('DOMContentLoaded', function(){
+  setTimeout(updateGeminiStatus, 500);
 });
 
 </script>
