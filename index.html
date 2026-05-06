@@ -426,6 +426,15 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
       <div class="bng-ss">+ 5 人生存款 · 阻斷焦慮，是最珍貴的存款</div>
     </button>
   </div>
+  <div class="bng-state" id="bng-continue" style="padding:20px 18px 24px;">
+    <div class="bng-round-badge" id="bng-round-badge">第 2 輪對話</div>
+    <div class="bng-convo-history" id="bng-convo-history"></div>
+    <div class="bng-continue-prompt">還想說什麼？守護者繼續聽著...</div>
+    <textarea class="bng-ta" id="bng-continue-ta"
+      placeholder="繼續說，沒有關係..."
+      oninput="bngContinueCheck()" style="min-height:110px;margin-bottom:14px;"></textarea>
+    <button class="bng-summon" id="bng-continue-send" onclick="bngContinueSend()">🌿 繼續說</button>
+  </div>
 </div>
 
 <div id="setup">
@@ -746,7 +755,14 @@ var S={chk:{},obs:{},wk:{},streak:0,hist:{},msgs:[],busy:false},T={};
 
 function loadState(){
   var dk=ld('d_'+tkey());if(dk){S.chk=dk.c||{};S.obs=dk.o||{};}
-  var sk=ld('sk');if(sk){S.streak=sk.s||0;S.hist=sk.h||{};}
+  var sk=ld('sk');
+  if(sk){
+    // 清除舊版避風模式寫入 h 的髒 key（格式：YYYY-MM-DD_bngN）
+    var h=sk.h||{};
+    Object.keys(h).forEach(function(k){if(/_bng\d+$/.test(k))delete h[k];});
+    sk.h=h;try{localStorage.setItem('sk',JSON.stringify(sk));}catch(e){}
+    S.streak=sk.s||0;S.hist=h;
+  }
   var wk=ld('wk_'+wkey());if(wk){S.wk=wk;}
   var ms=ld('msgs');if(ms){S.msgs=ms.filter(function(m){return m.dt===tkey();}).slice(-40);}
 }
@@ -1345,7 +1361,7 @@ function bngSurvived(){
   btn.className='bng-survived bng-done bng-s3';
   var sk_d=null;try{var r=localStorage.getItem('sk');if(r)sk_d=JSON.parse(r);}catch(e){}
   if(!sk_d)sk_d={s:0,h:{},last:''};
-  var today=tkey();for(var i=1;i<=5;i++)sk_d.h[today+'_bng'+i]=true;
+  var today=tkey();sk_d.bng=sk_d.bng||{};sk_d.bng[today]=true;
   try{localStorage.setItem('sk',JSON.stringify(sk_d));}catch(e){}
   hubRefresh();try{rStreak();}catch(e){}
   var st=btn.querySelector('.bng-st'),ss=btn.querySelector('.bng-ss');
