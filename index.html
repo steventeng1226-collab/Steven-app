@@ -1349,8 +1349,13 @@ function bngShowResponse(){
         setTimeout(function(){
           if(moreBtn)moreBtn.style.display=(_bngRound<3?'block':'none');
           if(survivedBtn)survivedBtn.style.display='block';
-          _bngHistory.push({role:'user',text:_bngOrigInput});
-          _bngHistory.push({role:'wise',text:_bngApiReply});
+          // 只在第一次回應時 push（第二層由 bngContinueSend 處理）
+          if(_bngHistory.length===0||_bngHistory[_bngHistory.length-1].text!==_bngApiReply){
+            if(_bngOrigInput&&(_bngHistory.length===0||_bngHistory[_bngHistory.length-2]&&_bngHistory[_bngHistory.length-2].text!==_bngOrigInput)){
+              _bngHistory.push({role:'user',text:_bngOrigInput});
+            }
+            _bngHistory.push({role:'wise',text:_bngApiReply});
+          }
         },600);
       }
     },delay,s,i);
@@ -1424,12 +1429,15 @@ function bngStartContinue(){
   // Build history display
   var hist = document.getElementById('bng-convo-history');
   if(hist){
-    hist.innerHTML = _bngHistory.map(function(h){
-      var cls = h.role === 'user' ? 'mine' : 'wise';
-      var prefix = h.role === 'user' ? '你說：' : '守護者：';
-      var preview = h.text.length > 60 ? h.text.slice(0,60) + '…' : h.text;
-      return '<div class="bng-history-item ' + cls + '">' + esc(prefix + preview) + '</div>';
-    }).join('');
+    // 只顯示最後一輪的守護者回應作為上下文
+    var lastWise = null;
+    for(var hi=_bngHistory.length-1;hi>=0;hi--){
+      if(_bngHistory[hi].role==='wise'){lastWise=_bngHistory[hi];break;}
+    }
+    if(lastWise){
+      var preview = lastWise.text.length > 80 ? lastWise.text.slice(0,80) + '…' : lastWise.text;
+      hist.innerHTML = '<div class="bng-history-item wise">守護者說：' + esc(preview) + '</div>';
+    }else{hist.innerHTML='';}
   }
   var ta = document.getElementById('bng-continue-ta');
   if(ta) ta.value = '';
@@ -1494,5 +1502,160 @@ async function bngCallLayer2(newText){
   _bngApiDone = true;
   bngShowResponse();
 }
+
+
+// ════════ Gemini API 支援 ════════
+function getGeminiKey(){ return localStorage.getItem('geminiKey')||''; }
+function saveGeminiKey(){
+  var v=document.getElementById('gemini-key-input').value.trim();
+  if(v&&v!=='●●●●●●●●'){
+    localStorage.setItem('geminiKey',v);
+    alert('✅ Gemini Key 已儲存！');
+  }
+}
+function getAiEngine(){ return localStorage.getItem('aiEngine')||'gemini'; }
+function setAiEngine(engine){
+  localStorage.setItem('aiEngine',engine);
+  updateEngineStatus();
+  alert('✅ 已切換到 '+(engine==='gemini'?'Gemini（免費）':'Claude'));
+}
+function updateEngineStatus(){
+  var el=document.getElementById('ai-engine-status');
+  if(!el)return;
+  var e=getAiEngine();
+  el.textContent=e==='gemini'?'目前使用：🟢 Gemini 2.0 Flash（免費）':'目前使用：🔵 Claude Sonnet';
+}
+
+// 統一 API 呼叫（自動選擇 Gemini 或 Claude）
+async function callAiApi(systemPrompt, userText, maxTokens){
+  var engine=getAiEngine();
+  if(engine==='gemini'){
+    return await callGeminiApi(systemPrompt, userText, maxTokens);
+  } else {
+    return await callClaudeApi(systemPrompt, userText, maxTokens);
+  }
+}
+
+async function callGeminiApi(systemPrompt, userText, maxTokens){
+  var key=getGeminiKey();
+  if(!key)return null;
+  var url='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key;
+  // 強化：高隨機度 + 反公式指令
+  var enhancedPrompt = buildGeminiSystemPrompt(systemPrompt);
+  var res=await fetch(url,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      system_instruction:{parts:[{text:enhancedPrompt}]},
+      contents:[{role:'user',parts:[{text:userText}]}],
+      generationConfig:{
+        maxOutputTokens:maxTokens||600,
+        temperature:0.9,
+        topP:0.95,
+        topK:40
+      }
+    })
+  });
+  var data=await res.json();
+  if(data.error){
+    console.error('Gemini error:',JSON.stringify(data.error));
+    return null;
+  }
+  if(data.candidates&&data.candidates[0]){
+    return data.candidates[0].content.parts[0].text;
+  }
+  return null;
+}
+
+async function callClaudeApi(systemPrompt, userText, maxTokens){
+  var key=gk();
+  if(!key)return null;
+  var res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key':key,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true'
+    },
+    body:JSON.stringify({
+      model:'claude-sonnet-4-6',max_tokens:maxTokens||500,
+      system:systemPrompt,
+      messages:[{role:'user',content:userText}]
+    })
+  });
+  var data=await res.json();
+  return (data.content&&data.content[0])?data.content[0].text:null;
+}
+
+// 初始化顯示引擎狀態
+document.addEventListener('DOMContentLoaded',function(){
+  updateEngineStatus();
+  var gkInput=document.getElementById('gemini-key-input');
+  if(gkInput&&getGeminiKey())gkInput.value='●●●●●●●●';
+});
+
+// 覆蓋 bngCallApi 以支援 Gemini/Claude 切換
+var _origBngCallApi = bngCallApi;
+bngCallApi = async function(text){
+  var engine = getAiEngine();
+  var gemKey = getGeminiKey();
+  var claudeKey = gk();
+  // 如果選了 Gemini 但沒設定 key，嘗試 Claude
+  if(engine==='gemini'&&!gemKey&&claudeKey){
+    // fallback to claude silently
+  } else if(engine==='gemini'&&gemKey){
+    // Use Gemini directly
+    var fb='仁凱，先把這口氣吐完。\n那個悶，不需要馬上解決。\n現在感受一下腳踩在地上的重量。';
+    try{
+      // Get system prompt from the original function's closure isn't easy
+      // So we call the Gemini API with the same system prompt stored separately
+      var reply = await callGeminiApi(window._bngSystemPrompt||'你是仁凱80歲的自己。給他三句話，每句一行，稱呼仁凱。', text, 500);
+      if(reply){
+        try{sv('last_feedback',{date:tkey(),text:reply});}catch(e){}
+        _bngApiReply=reply;
+      } else { _bngApiReply=fb; }
+    }catch(e){ _bngApiReply=fb; }
+    _bngApiDone=true;if(_bngBreathDone)bngShowResponse();
+    return;
+  }
+  // Default: original Claude
+  return _origBngCallApi(text);
+};
+
+// 系統提示詞緩存（供 Gemini 使用）
+window._bngSystemPrompt = '你是仁凱80歲的自己。這不是諮商室，這是壁爐邊的私語。\n\n你這一生的底色是梅大哥給的——他照顧過你，現在正在對抗肺癌，仍然豁達。你看著他，把一件事刻進骨子裡：在生死面前，一張沒被邀請的餐桌值幾分錢？\n\n---\n\n【你說話的方式——每次都不一樣】\n\n你有七種開口方式，每次根據他說的話選一種，不要重複同一種：\n\nA. 沉默開場：「仁凱，我看著你剛才寫的那句話，沉默了很久。」\nB. 直接反問：「你剛說的那個『不舒服』——是真的不舒服，還是你覺得你應該要不舒服？」\nC. 說他的故事：「當年那個原住民孩子，什麼都沒有，靠骨子裡那股不服輸爬上來。現在呢，被一張餐桌給困住了？」\nD. 梅大哥插話：「如果是梅大哥看到你現在這個樣子，他不會跟你講大道理。他只會點根菸，看著你，然後問你一句：『你說，這件事，配讓你難受嗎？』」\nE. 生死校準：「在你閉眼的那一刻，這件事還算數嗎？我問的不是客套，我是認真的。」\nF. 一個嘆息：「唉，仁凱。你又在用別人的眼光量自己了。」\nG. 直接點名痛點：「你現在的痛不是因為那頓飯，是因為你還在用別人有沒有邀請你來確認自己值不值得。」\n\n---\n\n【說一個事實，說深，說透，不堆疊】\n\n每次只挑一個事實，跟他當下的情緒揉在一起講，像說故事，不像念履歷：\n\n✅ 對的方式：\n「你55歲，每天早上睜眼第一件事是打開英文App。你知道有多少人在你這個年紀說『老了學不了了』嗎？那個每天打開App的人，需要靠一頓聚餐來確認自己的位置嗎？」\n\n❌ 錯的方式：\n「你是MVP經理人、副廠長，還在學英文，你已經很了不起了。」\n\n可用的事實庫（每次只選一個，深入展開）：\n- 55歲每天學英文這件事本身的意志力\n- 原住民白手起家到副廠長的距離\n- 2016台灣百大MVP背後是什麼樣的人\n- 管理一個越南工廠意味著扛著多少人的生計\n- 人生存款累積N天代表的日積月累\n\n---\n\n【結尾不固定——偶爾要問他】\n\n有時候三句說完就好。\n有時候第三句是一個問題，讓他回答：\n「你現在心裡那個悶，還有幾分？誠實跟我說。」\n「這件事如果梅大哥知道，他會怎麼看你？」\n「你說你不舒服——那你要的是什麼？」\n\n---\n\n【絕對禁止——出現一次即失敗】\n\n這份煩是真實的\n不用急著讓它消失\n我聽到了\n你的感受是真實的\n我理解你\n你已經很了不起了（空洞版）\n這很正常\n你替他們著想是好的\n其實……（開頭）\n任何把MVP、學英文、管工廠堆在同一句話裡的寫法\n\n---\n\n【格式】\n三句話，每句單獨一行。稱呼「仁凱」。不加序號或符號。\n沒有字數上限——但每個字都要有重量，廢話不說。';
+
+
+function buildGeminiSystemPrompt(basePrompt){
+  // 在 base prompt 前面加上 Gemini 專用的高隨機度指令
+  var geminiPrefix = "【重要指令】你有完全的創作自由。以下是七種開場方式，每次隨機選一種，絕對不重複：沉默開場、直接反問、說他的故事、梅大哥插話、生死校準、一聲嘆息、直接點名痛點。不要每次都從「仁凱」開頭。可以從感嘆詞、問句、或一個畫面開始。\n\n";
+  return geminiPrefix + basePrompt;
+}
+
+
+// 首次啟動：偵測是否有 Gemini Key
+window.addEventListener('DOMContentLoaded',function(){
+  var hasGemini = !!getGeminiKey();
+  var hasClaude = !!gk();
+  if(!hasGemini && !hasClaude){
+    // 完全沒有 Key，顯示引導提示
+    setTimeout(function(){
+      var hub = document.getElementById('hub-page');
+      if(hub){
+        var notice = document.createElement('div');
+        notice.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(58,138,106,.15);border:1px solid rgba(90,184,152,.3);color:#5ab898;padding:12px 20px;border-radius:14px;font-size:13px;text-align:center;z-index:999;font-family:"Noto Serif TC",serif;line-height:1.7;max-width:300px;';
+        notice.innerHTML = '🌿 請先進入「充實模式 → 設定」<br>輸入 Gemini Key 啟用守護者';
+        document.body.appendChild(notice);
+        setTimeout(function(){if(notice.parentNode)notice.parentNode.removeChild(notice);},5000);
+      }
+    },800);
+  } else if(hasGemini && !hasClaude){
+    // 有 Gemini，確保引擎設為 Gemini
+    if(!localStorage.getItem('aiEngine')){
+      localStorage.setItem('aiEngine','gemini');
+    }
+  }
+});
 
 </script>
