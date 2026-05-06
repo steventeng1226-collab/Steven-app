@@ -193,8 +193,12 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
 .bng-ta:focus{border-color:rgba(90,184,152,.4);box-shadow:0 0 0 3px rgba(58,138,106,.08);outline:none;}
 .bng-ta::placeholder{color:#1a3828;font-size:.85rem;line-height:1.7;}
 .bng-summon{width:100%;padding:17px;border-radius:14px;text-align:center;font-size:17px;font-weight:600;font-family:inherit;cursor:default;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);color:#142818;transition:all .3s;}
-.bng-summon.active{background:linear-gradient(135deg,#0e3028 0%,#062018 100%);border:1px solid rgba(90,184,152,.32);color:#5ab898;cursor:pointer;}
-.bng-summon.active:active{opacity:.85;}
+.bng-summon.active{background:linear-gradient(135deg,#0e3028 0%,#062018 100%);border:1px solid rgba(90,184,152,.32);color:#5ab898;cursor:pointer;animation:bngSummonGlow 2.8s ease infinite;}
+.bng-summon.active:active{opacity:.85;animation:none;}
+@keyframes bngSummonGlow{
+  0%,100%{box-shadow:0 0 0 0 rgba(90,184,152,0),0 4px 18px rgba(0,0,0,.35);}
+  50%{box-shadow:0 0 0 7px rgba(58,138,106,.13),0 0 28px 4px rgba(58,138,106,.14),0 4px 18px rgba(0,0,0,.35);}
+}
 #bng-breath{align-items:center;justify-content:center;padding:40px 24px;}
 .bng-breath-hint{font-size:13px;color:#1e4a38;margin-bottom:44px;letter-spacing:.1em;}
 .bng-circle-wrap{position:relative;width:220px;height:220px;margin-bottom:44px;}
@@ -444,7 +448,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
     <div class="hdr-top" style="position:relative;">
     <button id="v57-back" onclick="goBackToHub()">‹</button>
       <div class="hdr-date" id="hdr-date"></div>
-      <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v5.7 ☁️</div>
+      <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v5.8 ☁️</div>
     </div>
     <div class="hdr-title">充實的一天</div>
     <div class="hdr-sub">Every Day Counts</div>
@@ -600,7 +604,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
     </div>
     <div class="set-card">
       <div class="set-t">關於這款 APP</div>
-      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>版本 v5.6 · GitHub Pages · ☁️ 雲端備份</span></div>
+      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>版本 v5.8 · GitHub Pages · ☁️ 雲端備份</span></div>
     </div>
   </div>
   </div><!-- /content-wrap -->
@@ -1301,10 +1305,39 @@ async function bngCallApi(text){
 function bngShowResponse(){
   var sentences=_bngApiReply.split('\n').filter(function(s){return s.trim();}).slice(0,3);
   var area=document.getElementById('bng-sentences');
-  if(area){var cls=['bs0 bng-s0','bs1 bng-s1','bs2 bng-s2'];area.innerHTML=sentences.map(function(s,i){return '<div class="bng-sentence '+cls[i]+'">'+esc(s)+'</div>';}).join('');}
   var btn=document.getElementById('bng-survived');
-  if(btn){btn.className='bng-survived bng-wait bng-s3';var st=btn.querySelector('.bng-st'),ss=btn.querySelector('.bng-ss');if(st)st.textContent='我撐過來了';if(ss)ss.textContent='+ 5 人生存款 · 阻斷焦慮，是最珍貴的存款';}
+  var moreBtn=document.getElementById('bng-more-btn');
+  // 先隱藏按鈕，清空句子區
+  if(area)area.innerHTML='';
+  if(btn){btn.style.display='none';btn.className='bng-survived bng-wait bng-s3';var st=btn.querySelector('.bng-st'),ss=btn.querySelector('.bng-ss');if(st)st.textContent='我撐過來了';if(ss)ss.textContent='+ 5 人生存款 · 阻斷焦慮，是最珍貴的存款';}
+  if(moreBtn)moreBtn.style.display='none';
   bngSetState('response');
+  // 逐句顯示，每句間隔 1.4 秒
+  var cls=['bs0','bs1','bs2'];
+  var delays=[0,1400,2800];
+  sentences.forEach(function(s,i){
+    setTimeout(function(){
+      if(!area)return;
+      var div=document.createElement('div');
+      div.className='bng-sentence '+cls[i];
+      div.style.opacity='0';
+      div.style.transform='translateY(14px)';
+      div.style.transition='opacity .45s ease, transform .45s ease';
+      div.innerHTML=esc(s);
+      area.appendChild(div);
+      // trigger reflow then animate in
+      requestAnimationFrame(function(){requestAnimationFrame(function(){
+        div.style.opacity='1';div.style.transform='translateY(0)';
+      });});
+      // 最後一句顯示後，再過 1.2 秒才顯示按鈕
+      if(i===sentences.length-1){
+        setTimeout(function(){
+          if(btn){btn.style.display='';btn.style.opacity='0';btn.style.transition='opacity .4s ease';requestAnimationFrame(function(){requestAnimationFrame(function(){btn.style.opacity='1';});});}
+          if(moreBtn&&_bngRound<3){moreBtn.style.display='';moreBtn.style.opacity='0';moreBtn.style.transition='opacity .4s ease .15s';requestAnimationFrame(function(){requestAnimationFrame(function(){moreBtn.style.opacity='1';});});}
+        },1200);
+      }
+    },delays[i]);
+  });
 }
 function bngSurvived(){
   var btn=document.getElementById('bng-survived');
@@ -1360,13 +1393,11 @@ bngSummon = function(){
 // 攔截 bngRenderResponse，記錄守護者回應
 var _origBngShowResponse = bngShowResponse;
 bngShowResponse = function(){
-  _origBngShowResponse();
-  // 記錄到 history
+  // 記錄到 history（在顯示前先記錄，避免逐句延遲導致 history 時序問題）
   _bngHistory.push({role:'user', text: _bngOrigInput});
   _bngHistory.push({role:'wise', text: _bngApiReply});
-  // 控制「再說一點」按鈕：最多3輪
-  var moreBtn = document.getElementById('bng-more-btn');
-  if(moreBtn) moreBtn.style.display = _bngRound < 3 ? 'block' : 'none';
+  _origBngShowResponse();
+  // 控制「再說一點」按鈕：最多3輪（bngShowResponse 內部會延遲顯示，這裡不需再控制）
 };
 
 function bngStartContinue(){
