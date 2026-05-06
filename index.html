@@ -2,1396 +2,1391 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#080808">
-<title>人生總部</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="充實">
+<meta name="theme-color" content="#120A00">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" id="ati" href="icon.svg">
+<title>充實的一天</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════════════════════
-   RESET & BASE
-═══════════════════════════════════════ */
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overflow:hidden;background:#000;}
-body{font-family:'Noto Serif TC',Georgia,serif;color:#f5e6c8;}
-::-webkit-scrollbar{width:3px;}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:2px;}
-textarea{font-family:inherit;}
-textarea:focus,input:focus{outline:none;}
-button{font-family:inherit;cursor:pointer;border:none;background:none;}
-
-/* ═══════════════════════════════════════
-   PAGES
-═══════════════════════════════════════ */
-.page{position:fixed;inset:0;display:none;flex-direction:column;overflow:hidden;}
-.page.active{display:flex;}
-
-/* ═══════════════════════════════════════
-   HUB PAGE
-═══════════════════════════════════════ */
-#hub{background:#000;}
-.hub-half{
-  flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  position:relative;overflow:hidden;cursor:pointer;
-  transition:filter .3s;
+:root{
+  --bg:#120A00;--bg2:#1A0F00;--bg3:#221400;--card:#1E1100;
+  --gold:#F5A623;--gold2:#FFD080;--gold3:#C07800;
+  --text1:#FFFFFF;--text2:#C8A870;--text4:#8A6A38;--muted:#5A4020;
+  --red:#FF7055;--green:#6FBF73;--border:#3D2500;--border2:#5A3800;
 }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:var(--bg);overflow:hidden;}
+body{font-family:'Noto Serif TC',serif;color:var(--text1);max-width:430px;margin:0 auto;overflow-x:hidden;font-size:1.05rem;}
+/* ── Safe area ── */
+.hdr{background:var(--bg);padding:calc(1rem + env(safe-area-inset-top,0px)) 1.4rem .8rem;border-bottom:2px solid var(--border);flex-shrink:0;}
+.tabs{display:flex;background:var(--bg);border-bottom:2px solid var(--border);flex-shrink:0;}
+.pane{display:none;padding:1.2rem 1.4rem calc(5rem + env(safe-area-inset-bottom,0px));height:100%;overflow-y:auto;}
+.pane.on{display:block;}
+#content-wrap{flex:1;overflow:hidden;position:relative;}
+/* ── Setup / App shell ── */
+#setup{position:fixed;inset:0;background:var(--bg);z-index:990;display:none;align-items:center;justify-content:center;padding:2rem;}
+#setup.show{display:flex;}
+.sw{width:100%;max-width:350px;}
+.sw-h{font-family:'Cormorant Garamond',serif;font-size:1.9rem;color:var(--gold);margin-bottom:.4rem;}
+.sw-p{font-size:.9rem;color:var(--text2);line-height:2.4;margin-bottom:2rem;}
+.fl{font-size:.75rem;color:var(--text2);letter-spacing:.13em;margin-bottom:.5rem;display:block;font-weight:700;}
+.frow{display:flex;gap:.5rem;margin-bottom:.5rem;}
+.finput{flex:1;background:var(--bg3);border:2px solid var(--border2);border-radius:10px;padding:.85rem 1rem;color:#FFF;font-size:1rem;outline:none;}
+.eyebtn{width:48px;background:var(--bg3);border:2px solid var(--border2);border-radius:10px;color:var(--text2);cursor:pointer;font-size:1.15rem;display:flex;align-items:center;justify-content:center;}
+.pbtn{width:100%;padding:1rem;background:var(--gold);border:none;border-radius:12px;color:#1A0F00;font-family:'Noto Serif TC',serif;font-size:1.05rem;font-weight:700;cursor:pointer;margin-top:.4rem;}
+.hint{font-size:.75rem;color:var(--muted);margin-top:1rem;line-height:2;text-align:center;}
+#app{display:none;height:100dvh;flex-direction:column;overflow:hidden;}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;}
+.hdr-date{font-size:.8rem;color:var(--text2);letter-spacing:.08em;}
+.hdr-ver{font-size:.65rem;color:var(--gold);background:var(--bg3);border:2px solid var(--border2);border-radius:5px;padding:.13rem .45rem;cursor:pointer;font-weight:700;}
+.hdr-title{font-family:'Cormorant Garamond',serif;font-size:2.5rem;color:var(--gold);font-weight:400;line-height:1;}
+.hdr-sub{font-size:.75rem;color:var(--text2);font-style:italic;margin-top:.25rem;}
+.spill{display:inline-flex;align-items:center;gap:.5rem;margin-top:1rem;background:var(--bg3);border:2px solid var(--border2);border-radius:30px;padding:.42rem 1.1rem;font-size:.82rem;color:#FFF;}
+.spill b{color:var(--gold);font-weight:700;}
+#rest-bar{display:none;margin-top:.6rem;padding:.5rem 1rem;background:#1A1500;border:1px solid #3D2500;border-radius:20px;font-size:.78rem;color:#C8A870;font-style:italic;}
+#echo-bar{display:none;margin:0;background:#1A1000;border-bottom:1px solid #3D2500;padding:.75rem 1.4rem;cursor:pointer;}
+.tab{flex:1;padding:.9rem .1rem;background:none;border:none;border-bottom:3px solid transparent;color:var(--text4);font-family:'Noto Serif TC',serif;font-size:.73rem;cursor:pointer;transition:all .2s;}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold);}
+.sec{display:flex;align-items:center;gap:.65rem;margin:1.9rem 0 .7rem;}
+.sec:first-child{margin-top:0;}
+.sdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.slabel{font-size:.76rem;letter-spacing:.12em;font-weight:700;flex:1;}
+.scount{font-size:.76rem;color:var(--text2);}
+.snote{font-size:.75rem;color:var(--text2);margin-bottom:.9rem;font-style:italic;line-height:2.1;}
+.pbar{height:3px;background:var(--border);border-radius:3px;margin-bottom:.9rem;overflow:hidden;}
+.pfill{height:100%;border-radius:3px;transition:width .55s cubic-bezier(.34,1.56,.64,1);}
+.item{display:flex;align-items:flex-start;gap:.85rem;padding:1rem 1.05rem;background:var(--card);border:2px solid var(--border);border-radius:13px;margin-bottom:.55rem;cursor:pointer;user-select:none;-webkit-user-select:none;transition:all .2s;}
+.item:active{transform:scale(.975);}
+.item.on{background:var(--bg3);border-color:var(--border2);}
+.item.pop{animation:pop .3s ease;}
+@keyframes pop{50%{transform:scale(1.018)}}
+.ck{width:26px;height:26px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .25s;}
+.item.on .ck{background:var(--gold);border-color:var(--gold);}
+.ckm{color:#1A0F00;font-size:.75rem;font-weight:900;display:none;}
+.item.on .ckm{display:block;}
+.ie{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
+.il{font-size:1.02rem;color:#FFF;line-height:1.5;font-weight:400;}
+.item.on .il{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--border2);}
+.idesc{font-size:.75rem;color:var(--text2);margin-top:.25rem;line-height:1.7;}
+.gdb{background:linear-gradient(135deg,var(--bg3),var(--card));border:2px solid var(--border2);border-radius:14px;padding:1.6rem;text-align:center;margin:1.4rem 0;animation:fi .5s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.gdb-e{font-size:1.9rem;margin-bottom:.6rem;}
+.gdb-t{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold);margin-bottom:.5rem;}
+.gdb-s{font-size:.85rem;color:#FFF;font-style:italic;line-height:2.4;}
+.obs-card{background:var(--card);border:2px solid var(--border);border-radius:13px;padding:1.2rem;margin-bottom:.7rem;}
+.obs-q{font-size:1rem;color:#FFF;margin-bottom:.7rem;line-height:1.85;}
+textarea{width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:9px;padding:.75rem 1rem;color:#FFF;font-family:'Noto Serif TC',serif;font-size:.95rem;resize:none;min-height:88px;line-height:1.95;outline:none;-webkit-appearance:none;touch-action:manipulation;}
+textarea:focus{border-color:var(--gold3);box-shadow:0 0 0 2px rgba(192,120,0,0.15);}
+textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
+#pane-ai{display:none;flex-direction:column;height:100%;overflow:hidden;padding:0;}
+#pane-ai.on{display:flex;}
+.chat-hdr{text-align:center;padding:.65rem 1.4rem .55rem;border-bottom:1.5px solid var(--border);flex-shrink:0;}
+.chat-ht{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--gold);}
+.chat-hs{font-size:.72rem;color:var(--text2);font-style:italic;margin-top:.15rem;}
+#msg-list{flex:1;overflow-y:auto;padding:.5rem 1.4rem;scrollbar-width:none;min-height:0;}
+#msg-list::-webkit-scrollbar{display:none;}
+.empty-chat{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:0 1rem;}
+.empty-e{font-size:1.6rem;margin-bottom:.55rem;}
+.empty-t{color:var(--text2);font-size:.88rem;line-height:2.4;text-align:center;}
+.qrow{display:flex;flex-wrap:wrap;gap:.4rem;padding:.5rem 1.4rem .3rem;flex-shrink:0;}
+.qp{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:.35rem .8rem;font-family:'Noto Serif TC',serif;font-size:.74rem;color:#FFF;cursor:pointer;}
+.cbar{display:flex;gap:.55rem;padding:.45rem 1.4rem calc(.55rem + env(safe-area-inset-bottom,0px));border-top:1.5px solid var(--border);flex-shrink:0;}
+.msg{margin-bottom:.8rem;animation:fi .25s ease;}
+.msg.user{text-align:right;}
+.bubble{display:inline-block;max-width:86%;padding:.7rem 1rem;border-radius:16px;font-size:.92rem;line-height:1.95;}
+.msg.user .bubble{background:var(--bg3);color:#FFF;border-bottom-right-radius:3px;}
+.msg.assistant .bubble{background:var(--card);border:2px solid var(--border);color:#FFF;border-bottom-left-radius:3px;text-align:left;}
+.cin{flex:1;background:var(--card);border:2px solid var(--border);border-radius:24px;padding:.75rem 1.05rem;color:#FFF;font-family:'Noto Serif TC',serif;font-size:.95rem;outline:none;}
+.sbtn{width:46px;height:46px;background:var(--gold);border:none;border-radius:50%;color:#1A0F00;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;}
+.sbtn:disabled{opacity:.3;}
+.typing{display:flex;gap:5px;align-items:center;padding:.4rem .1rem;}
+.dot{width:6px;height:6px;background:var(--text4);border-radius:50%;animation:bn 1.2s infinite;}
+.dot:nth-child(2){animation-delay:.18s}.dot:nth-child(3){animation-delay:.36s}
+@keyframes bn{0%,80%,100%{transform:scale(.7);opacity:.4}40%{transform:scale(1.1);opacity:1}}
+.wk-hdr{text-align:center;margin-bottom:1.5rem;}
+.wk-ht{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--gold);}
+.wk-hs{font-size:.76rem;color:var(--text2);margin-top:.28rem;font-style:italic;}
+.wk-card{background:var(--card);border:2px solid var(--border);border-radius:13px;padding:1.2rem;margin-bottom:.7rem;}
+.wk-n{font-size:.72rem;color:var(--text2);letter-spacing:.13em;margin-bottom:.28rem;font-weight:700;}
+.wk-q{font-size:1rem;color:#FFF;margin-bottom:.7rem;line-height:1.85;}
+.wk-remind{background:var(--card);border:2px solid var(--border);border-radius:13px;padding:1.6rem;text-align:center;margin-top:1.4rem;}
+.wkr-t{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--gold);margin-bottom:1rem;}
+.wkr-b{font-size:.9rem;color:var(--text2);line-height:2.8;font-style:italic;}
+.wkr-b em{color:#FFF;font-style:normal;}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.15rem;}
+.scard{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:1.4rem;text-align:center;}
+.sn{font-family:'Cormorant Garamond',serif;font-size:2.7rem;color:var(--gold);line-height:1;margin-bottom:.45rem;}
+.sl{font-size:.76rem;color:var(--text2);letter-spacing:.1em;}
+.cal-wrap{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:1.3rem;margin-bottom:1.05rem;}
+.cal-t{font-size:.76rem;color:var(--text2);letter-spacing:.1em;margin-bottom:.95rem;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
+.cal-d{aspect-ratio:1;border-radius:4px;background:var(--bg3);}
+.cal-d.done{background:var(--gold);opacity:.75;}
+.cal-d.today{border:2px solid var(--gold);}
+.cal-leg{display:flex;gap:1.2rem;margin-top:.95rem;justify-content:center;}
+.leg-i{display:flex;align-items:center;gap:.4rem;font-size:.73rem;color:var(--text2);}
+.leg-d{width:10px;height:10px;border-radius:3px;}
+.qcard{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:1.7rem;text-align:center;margin-top:1.05rem;}
+.qt{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--gold);margin-bottom:1rem;}
+.qb{font-size:.9rem;color:var(--text2);line-height:2.8;font-style:italic;}
+.qb em{color:#FFF;font-style:normal;}
+.set-h{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--gold);margin-bottom:1.4rem;}
+.set-card{background:var(--card);border:2px solid var(--border);border-radius:13px;padding:1.3rem;margin-bottom:.95rem;}
+.set-t{font-size:.76rem;color:var(--text2);letter-spacing:.13em;margin-bottom:.95rem;font-weight:700;}
+.kstatus{font-size:.82rem;margin-top:.7rem;}
+.kok{color:var(--green);}
+.kno{color:var(--red);}
+.about{font-size:.9rem;color:#FFF;line-height:2.6;}
+.about span{color:var(--text4);font-size:.78rem;}
+
+/* ═══ HUB ═══ */
+#hub-page{position:fixed;inset:0;display:flex;flex-direction:column;z-index:800;background:#000;}
+.hub-half{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;cursor:pointer;}
 .hub-half:active{filter:brightness(1.2);}
 #hub-doing{background:linear-gradient(155deg,#0e0800 0%,#1c1200 100%);border-bottom:1px solid #000;}
 #hub-being{background:linear-gradient(155deg,#020a10 0%,#041410 100%);}
-.hub-glow{
-  position:absolute;width:200px;height:200px;border-radius:50%;
-  top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;
-}
+.hub-glow{position:absolute;width:200px;height:200px;border-radius:50%;
+  top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;}
 #glow-doing{background:radial-gradient(circle,rgba(201,150,14,.14) 0%,transparent 70%);}
 #glow-being{background:radial-gradient(circle,rgba(58,138,106,.1) 0%,transparent 70%);}
-.hub-icon{font-size:44px;margin-bottom:10px;transition:transform .3s;}
-.hub-half:active .hub-icon{transform:scale(1.1);}
-.hub-title{font-size:24px;font-weight:700;margin-bottom:5px;}
-.hub-sub{font-size:12px;letter-spacing:.06em;margin-bottom:18px;}
-.hub-badge{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:7px 16px;border-radius:18px;font-size:13px;
-}
+.hub-icon{font-size:44px;margin-bottom:10px;}
+.hub-title{font-size:24px;font-weight:700;margin-bottom:5px;font-family:'Noto Serif TC',serif;}
+.hub-sub{font-size:12px;letter-spacing:.06em;margin-bottom:18px;font-family:'Noto Serif TC',serif;}
+.hub-badge{display:inline-flex;align-items:center;gap:7px;padding:7px 16px;border-radius:18px;font-size:13px;font-family:'Noto Serif TC',serif;}
 #badge-doing{background:rgba(201,150,14,.1);border:1px solid rgba(201,150,14,.22);color:#c9960e;}
 #badge-being{background:rgba(40,100,76,.1);border:1px solid rgba(40,100,76,.22);color:#3a7a5a;font-style:italic;font-size:12px;}
-.hub-hint{position:absolute;bottom:14px;font-size:10px;letter-spacing:.06em;}
+.hub-hint{position:absolute;bottom:14px;font-size:10px;letter-spacing:.06em;font-family:'Noto Serif TC',serif;}
 #hint-doing{color:rgba(90,60,10,.45);}
 #hint-being{color:rgba(20,60,40,.45);}
 .hub-divider{height:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent);flex-shrink:0;}
-/* time-based glow animation */
 @keyframes hubGlow{0%,100%{opacity:.5}50%{opacity:1}}
-.hub-active-glow{animation:hubGlow 3s ease infinite;}
+.hub-glow-active{animation:hubGlow 3s ease infinite;}
 
-/* ═══════════════════════════════════════
-   DOING MODE
-═══════════════════════════════════════ */
-#doing{background:linear-gradient(155deg,#0e0800 0%,#180f00 100%);color:#f5e6c8;}
-.doing-header{
-  display:flex;align-items:center;padding:52px 18px 12px;
-  background:rgba(10,6,0,.95);border-bottom:1px solid rgba(201,150,14,.1);
-  position:relative;flex-shrink:0;backdrop-filter:blur(12px);
-}
-.back-btn{
-  position:absolute;left:14px;top:50%;transform:translateY(-50%);
-  font-size:20px;color:rgba(90,60,10,.5);padding:6px 10px;margin-top:14px;
-  border-radius:8px;cursor:pointer;transition:color .2s;
-}
-.back-btn:active{color:#c9960e;}
-.header-title{flex:1;text-align:center;padding-top:14px;}
-.header-title .t1{font-size:17px;font-weight:700;color:#e8b830;}
-.header-title .t2{font-size:10px;color:#4a3208;margin-top:1px;letter-spacing:.05em;}
-.savings-badge{
-  position:absolute;right:14px;top:50%;transform:translateY(-50%);
-  padding:6px 12px;border-radius:10px;margin-top:14px;
-  background:rgba(201,150,14,.08);border:1px solid rgba(201,150,14,.18);text-align:right;
-}
-.savings-badge .n{font-size:16px;font-weight:700;color:#f0c040;}
-.savings-badge .l{font-size:9px;color:#6a4e18;}
-/* Tab bar */
-.tab-bar{
-  display:flex;background:rgba(8,5,0,.9);
-  border-bottom:1px solid rgba(201,150,14,.08);
-  flex-shrink:0;
-}
-.tab-btn{
-  flex:1;padding:11px 4px;font-size:10px;color:#4a3208;
-  letter-spacing:.04em;border-bottom:2px solid transparent;
-  transition:all .2s;text-align:center;font-family:inherit;
-}
-.tab-btn.active{color:#e8b830;border-bottom-color:#c9960e;}
-.tab-content{display:none;flex:1;overflow-y:auto;padding:16px 16px 32px;}
-.tab-content.active{display:block;}
-/* Progress bar */
-.prog-wrap{margin-bottom:18px;}
-.prog-labels{display:flex;justify-content:space-between;font-size:10px;color:#4a3818;margin-bottom:5px;}
-.prog-bar{height:2px;background:rgba(255,255,255,.06);border-radius:1px;overflow:hidden;}
-.prog-fill{height:100%;background:linear-gradient(90deg,#c9960e,#f0c040);border-radius:1px;transition:width .4s ease;}
-/* Section label */
-.sec-label{font-size:10px;color:#4a3818;letter-spacing:.1em;margin:0 0 8px;}
-/* Check items */
-.check-list{display:flex;flex-direction:column;gap:7px;margin-bottom:20px;}
-.check-item{
-  display:flex;align-items:center;gap:10px;padding:12px 14px;
-  border-radius:11px;cursor:pointer;transition:all .22s;
-}
-.check-item.on{background:rgba(201,150,14,.09);border:1px solid rgba(201,150,14,.26);}
-.check-item.off{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);}
-.check-item .ci-e{font-size:18px;}
-.check-item .ci-l{flex:1;font-size:14px;}
-.check-item.on .ci-l{color:#f0c040;}
-.check-item.off .ci-l{color:#c8a870;}
-.check-dot{
-  width:18px;height:18px;border-radius:50%;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  font-size:10px;color:#fff;font-weight:700;transition:all .2s;
-}
-.check-dot.on{background:rgba(201,150,14,.85);}
-.check-dot.off{border:1.5px solid rgba(120,90,40,.35);}
-/* Compact grid (vitality) */
-.vit-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:20px;}
-.vit-item{
-  padding:10px;border-radius:11px;cursor:pointer;transition:all .22s;
-}
-.vit-item.on{background:rgba(201,150,14,.09);border:1px solid rgba(201,150,14,.26);}
-.vit-item.off{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);}
-.vit-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;}
-.vit-item .vi-e{font-size:16px;}
-.vit-item .vi-l{font-size:11px;line-height:1.4;}
-.vit-item.on .vi-l{color:#f0c040;}
-.vit-item.off .vi-l{color:#a08050;}
-/* Observation */
-.obs-q{margin-bottom:14px;}
-.obs-label{font-size:12px;color:#9a7840;margin-bottom:6px;line-height:1.5;}
-.obs-ta{
-  width:100%;padding:12px;border-radius:10px;resize:none;
-  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);
-  color:#d4b870;font-size:14px;line-height:1.7;min-height:70px;
-}
-.obs-ta::placeholder{color:#3a2e10;}
-/* Save savings button */
-.deposit-btn{
-  width:100%;padding:16px;border-radius:14px;text-align:center;
-  margin-top:8px;font-size:16px;font-weight:600;transition:all .3s;
-  font-family:inherit;
-}
-.deposit-btn.ready{
-  background:linear-gradient(135deg,#1a1000,#0e0800);
-  border:1px solid rgba(201,150,14,.4);color:#e8b830;cursor:pointer;
-}
-.deposit-btn.done{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);color:#3a2e10;cursor:default;}
-.deposit-btn.already{background:rgba(201,150,14,.06);border:1px solid rgba(201,150,14,.15);color:#7a6030;}
-/* Echo card */
-.echo-card{
-  padding:12px 14px;border-radius:12px;margin-bottom:16px;
-  background:rgba(201,150,14,.06);border:1px solid rgba(201,150,14,.15);cursor:pointer;
-}
-.echo-label{font-size:9px;color:#6a4e18;letter-spacing:.08em;margin-bottom:4px;}
-.echo-text{font-size:12px;color:#c8a870;line-height:1.75;}
-/* AI Chat */
-.chat-area{display:flex;flex-direction:column;height:calc(100vh - 200px);}
-.chat-msgs{flex:1;overflow-y:auto;padding-bottom:10px;}
-.msg-row{margin-bottom:12px;display:flex;flex-direction:column;}
-.msg-row.user{align-items:flex-end;}
-.msg-row.ai{align-items:flex-start;}
-.msg-bubble{
-  max-width:88%;padding:12px 14px;border-radius:14px;
-  font-size:14px;line-height:1.8;
-}
-.msg-row.user .msg-bubble{background:rgba(201,150,14,.12);border:1px solid rgba(201,150,14,.2);color:#e8c860;}
-.msg-row.ai .msg-bubble{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#d4b870;}
-.quick-btns{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
-.quick-btn{
-  padding:7px 12px;border-radius:16px;font-size:12px;
-  background:rgba(201,150,14,.07);border:1px solid rgba(201,150,14,.18);
-  color:#c8a058;cursor:pointer;transition:all .2s;font-family:inherit;
-}
-.quick-btn:active{background:rgba(201,150,14,.18);}
-.chat-input-row{display:flex;gap:8px;margin-top:8px;}
-.chat-ta{
-  flex:1;padding:10px 14px;border-radius:12px;resize:none;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-  color:#d4b870;font-size:14px;line-height:1.6;min-height:44px;max-height:100px;
-}
-.chat-ta::placeholder{color:#3a2e10;}
-.chat-send{
-  padding:10px 16px;border-radius:12px;font-size:14px;
-  background:rgba(201,150,14,.12);border:1px solid rgba(201,150,14,.25);
-  color:#e8b830;cursor:pointer;flex-shrink:0;transition:all .2s;font-family:inherit;
-}
-.chat-send:active{background:rgba(201,150,14,.25);}
-.typing-dot{display:inline-block;width:6px;height:6px;background:#c9960e;border-radius:50%;margin:0 2px;animation:typingBounce .8s ease infinite;}
-.typing-dot:nth-child(2){animation-delay:.12s;}
-.typing-dot:nth-child(3){animation-delay:.24s;}
-@keyframes typingBounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
-/* Weekly review */
-.week-q{margin-bottom:16px;}
-.week-qlabel{font-size:13px;color:#9a7840;margin-bottom:7px;line-height:1.5;}
-.week-ta{
-  width:100%;padding:12px;border-radius:10px;resize:none;
-  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);
-  color:#d4b870;font-size:14px;line-height:1.7;min-height:80px;
-}
-.week-ta::placeholder{color:#3a2e10;}
-.week-save-btn{
-  width:100%;padding:14px;border-radius:12px;text-align:center;
-  background:rgba(201,150,14,.08);border:1px solid rgba(201,150,14,.22);
-  color:#c9960e;font-size:15px;cursor:pointer;font-family:inherit;
-  transition:all .2s;margin-top:4px;
-}
-/* Progress */
-.savings-hero{text-align:center;margin:8px 0 24px;}
-.savings-hero .n{font-size:56px;font-weight:700;color:#f0c040;line-height:1;}
-.savings-hero .l{font-size:13px;color:#6a4e18;margin-top:4px;letter-spacing:.06em;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:20px;}
-.cal-cell{
-  aspect-ratio:1;border-radius:5px;display:flex;align-items:center;
-  justify-content:center;font-size:9px;color:#3a2e10;
-  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.04);
-}
-.cal-cell.has{background:rgba(201,150,14,.2);border-color:rgba(201,150,14,.3);color:#c9960e;}
-.cal-cell.today{border-color:rgba(201,150,14,.6);color:#f0c040;}
-.letter-card{
-  padding:16px;border-radius:14px;margin-top:8px;
-  background:rgba(201,150,14,.06);border:1px solid rgba(201,150,14,.18);
-  font-size:14px;color:#c8a870;line-height:1.85;white-space:pre-wrap;
-}
-/* Settings */
-.setting-group{margin-bottom:20px;}
-.setting-label{font-size:11px;color:#5a4020;letter-spacing:.08em;margin-bottom:8px;}
-.setting-input{
-  width:100%;padding:12px 14px;border-radius:10px;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-  color:#d4b870;font-size:14px;font-family:inherit;
-}
-.setting-input::placeholder{color:#3a2e10;}
-.setting-btn{
-  width:100%;padding:13px;border-radius:10px;text-align:center;
-  background:rgba(201,150,14,.08);border:1px solid rgba(201,150,14,.2);
-  color:#c9960e;font-size:14px;cursor:pointer;margin-top:8px;
-  transition:all .2s;font-family:inherit;
-}
-.setting-btn:active{background:rgba(201,150,14,.18);}
-.about-text{font-size:12px;color:#4a3818;line-height:1.8;margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.06);}
-
-/* ═══════════════════════════════════════
-   BEING MODE
-═══════════════════════════════════════ */
-#being{background:linear-gradient(155deg,#020a10 0%,#041410 100%);color:#d4ede5;}
-.being-header{
-  display:flex;align-items:center;padding:52px 18px 12px;
+/* ═══ BEING PAGE ═══ */
+#being-page{position:fixed;inset:0;display:none;flex-direction:column;overflow:hidden;
+  background:linear-gradient(155deg,#020a10 0%,#041410 100%);
+  font-family:'Noto Serif TC',serif;color:#d4ede5;}
+#being-page.show{display:flex;}
+.being-hdr{display:flex;align-items:center;
+  padding:calc(16px + env(safe-area-inset-top,0px)) 18px 12px;
   background:rgba(2,8,14,.95);border-bottom:1px solid rgba(40,100,76,.1);
-  position:relative;flex-shrink:0;backdrop-filter:blur(12px);
-}
-.being-header .back-btn{color:rgba(20,60,40,.5);margin-top:14px;}
-.being-header .back-btn:active{color:#5ab898;}
-.being-hdr-title{flex:1;text-align:center;padding-top:14px;}
-.being-hdr-title .t1{font-size:15px;font-weight:600;color:#5ab898;}
-.being-hdr-title .t2{font-size:10px;color:#1a3e2e;margin-top:1px;letter-spacing:.06em;}
-.being-reset{
-  position:absolute;right:14px;top:50%;transform:translateY(-50%);margin-top:14px;
-  font-size:11px;color:#3a8a6a;padding:5px 10px;border-radius:12px;
-  border:1px solid rgba(58,138,106,.2);cursor:pointer;font-family:inherit;background:none;
-  display:none;
-}
-/* Being states */
+  position:relative;flex-shrink:0;}
+.being-back{font-size:20px;color:rgba(20,60,40,.5);padding:4px 10px;
+  border-radius:8px;cursor:pointer;background:none;border:none;font-family:inherit;}
+.being-back:active{color:#5ab898;}
+.being-hdr-c{flex:1;text-align:center;}
+.being-hdr-c .t1{font-size:15px;font-weight:600;color:#5ab898;}
+.being-hdr-c .t2{font-size:10px;color:#1a3e2e;margin-top:1px;letter-spacing:.06em;}
+.being-reset-btn{font-size:11px;color:#3a8a6a;padding:5px 10px;border-radius:12px;
+  border:1px solid rgba(58,138,106,.2);cursor:pointer;background:none;font-family:inherit;display:none;}
+/* states */
 .being-state{display:none;flex:1;overflow-y:auto;}
-.being-state.active{display:flex;flex-direction:column;}
-/* Idle */
+.being-state.bactive{display:flex;flex-direction:column;}
 #bs-idle{padding:20px 18px;}
-.memory-card{
-  padding:12px 14px;border-radius:12px;margin-bottom:18px;
-  background:rgba(38,95,72,.08);border:1px solid rgba(38,95,72,.18);
-}
-.memory-label{font-size:9px;color:#2a6a52;letter-spacing:.08em;margin-bottom:4px;}
-.memory-text{font-size:12px;color:#6aaa90;line-height:1.8;}
+.bmemory-card{padding:12px 14px;border-radius:12px;margin-bottom:18px;
+  background:rgba(38,95,72,.08);border:1px solid rgba(38,95,72,.18);}
+.bmemory-lbl{font-size:9px;color:#2a6a52;letter-spacing:.08em;margin-bottom:4px;}
+.bmemory-txt{font-size:12px;color:#6aaa90;line-height:1.8;}
 .being-prompt{text-align:center;margin-bottom:16px;}
-.being-prompt .p1{font-size:22px;color:#c8e8de;font-weight:400;}
+.being-prompt .p1{font-size:22px;color:#c8e8de;}
 .being-prompt .p2{font-size:12px;color:#1e4a38;margin-top:5px;}
 .chip-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:14px;}
-.chip{
-  padding:7px 14px;border-radius:18px;cursor:pointer;
-  background:rgba(50,120,90,.09);border:1px solid rgba(50,120,90,.2);
-  font-size:13px;color:#7ab8a0;transition:all .2s;
-}
-.chip:active{background:rgba(50,120,90,.2);}
-.being-ta{
-  width:100%;padding:16px;border-radius:14px;resize:none;
+.bchip{padding:7px 14px;border-radius:18px;cursor:pointer;font-size:13px;
+  background:rgba(50,120,90,.09);border:1px solid rgba(50,120,90,.2);color:#7ab8a0;}
+.bchip:active{background:rgba(50,120,90,.2);}
+.being-ta{width:100%;padding:16px;border-radius:14px;resize:none;font-family:inherit;
   background:rgba(50,120,90,.05);border:1px solid rgba(50,120,90,.18);
-  color:#c8e8de;font-size:15px;line-height:1.85;min-height:140px;
-  margin-bottom:14px;
-}
+  color:#c8e8de;font-size:15px;line-height:1.85;min-height:140px;margin-bottom:14px;}
 .being-ta::placeholder{color:#1e4030;}
-.summon-btn{
-  width:100%;padding:17px;border-radius:14px;text-align:center;
-  font-size:16px;font-weight:600;transition:all .3s;font-family:inherit;
-  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);
-  color:#1a3a2a;cursor:default;
-}
-.summon-btn.ready{
-  background:linear-gradient(135deg,#0e3028,#062018);
-  border:1px solid rgba(90,184,152,.32);color:#5ab898;cursor:pointer;
-}
-/* Breathing state */
-#bs-breath{
-  align-items:center;justify-content:center;padding:40px 24px;
-}
+.summon-btn{width:100%;padding:17px;border-radius:14px;text-align:center;
+  font-size:16px;font-weight:600;font-family:inherit;cursor:default;
+  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);color:#1a3a2a;}
+.summon-btn.bready{background:linear-gradient(135deg,#0e3028,#062018);
+  border:1px solid rgba(90,184,152,.32);color:#5ab898;cursor:pointer;}
+#bs-breath{align-items:center;justify-content:center;padding:40px 24px;}
 .breath-hint{font-size:12px;color:#1e4a38;margin-bottom:40px;letter-spacing:.1em;}
-.breath-circle-wrap{position:relative;width:220px;height:220px;margin-bottom:40px;}
-.breath-ring{
-  position:absolute;border-radius:50%;border-style:solid;border-color:rgba(58,138,106,.1);
-}
-.breath-main{
-  position:absolute;inset:0;border-radius:50%;
+.breath-wrap{position:relative;width:220px;height:220px;margin-bottom:40px;}
+.bring{position:absolute;border-radius:50%;border:1px solid rgba(58,138,106,.1);}
+.bmain{position:absolute;inset:0;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  transition:transform .8s ease;
   border:1px solid rgba(90,184,152,.25);
-}
-.breath-num{font-size:40px;font-weight:300;color:#5ab898;min-width:52px;text-align:center;}
-.breath-phase{font-size:28px;font-weight:300;color:#c8e8de;margin-bottom:6px;letter-spacing:.04em;}
-.breath-sub{font-size:13px;color:#1e5a40;letter-spacing:.06em;}
-.breath-dots{display:flex;gap:6px;margin-top:28px;}
+  background:radial-gradient(circle,rgba(58,138,106,.12) 0%,transparent 70%);
+  transition:transform .8s ease;}
+.bnum{font-size:40px;font-weight:300;color:#5ab898;min-width:52px;text-align:center;}
+.bphase-lbl{font-size:28px;font-weight:300;color:#c8e8de;margin-bottom:6px;}
+.bphase-sub{font-size:13px;color:#1e5a40;letter-spacing:.06em;}
+.bdots{display:flex;gap:6px;margin-top:28px;}
 .bdot{height:4px;border-radius:2px;transition:all .4s;}
-/* Response state */
-#bs-response{padding:20px 18px;flex:1;}
-.wise-head{text-align:center;margin-bottom:20px;}
-.wise-avatar{
-  width:58px;height:58px;border-radius:50%;margin:0 auto 8px;
+#bs-response{flex:1;padding:20px 18px;overflow-y:auto;}
+.wise-head-b{text-align:center;margin-bottom:20px;}
+.wise-avatar-b{width:58px;height:58px;border-radius:50%;margin:0 auto 8px;
   background:radial-gradient(circle,rgba(58,138,106,.18) 0%,transparent 70%);
   border:1px solid rgba(90,184,152,.25);
-  display:flex;align-items:center;justify-content:center;font-size:24px;
-  box-shadow:0 0 24px rgba(58,138,106,.1);
+  display:flex;align-items:center;justify-content:center;font-size:24px;}
+.wise-lbl-b{font-size:10px;color:#2a6a52;letter-spacing:.1em;}
+.bsentence{padding:16px 18px;border-radius:13px;margin-bottom:10px;
+  font-size:16px;line-height:1.88;}
+.bsentence.s0{background:rgba(38,90,70,.08);border:1px solid rgba(48,100,78,.14);color:#9ac8b8;}
+.bsentence.s1{background:rgba(38,90,70,.05);border:1px solid rgba(48,100,78,.09);color:#aed8c6;}
+.bsentence.s2{background:rgba(58,138,106,.1);border:1px solid rgba(90,184,152,.22);
+  color:#88d8bc;border-left:3px solid rgba(90,184,152,.42);padding-left:14px;font-weight:500;}
+.survived-wrap{padding:18px;border-radius:16px;text-align:center;margin-top:8px;cursor:pointer;}
+.survived-wrap.waiting{background:linear-gradient(135deg,#0d2e24,#071c14);
+  border:1px solid rgba(90,184,152,.34);box-shadow:0 4px 20px rgba(0,0,0,.4);}
+.survived-wrap.done{background:rgba(90,184,152,.06);border:1px solid rgba(90,184,152,.14);}
+.survived-wrap .si{font-size:22px;margin-bottom:3px;}
+.survived-wrap .st{font-size:16px;color:#5ab898;font-weight:600;}
+.survived-wrap .ss{font-size:11px;color:#2a6a52;margin-top:3px;}
+@keyframes bFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.banim{animation:bFadeUp .45s ease both;}
+.banim2{animation:bFadeUp .45s .12s ease both;}
+.banim3{animation:bFadeUp .45s .24s ease both;}
+.banim4{animation:bFadeUp .5s .4s ease both;}
+/* Back btn in #app header */
+#v57-back{
+  position:absolute;left:0;top:50%;transform:translateY(-50%);
+  font-size:18px;color:rgba(90,60,10,.4);padding:6px 14px;
+  cursor:pointer;background:none;border:none;font-family:inherit;
+  padding-top: calc(env(safe-area-inset-top,0px) + 6px);
 }
-.wise-lbl{font-size:10px;color:#2a6a52;letter-spacing:.1em;}
-.sentence-card{
-  padding:16px 18px;border-radius:13px;margin-bottom:10px;
-  font-size:16px;line-height:1.88;
-  animation:fadeUp .45s ease both;
-}
-.sentence-card:nth-child(2){animation-delay:.12s;}
-.sentence-card:nth-child(3){animation-delay:.24s;}
-.sentence-card.s0{background:rgba(38,90,70,.08);border:1px solid rgba(48,100,78,.14);color:#9ac8b8;}
-.sentence-card.s1{background:rgba(38,90,70,.05);border:1px solid rgba(48,100,78,.09);color:#aed8c6;}
-.sentence-card.s2{
-  background:rgba(58,138,106,.1);border:1px solid rgba(90,184,152,.22);color:#88d8bc;
-  border-left:3px solid rgba(90,184,152,.42);padding-left:14px;font-weight:500;
-}
-.survived-btn{
-  width:100%;padding:18px;border-radius:16px;text-align:center;
-  margin-top:8px;cursor:pointer;transition:all .3s;
-  animation:fadeUp .5s .4s ease both;font-family:inherit;
-}
-.survived-btn.waiting{
-  background:linear-gradient(135deg,#0d2e24,#071c14);
-  border:1px solid rgba(90,184,152,.34);
-  box-shadow:0 4px 20px rgba(0,0,0,.4);
-}
-.survived-btn.done{
-  background:rgba(90,184,152,.06);border:1px solid rgba(90,184,152,.14);
-}
-.survived-btn .sb-icon{font-size:22px;margin-bottom:3px;}
-.survived-btn .sb-title{font-size:16px;color:#5ab898;font-weight:600;}
-.survived-btn .sb-sub{font-size:11px;color:#2a6a52;margin-top:3px;}
-.survived-btn.done .sb-sub{line-height:1.7;}
+#v57-back:active{color:#F5A623;}
 
-/* ═══════════════════════════════════════
-   ANIMATIONS
-═══════════════════════════════════════ */
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-@keyframes breathPulse{0%,100%{box-shadow:0 0 28px rgba(90,184,152,.1)}50%{box-shadow:0 0 56px rgba(90,184,152,.28)}}
-@keyframes toast-in{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-.toast-el{
-  position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
-  background:rgba(201,150,14,.15);border:1px solid rgba(201,150,14,.3);
-  color:#e8b830;padding:10px 20px;border-radius:20px;font-size:13px;
-  animation:toast-in .3s ease;z-index:999;pointer-events:none;
-}
-.toast-el.green{background:rgba(58,138,106,.15);border-color:rgba(90,184,152,.3);color:#5ab898;}
 </style>
+<script>
+// ── 動態產生 apple-touch-icon（iOS 加到主畫面用）──
+(function(){
+  function makeIcon(size){
+    var c=document.createElement('canvas');c.width=c.height=size;
+    var x=c.getContext('2d');var s=size/512;
+    // BG
+    var bg=x.createRadialGradient(size*.5,size*.42,0,size*.5,size*.5,size*.8);
+    bg.addColorStop(0,'#231300');bg.addColorStop(1,'#0C0600');
+    x.beginPath();roundRect(x,0,0,size,size,size*.215);x.fillStyle=bg;x.fill();
+    // Ambient glow
+    x.beginPath();x.arc(size*.5,size*.517,size*.41,0,Math.PI*2);
+    x.fillStyle='rgba(245,166,35,0.04)';x.fill();
+    // Coin body
+    x.beginPath();x.arc(size*.5,size*.517,size*.316,0,Math.PI*2);
+    x.fillStyle='#140D00';x.fill();
+    // Coin ring
+    var cg=x.createLinearGradient(size*.25,size*.1,size*.75,size*.9);
+    cg.addColorStop(0,'#FFE080');cg.addColorStop(.45,'#F5A623');cg.addColorStop(1,'#9A5E00');
+    x.beginPath();x.arc(size*.5,size*.517,size*.316,0,Math.PI*2);
+    x.strokeStyle=cg;x.lineWidth=size*.025;x.stroke();
+    // Inner ring
+    x.beginPath();x.arc(size*.5,size*.517,size*.281,0,Math.PI*2);
+    x.strokeStyle='rgba(245,166,35,0.2)';x.lineWidth=size*.003;x.stroke();
+    // Stem
+    x.beginPath();x.moveTo(size*.5,size*.645);
+    x.bezierCurveTo(size*.495,size*.572,size*.496,size*.502,size*.5,size*.406);
+    x.strokeStyle='#F5A623';x.lineWidth=size*.025;x.lineCap='round';x.stroke();
+    // Left leaf
+    x.beginPath();x.moveTo(size*.496,size*.554);
+    x.quadraticCurveTo(size*.420,size*.527,size*.402,size*.480);
+    x.quadraticCurveTo(size*.452,size*.492,size*.496,size*.554);
+    x.fillStyle='#F5A623';x.fill();
+    // Right leaf
+    x.beginPath();x.moveTo(size*.504,size*.496);
+    x.quadraticCurveTo(size*.580,size*.467,size*.598,size*.418);
+    x.quadraticCurveTo(size*.548,size*.430,size*.504,size*.496);
+    x.fillStyle='#F5A623';x.fill();
+    // Bud glow
+    var bg2=x.createRadialGradient(size*.488,size*.376,0,size*.5,size*.387,size*.055);
+    bg2.addColorStop(0,'#FFF8DC');bg2.addColorStop(.5,'#F5A623');bg2.addColorStop(1,'#C07800');
+    x.beginPath();x.arc(size*.5,size*.387,size*.043,0,Math.PI*2);
+    x.fillStyle=bg2;x.fill();
+    return c;
+  }
+  function roundRect(ctx,x,y,w,h,r){
+    ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+  }
+  window.addEventListener('load',function(){
+    try{
+      var png=makeIcon(192).toDataURL('image/png');
+      var el=document.getElementById('ati');
+      if(el)el.href=png;
+    }catch(e){}
+  });
+})();
+</script>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════
-     HUB PAGE
-═══════════════════════════════════ -->
-<div id="hub" class="page active">
-  <div id="hub-doing" class="hub-half" onclick="goTo('doing')">
+<!-- ═══ HUB PAGE ═══ -->
+<div id="hub-page">
+  <div id="hub-doing" class="hub-half" onclick="hubGo('doing')">
     <div class="hub-glow" id="glow-doing"></div>
     <div class="hub-icon">☀️</div>
     <div class="hub-title" style="color:#e8b830">充實模式</div>
     <div class="hub-sub" style="color:#4a3208">做模式 · 積極向上</div>
-    <div class="hub-badge" id="badge-doing">
-      <span>💰</span>
-      <span id="hub-savings">-- 天存款</span>
-    </div>
+    <div class="hub-badge" id="badge-doing">💰 <span id="hub-savings">--</span> 天存款</div>
     <div class="hub-hint" id="hint-doing">點擊進入 ›</div>
   </div>
   <div class="hub-divider"></div>
-  <div id="hub-being" class="hub-half" onclick="goTo('being')">
+  <div id="hub-being" class="hub-half" onclick="hubGo('being')">
     <div class="hub-glow" id="glow-being"></div>
     <div class="hub-icon">🌿</div>
     <div class="hub-title" style="color:#5ab898">避風模式</div>
     <div class="hub-sub" style="color:#1e4a38">在模式 · 智者等你</div>
-    <div class="hub-badge" id="badge-being">
-      <span id="hub-memory-text">「沙發在等你，無需準備」</span>
+    <div class="hub-badge" id="badge-being" style="max-width:240px;text-align:center;">
+      <span id="hub-memory">「沙發在等你，無需準備」</span>
     </div>
     <div class="hub-hint" id="hint-being">點擊進入 ›</div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════
-     DOING MODE
-═══════════════════════════════════ -->
-<div id="doing" class="page">
-  <div class="doing-header">
-    <button class="back-btn" onclick="goTo('hub')">‹</button>
-    <div class="header-title">
-      <div class="t1">☀️ 充實的一天</div>
-      <div class="t2">做模式 · 積極向上</div>
-    </div>
-    <div class="savings-badge">
-      <div class="n" id="doing-savings">0</div>
-      <div class="l">人生存款</div>
-    </div>
-  </div>
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="switchTab('today')" id="tab-today">🌅 今日</button>
-    <button class="tab-btn" onclick="switchTab('ai')" id="tab-ai">💬 夥伴</button>
-    <button class="tab-btn" onclick="switchTab('weekly')" id="tab-weekly">📅 週顧</button>
-    <button class="tab-btn" onclick="switchTab('progress')" id="tab-progress">📈 進步</button>
-    <button class="tab-btn" onclick="switchTab('settings')" id="tab-settings">⚙️ 設定</button>
-  </div>
-
-  <!-- TODAY TAB -->
-  <div class="tab-content active" id="tc-today">
-    <div id="echo-area"></div>
-    <div class="prog-wrap">
-      <div class="prog-labels">
-        <span id="prog-core-label">核心 0 / 4</span>
-        <span id="prog-vit-label">活力 0 / 7</span>
-      </div>
-      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-    </div>
-    <div class="sec-label">核心層（3項以上 = 存一天）</div>
-    <div class="check-list" id="core-list"></div>
-    <div class="sec-label">活力層</div>
-    <div class="vit-grid" id="vit-grid"></div>
-    <div class="sec-label">觀察層（睡前 2 分鐘）</div>
-    <div id="obs-area"></div>
-    <button class="deposit-btn done" id="deposit-btn" onclick="tryDeposit()">💰 儲存今日存款</button>
-  </div>
-
-  <!-- AI TAB -->
-  <div class="tab-content" id="tc-ai">
-    <div class="quick-btns" id="quick-btns"></div>
-    <div class="chat-msgs" id="chat-msgs"></div>
-    <div id="typing-indicator" style="display:none;padding:8px 0;">
-      <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
-    </div>
-    <div class="chat-input-row">
-      <textarea class="chat-ta" id="chat-ta" placeholder="說什麼都好..." rows="2" oninput="autoResize(this)"></textarea>
-      <button class="chat-send" onclick="sendChat()">送出</button>
-    </div>
-  </div>
-
-  <!-- WEEKLY TAB -->
-  <div class="tab-content" id="tc-weekly">
-    <div id="weekly-area"></div>
-  </div>
-
-  <!-- PROGRESS TAB -->
-  <div class="tab-content" id="tc-progress">
-    <div class="savings-hero">
-      <div class="n" id="progress-savings">0</div>
-      <div class="l">人生存款天數</div>
-    </div>
-    <div class="sec-label">最近 35 天</div>
-    <div class="cal-grid" id="cal-grid"></div>
-    <div id="letter-area"></div>
-  </div>
-
-  <!-- SETTINGS TAB -->
-  <div class="tab-content" id="tc-settings">
-    <div class="setting-group">
-      <div class="setting-label">ANTHROPIC API KEY</div>
-      <input class="setting-input" id="api-key-input" type="password" placeholder="sk-ant-..." />
-      <button class="setting-btn" onclick="saveApiKey()">儲存 API Key</button>
-    </div>
-    <div class="setting-group">
-      <div class="setting-label">GOOGLE APPS SCRIPT URL（存款同步）</div>
-      <input class="setting-input" id="gs-url-input" type="text" placeholder="https://script.google.com/..." />
-      <button class="setting-btn" onclick="saveGsUrl()">儲存並同步</button>
-      <button class="setting-btn" onclick="syncFromSheets()" style="margin-top:6px;background:rgba(255,255,255,.03);">↓ 從 Sheets 還原存款</button>
-    </div>
-    <div class="about-text">
-      人生總部 v1.0<br>
-      雙子星架構 · 書房與沙發並存<br><br>
-      充實模式 = 每日積累<br>
-      避風模式 = 情緒急救<br>
-      兩扇門，一個家。<br><br>
-      💙 為仁凱打造
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════
-     BEING MODE
-═══════════════════════════════════ -->
-<div id="being" class="page">
-  <div class="being-header">
-    <button class="back-btn" onclick="goTo('hub')">‹</button>
-    <div class="being-hdr-title">
+<!-- ═══ BEING PAGE ═══ -->
+<div id="being-page">
+  <div class="being-hdr">
+    <button class="being-back" onclick="beingGoHub()">‹</button>
+    <div class="being-hdr-c">
       <div class="t1">🌿 心靈急救箱</div>
       <div class="t2">在模式 · 避風港</div>
     </div>
-    <button class="being-reset" id="being-reset" onclick="beingReset()">重新開始</button>
+    <button class="being-reset-btn" id="being-reset-btn" onclick="beingReset()">重新開始</button>
   </div>
-
-  <!-- IDLE STATE -->
-  <div class="being-state active" id="bs-idle">
-    <div id="being-memory-card"></div>
+  <!-- IDLE -->
+  <div class="being-state bactive" id="bs-idle">
+    <div id="bmemory-area"></div>
     <div class="being-prompt">
       <div class="p1">現在感覺怎麼了？</div>
       <div class="p2">說什麼都好 · 智者在等你</div>
     </div>
     <div class="chip-row">
-      <div class="chip" onclick="addChip('焦慮')">😰 焦慮</div>
-      <div class="chip" onclick="addChip('憤怒')">😤 憤怒</div>
-      <div class="chip" onclick="addChip('悲傷')">😔 悲傷</div>
-      <div class="chip" onclick="addChip('麻木')">😶 麻木</div>
-      <div class="chip" onclick="addChip('挫敗')">😫 挫敗</div>
+      <div class="bchip" onclick="bAddChip('焦慮')">😰 焦慮</div>
+      <div class="bchip" onclick="bAddChip('憤怒')">😤 憤怒</div>
+      <div class="bchip" onclick="bAddChip('悲傷')">😔 悲傷</div>
+      <div class="bchip" onclick="bAddChip('麻木')">😶 麻木</div>
+      <div class="bchip" onclick="bAddChip('挫敗')">😫 挫敗</div>
     </div>
-    <textarea class="being-ta" id="being-ta" placeholder="或是直接說出來..." oninput="checkSummon()"></textarea>
-    <button class="summon-btn" id="summon-btn" onclick="summon()">🌿 呼喚智者</button>
+    <textarea class="being-ta" id="being-ta" placeholder="或是直接說出來..." oninput="bCheckSummon()"></textarea>
+    <button class="summon-btn" id="summon-btn" onclick="bSummon()">🌿 呼喚智者</button>
   </div>
-
-  <!-- BREATHING STATE -->
+  <!-- BREATHING -->
   <div class="being-state" id="bs-breath">
     <div class="breath-hint" id="breath-hint">先讓身體接住你</div>
-    <div class="breath-circle-wrap">
-      <div class="breath-ring" id="br1" style="inset:-14px;border-width:1px;"></div>
-      <div class="breath-ring" id="br2" style="inset:-28px;border-width:1px;border-color:rgba(58,138,106,.06);"></div>
-      <div class="breath-main" id="breath-main">
-        <div class="breath-num" id="breath-num">4</div>
-      </div>
+    <div class="breath-wrap">
+      <div class="bring" id="br1" style="inset:-14px;"></div>
+      <div class="bring" id="br2" style="inset:-28px;border-color:rgba(58,138,106,.06);"></div>
+      <div class="bmain" id="bmain"><div class="bnum" id="bnum">4</div></div>
     </div>
-    <div class="breath-phase" id="breath-phase">吸氣</div>
-    <div class="breath-sub" id="breath-sub">慢慢吸進來</div>
-    <div class="breath-dots">
-      <div class="bdot" id="bd0" style="width:20px;background:#5ab898;"></div>
-      <div class="bdot" id="bd1" style="width:5px;background:rgba(255,255,255,.1);"></div>
-      <div class="bdot" id="bd2" style="width:5px;background:rgba(255,255,255,.1);"></div>
+    <div class="bphase-lbl" id="bphase-lbl">吸氣</div>
+    <div class="bphase-sub" id="bphase-sub">慢慢吸進來</div>
+    <div class="bdots">
+      <div class="bdot" id="bdot0" style="width:20px;background:#5ab898;"></div>
+      <div class="bdot" id="bdot1" style="width:5px;background:rgba(255,255,255,.1);"></div>
+      <div class="bdot" id="bdot2" style="width:5px;background:rgba(255,255,255,.1);"></div>
+    </div>
+  </div>
+  <!-- RESPONSE -->
+  <div class="being-state" id="bs-response">
+    <div class="wise-head-b">
+      <div class="wise-avatar-b">🌿</div>
+      <div class="wise-lbl-b">80 歲的仁凱說</div>
+    </div>
+    <div id="bsentences"></div>
+    <div class="survived-wrap waiting banim4" id="survived-wrap" onclick="bSurvived()">
+      <div class="si">✅</div>
+      <div class="st">我撐過來了</div>
+      <div class="ss">+ 5 人生存款 · 阻斷焦慮，是最珍貴的存款</div>
+    </div>
+  </div>
+</div>
+
+
+<div id="setup">
+  <div class="sw">
+    <div class="sw-h">設定 API Key</div>
+    <div class="sw-p">輸入你的 Anthropic API Key<br>Key 只存在你的手機，完全隱私</div>
+    <label class="fl">ANTHROPIC API KEY</label>
+    <div class="frow">
+      <input class="finput" id="sk0" type="password" placeholder="sk-ant-api03-...">
+      <button class="eyebtn" onclick="tv('sk0')">👁</button>
+    </div>
+    <button class="pbtn" onclick="saveSetup()">💾 儲存並開始使用</button>
+    <div class="hint">Key 存在手機 localStorage · 完全離線</div>
+    <button onclick="goBackToHub()" style="margin-top:1rem;background:none;border:none;color:#5A4020;font-family:'Noto Serif TC',serif;font-size:.88rem;cursor:pointer;width:100%;padding:.6rem;">← 返回首頁</button>
+  </div>
+</div>
+
+<div id="app" style="display:none;flex-direction:column;">
+  <div class="hdr">
+    <div class="hdr-top">
+      <div class="hdr-date" id="hdr-date"></div>
+      <button id="v57-back" onclick="goBackToHub()">‹</button><div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v5.7 ☁️</div>
+    </div>
+    <div class="hdr-title">充實的一天</div>
+    <div class="hdr-sub">Every Day Counts</div>
+    <div class="spill" id="spill">💰 人生存款 <b id="snum">0</b> 天</div>
+    <div id="rest-bar"></div>
+  </div>
+
+  <div id="echo-bar" onclick="toggleEcho()" style="flex-shrink:0;">
+    <div style="display:flex;align-items:flex-start;gap:.65rem;">
+      <div style="font-size:1rem;flex-shrink:0;margin-top:.1rem;">🌅</div>
+      <div style="flex:1;">
+        <div style="font-size:.68rem;color:#8A6030;letter-spacing:.1em;margin-bottom:.25rem;font-weight:700;">昨日回音 · MORNING ECHO</div>
+        <div id="echo-preview" style="font-size:.85rem;color:#F0DEB0;line-height:1.8;"></div>
+        <div id="echo-full" style="display:none;font-size:.85rem;color:#F0DEB0;line-height:2.1;margin-top:.7rem;padding-top:.7rem;border-top:1px solid #3D2500;"></div>
+        <div id="echo-toggle-hint" style="font-size:.68rem;color:#5A4020;margin-top:.4rem;">點擊展開全文 ▾</div>
+      </div>
     </div>
   </div>
 
-  <!-- RESPONSE STATE -->
-  <div class="being-state" id="bs-response">
-    <div class="wise-head">
-      <div class="wise-avatar">🌿</div>
-      <div class="wise-lbl">80 歲的仁凱說</div>
+  <div class="tabs">
+    <button class="tab on" onclick="switchTab('today')">今日</button>
+    <button class="tab" onclick="switchTab('ai')">心靈</button>
+    <button class="tab" onclick="switchTab('weekly')">回顧</button>
+    <button class="tab" onclick="switchTab('progress')">進步</button>
+    <button class="tab" onclick="switchTab('settings')">設定</button>
+  </div>
+
+  <div id="content-wrap">
+  <div id="pane-today" class="pane on">
+    <div class="sec"><div class="sdot" style="background:var(--red)"></div><div class="slabel" style="color:var(--red)">核心層 — 每天必做</div><div class="scount" id="cc">0 / 4</div></div>
+    <div class="pbar"><div class="pfill" id="cpbar" style="width:0%;background:var(--red)"></div></div>
+    <div id="core-list"></div>
+    <div class="sec"><div class="sdot" style="background:var(--gold)"></div><div class="slabel" style="color:var(--gold)">活力層 — 完成5項就是好的一天</div><div class="scount" id="ac">0 / 8</div></div>
+    <div class="pbar"><div class="pfill" id="apbar" style="width:0%;background:var(--gold)"></div></div>
+    <div id="act-list"></div>
+    <div id="gdb" style="display:none" class="gdb">
+      <div class="gdb-e">✨</div>
+      <div class="gdb-t">今天是充實的一天</div>
+      <div class="gdb-s">你今天善待了自己。<br>這一天，已存入你的人生帳戶。</div>
     </div>
-    <div id="response-sentences"></div>
-    <button class="survived-btn waiting" id="survived-btn" onclick="handleSurvived()">
-      <div class="sb-icon">✅</div>
-      <div class="sb-title">我撐過來了</div>
-      <div class="sb-sub">+ 5 人生存款 · 阻斷焦慮，是最珍貴的存款</div>
-    </button>
+    <div class="sec" style="margin-top:2rem"><div class="sdot" style="background:var(--green)"></div><div class="slabel" style="color:var(--green)">觀察層 — 睡前2分鐘</div></div>
+    <div class="snote">不用評判，不用改變。只是像個旁觀者，看看自己今天。</div>
+    <div id="obs-list"></div>
+    <div style="margin-top:1.5rem;">
+      <button id="wise-btn" onclick="getWiseFeedback()" style="width:100%;padding:1.1rem;background:linear-gradient(135deg,#F5A623,#C07800);border:none;border-radius:13px;color:#1A0F00;font-family:'Noto Serif TC',serif;font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.6rem;">🌿 請80歲的我，給今天的自己一封信</button>
+      <div id="wise-card" style="display:none;margin-top:1.1rem;background:linear-gradient(160deg,#1E1500,#150E00);border:1.5px solid #8A6010;border-radius:16px;overflow:hidden;">
+        <div style="height:4px;background:linear-gradient(90deg,#8A6010,#F5A623,#8A6010);"></div>
+        <div style="padding:1.4rem 1.4rem 1.6rem;">
+          <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:1rem;">
+            <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#F5A623,#C07800);display:flex;align-items:center;justify-content:center;font-size:.8rem;">🌿</div>
+            <div>
+              <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;color:#F5A623;">80歲的仁凱</div>
+              <div style="font-size:.68rem;color:#8A6A38;font-style:italic;" id="wise-date"></div>
+            </div>
+          </div>
+          <div id="wise-text" style="font-size:.93rem;color:#F0DEB0;line-height:2.3;border-left:2px solid #5A3800;padding-left:1rem;"></div>
+          <div style="margin-top:1.2rem;padding-top:1rem;border-top:1px solid #2A1A00;font-size:.7rem;color:#5A4020;text-align:right;font-style:italic;">寫給：今天的仁凱 · 來自：25年後的你</div>
+        </div>
+      </div>
+      <div id="wise-hint" style="display:none;margin-top:.8rem;padding:.85rem 1rem;background:#1E1100;border:1.5px solid #3D2500;border-radius:10px;font-size:.85rem;color:#C8A870;line-height:2;text-align:center;"></div>
+    </div>
+  </div>
+
+  <div id="pane-ai" class="pane">
+    <div class="chat-hdr">
+      <div class="chat-ht">80歲的仁凱 🌿</div>
+      <div class="chat-hs">我年輕的自己，我在這裡。</div>
+    </div>
+    <div id="msg-list"></div>
+    <div class="qrow">
+      <button class="qp" onclick="qs('今天有點累')">今天有點累</button>
+      <button class="qp" onclick="qs('今天做到了！')">今天做到了！</button>
+      <button class="qp" onclick="qs('壓力很大')">壓力很大</button>
+      <button class="qp" onclick="qs('想說說話')">想說說話</button>
+      <button class="qp" onclick="qs('幫助了別人')">幫助了別人</button>
+    </div>
+    <div class="cbar">
+      <input class="cin" id="cin" placeholder="說說今天的感受..." onkeypress="if(event.key==='Enter')send()">
+      <button class="sbtn" id="sbtn" onclick="send()">➤</button>
+    </div>
+  </div>
+
+  <div id="pane-weekly" class="pane">
+    <div class="wk-hdr"><div class="wk-ht">每週回顧</div><div class="wk-hs">每週日，給自己10分鐘。認識自己，多一點。</div></div>
+    <div id="weekly-list"></div>
+    <div class="wk-remind">
+      <div class="wkr-t">本週的提醒</div>
+      <div class="wkr-b">「知道痛苦在哪裡，<br>知道方向在哪裡，<br><em>現在，讓每天的生活跟上。</em>」</div>
+    </div>
+  </div>
+
+  <div id="pane-progress" class="pane">
+    <div class="sgrid">
+      <div class="scard"><div class="sn" id="ps">💰 0</div><div class="sl">人生存款（累積善待天數）</div></div>
+      <div class="scard"><div class="sn" id="pt" style="font-size:2rem;">0</div><div class="sl">近期連續天數</div></div>
+    </div>
+    <div style="background:var(--card);border:2px solid var(--border);border-radius:14px;padding:1.4rem;margin-bottom:1.05rem;">
+      <div style="font-size:.76rem;color:var(--text2);letter-spacing:.1em;margin-bottom:.9rem;font-weight:700;">本月人生存款 💰</div>
+      <div style="position:relative;height:36px;background:var(--bg3);border-radius:8px;overflow:hidden;margin-bottom:.8rem;">
+        <div id="deposit-bar" style="height:100%;background:linear-gradient(90deg,#C07800,#F5A623);border-radius:8px;width:0%;transition:width 1s cubic-bezier(.34,1.56,.64,1);"></div>
+        <div id="deposit-label" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;color:#1A0F00;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--text2);margin-bottom:.9rem;">
+        <span>0</span><span id="deposit-max"></span>
+      </div>
+      <div style="font-size:.82rem;color:#F0DEB0;line-height:2;font-style:italic;text-align:center;padding-top:.7rem;border-top:1px solid var(--border);">仁凱，你正在為 80 歲的自己積累幸福資本。</div>
+    </div>
+    <div class="cal-wrap">
+      <div class="cal-t">最近 35 天</div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div class="cal-leg">
+        <div class="leg-i"><div class="leg-d" style="background:var(--gold);opacity:.75"></div>充實的一天</div>
+        <div class="leg-i"><div class="leg-d" style="background:var(--bg3)"></div>其他</div>
+      </div>
+    </div>
+    <!-- 感謝信入口 -->
+    <div id="letter-trigger" style="display:none;background:linear-gradient(135deg,#1E1500,#150E00);border:1.5px solid #8A6010;border-radius:16px;padding:1.5rem;margin-bottom:1.05rem;text-align:center;cursor:pointer;" onclick="openLetter()">
+      <div style="font-size:1.6rem;margin-bottom:.6rem;">📬</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:#F5A623;margin-bottom:.4rem;">你有一封來自未來的信</div>
+      <div style="font-size:.82rem;color:#C8A870;font-style:italic;" id="letter-trigger-desc"></div>
+    </div>
+
+    <div class="qcard">
+      <div class="qt">給仁凱的話</div>
+      <div class="qb">「那個台灣原住民的小孩，<br>從小被瞧不起的那個孩子——<br><em>他的名字，出現在100大MVP的舞台上。</em><br><br>你不需要再證明什麼了。<br><em>你本來就值得被尊重。</em><br><br>25年後，80歲的你，<br>會感謝今天開始的你。」</div>
+    </div>
+  </div>
+
+  <div id="pane-settings" class="pane">
+    <div class="set-h">設定</div>
+    <div class="set-card">
+      <div class="set-t">ANTHROPIC API KEY</div>
+      <div class="frow">
+        <input class="finput" id="sk1" type="password" placeholder="sk-ant-api03-...">
+        <button class="eyebtn" onclick="tv('sk1')">👁</button>
+      </div>
+      <button class="pbtn" style="margin-top:.6rem" onclick="saveApp()">💾 儲存 API Key</button>
+      <div class="kstatus" id="kst"></div>
+    </div>
+    <div class="set-card">
+      <div class="set-t">☁️ 雲端備份 · GOOGLE SHEETS</div>
+      <label class="fl" style="margin-top:.4rem">APPS SCRIPT 網址</label>
+      <div class="frow">
+        <input class="finput" id="sheets-url" type="url" placeholder="https://script.google.com/macros/s/...">
+      </div>
+      <button class="pbtn" style="margin-top:.5rem;background:#1A2A1A;color:var(--green);border:1.5px solid #2A4A2A;" onclick="saveSheetsUrl()">💾 儲存網址</button>
+      <div id="sync-status" style="font-size:.82rem;margin-top:.7rem;color:#C8A870;min-height:1.4em;text-align:center;"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-top:.3rem;">
+        <button class="pbtn" style="background:var(--bg3);color:#FFF;border:1.5px solid var(--border2);font-size:.88rem;" onclick="cloudPushAll()">☁️ 備份到雲端</button>
+        <button class="pbtn" style="background:var(--bg3);color:#FFF;border:1.5px solid var(--border2);font-size:.88rem;" onclick="cloudRestore()">⬇️ 從雲端還原</button>
+      </div>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:.85rem;line-height:2;text-align:center;">好日子記錄會自動備份 · 換手機點「還原」即可</div>
+    </div>
+    <div class="set-card">
+      <div class="set-t">關於這款 APP</div>
+      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>版本 v5.6 · GitHub Pages · ☁️ 雲端備份</span></div>
+    </div>
+  </div>
+  </div><!-- /content-wrap -->
+</div>
+
+<div id="letter-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:600;align-items:flex-start;justify-content:center;padding:1.5rem;overflow-y:auto;">
+  <div style="width:100%;max-width:400px;margin:2rem auto;">
+    <!-- 信封上半（蓋子） -->
+    <div id="env-flap" style="width:100%;height:60px;background:linear-gradient(160deg,#2A1800,#1E1000);border:1.5px solid #8A6010;border-radius:16px 16px 0 0;position:relative;overflow:hidden;transition:transform .6s ease;transform-origin:bottom center;">
+      <div style="position:absolute;left:50%;top:10px;transform:translateX(-50%);font-size:1.4rem;">🌿</div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:0;border-left:200px solid transparent;border-right:200px solid transparent;border-top:30px solid #1A0F00;"></div>
+    </div>
+    <!-- 信封主體 -->
+    <div style="background:linear-gradient(160deg,#1E1500,#150E00);border:1.5px solid #8A6010;border-top:none;border-radius:0 0 16px 16px;padding:1.8rem 1.6rem 2rem;">
+      <div style="height:3px;background:linear-gradient(90deg,#8A6010,#F5A623,#8A6010);border-radius:3px;margin-bottom:1.4rem;"></div>
+      <div style="font-size:.68rem;color:#8A6030;letter-spacing:.18em;margin-bottom:.4rem;font-weight:700;">來自未來的感謝信</div>
+      <div id="letter-milestone" style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:#F5A623;margin-bottom:1.2rem;"></div>
+      <div id="letter-body" style="font-size:.93rem;color:#F0DEB0;line-height:2.4;font-style:italic;border-left:2px solid #5A3800;padding-left:1rem;min-height:80px;">
+        <div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      </div>
+      <div style="margin-top:1.4rem;padding-top:1rem;border-top:1px solid #2A1A00;font-size:.7rem;color:#5A4020;text-align:right;font-style:italic;" id="letter-from">寫給：55歲的仁凱 · 來自：80歲的你</div>
+      <button onclick="closeLetter()" style="margin-top:1.2rem;width:100%;padding:.8rem;background:transparent;border:1.5px solid #5A3800;border-radius:10px;color:#8A6030;font-family:'Noto Serif TC',serif;font-size:.88rem;cursor:pointer;">收好這封信 ✕</button>
+    </div>
+  </div>
+</div>
+
+<div id="theory-modal" onclick="closeTheory()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;align-items:center;justify-content:center;padding:2rem;">
+  <div onclick="event.stopPropagation()" style="background:linear-gradient(160deg,#1E1400,#150E00);border:1.5px solid #8A6010;border-radius:18px;padding:1.8rem;max-width:340px;width:100%;">
+    <div style="height:3px;background:linear-gradient(90deg,#8A6010,#F5A623,#8A6010);border-radius:3px;margin-bottom:1.3rem;"></div>
+    <div style="font-size:.68rem;color:#8A6030;letter-spacing:.15em;margin-bottom:.5rem;font-weight:700;">80歲智者的叮嚀</div>
+    <div id="theory-title" style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:#F5A623;margin-bottom:1rem;"></div>
+    <div id="theory-body" style="font-size:.9rem;color:#F0DEB0;line-height:2.3;"></div>
+    <button onclick="closeTheory()" style="margin-top:1.4rem;width:100%;padding:.7rem;background:transparent;border:1.5px solid #5A3800;border-radius:10px;color:#8A6030;font-family:'Noto Serif TC',serif;font-size:.85rem;cursor:pointer;">收起 ✕</button>
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════
-// CONSTANTS
-// ═══════════════════════════════════════════════════
-const GS_DEFAULT = 'https://script.google.com/macros/s/AKfycbzb7yP9rTXzz3RHahdIT6jK1Vs3aGJJtgsEvIV8u7gzzeq02N4vGi6_boPZ50FNcoik/exec';
-const CORE_ITEMS = [
-  {id:'protein', e:'🥛', l:'健康奶昔早餐'},
-  {id:'water',   e:'💧', l:'喝水 2000CC'},
-  {id:'english', e:'🇬🇧', l:'英文學習 5 分鐘'},
-  {id:'move',    e:'🏃', l:'運動 10 分鐘'},
+var CORE=[
+  {id:'smoothie',e:'🥤',l:'頂級能量早餐（含5g橄欖油）',d:'2蛋、酪梨180g、蘋果、堅果奶昔、橄欖油5g。為大腦精準合成神經傳導物質。'},
+  {id:'water',e:'💧',l:'喝水 2000CC',d:'身體是你最重要的資產'},
+  {id:'english',e:'📖',l:'英文學習 5分鐘',d:'哪怕只聽一句也算，你從未放棄'},
+  {id:'exercise',e:'💪',l:'運動，哪怕10分鐘',d:'壓力的最好出口'}
 ];
-const VIT_ITEMS = [
-  {id:'read',    e:'📖', l:'讀書 20 分鐘'},
-  {id:'family',  e:'👨‍👩‍👦', l:'聯繫家人'},
-  {id:'help',    e:'🤝', l:'幫助一個人'},
-  {id:'learn',   e:'💡', l:'學一件新事'},
-  {id:'quiet',   e:'🧘', l:'5 分鐘靜默'},
-  {id:'good',    e:'✍️', l:'寫下一件好事'},
-  {id:'sleep',   e:'🌙', l:'11 點前準備睡'},
+var ACT=[
+  {id:'sunshine',e:'☀️',l:'陽光直射儀式（10分鐘）',d:'開窗、脫掉負擔，讓最原始的光重塑血清素與生物鐘。'},
+  {id:'reading',e:'📚',l:'讀書20分鐘＋覆誦練口才',d:'一個動作，三種成長'},
+  {id:'family',e:'📱',l:'聯繫家人或媽媽',d:'一句話也是愛，距離不是阻礙'},
+  {id:'help',e:'🤝',l:'今天幫助了一個人',d:'你的影響力每天都在發生'},
+  {id:'learn',e:'💡',l:'今天學到一件新事物',d:'成長讓你感到真實'},
+  {id:'breathe',e:'🌿',l:'5分鐘安靜＋深呼吸',d:'吸4秒・停4秒・呼6秒'},
+  {id:'goodthing',e:'😊',l:'睡前寫下今天一件好事',d:'訓練大腦看見美好'},
+  {id:'sleep',e:'😴',l:'11點前準備睡覺',d:'休息是明天最好的準備'}
 ];
-const OBS_QS = [
-  '今天有沒有「卡住」的時刻？是什麼感覺？',
-  '今天有什麼讓你感到一點點輕鬆或開心的事？',
-  '現在的你，想對明天的自己說一句話？',
+var OBS=[
+  {id:'emotion',q:'今天有沒有注意到自己的情緒變化？',p:'身體哪裡有感覺？胸口緊？肩膀重？還是莫名輕鬆？'},
+  {id:'present',q:'今天有沒有一刻，真正活在當下？',p:'那一刻，你用哪個感官接收到它？光線？聲音？溫度？'},
+  {id:'selfkind',q:'今天，我有沒有對自己好一點？',p:'那件事做完，身體的哪個部位最先放鬆？'},
+  {id:'microlight',q:'✨ 今天的微光：寫下一件好事',p:'試著加上一個感官細節：我看見、我聽見、我皮膚感受到...',special:true}
 ];
-const QUICK_TRIGGERS = [
-  {e:'😤', l:'工作壓力很大', t:'work'},
-  {e:'😨', l:'覺得自己不夠好', t:'doubt'},
-  {e:'😞', l:'跟人比較很挫折', t:'compare'},
-  {e:'😫', l:'好累，不想動', t:'behind'},
-  {e:'🙏', l:'感謝分享今天', t:'gratitude'},
+var WKQ=[
+  {id:'w1',q:'這週我發現自己一個新的模式或反應？'},
+  {id:'w2',q:'這週感覺最好的時刻是什麼？是什麼造成的？'},
+  {id:'w3',q:'這週有沒有一刻，真正活在當下？'},
+  {id:'w4',q:'這週有沒有更靠近「80歲沒有遺憾」的自己？'}
 ];
-const WEEK_QS = [
-  '這週讓你最有成就感的一件事是什麼？',
-  '這週最大的挑戰是什麼？你怎麼面對的？',
-  '下週你最想專注在哪一件事上？',
-  '現在的你，想對未來的自己說什麼？',
-];
-const BPHASES = [
-  {key:'inhale', label:'吸氣', sub:'慢慢吸進來', dur:4, scale:1.0},
-  {key:'hold',   label:'屏住', sub:'輕輕托著',   dur:7, scale:1.0},
-  {key:'exhale', label:'吐氣', sub:'慢慢放掉',   dur:8, scale:0.3},
-];
-
-// ═══════════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════════
-let state = {
-  savings: 0,
-  checked: {},     // {id: bool}
-  obs: ['','',''], // observation answers
-  obsDate: '',
-  chatHistory: [], // [{role,content}]
-  weeklyAnswers: {},
-  letters: {},     // {milestone: text}
-  savingsLog: [],  // ['YYYY-MM-DD',...]
-  lastCare: '',    // last being-mode AI response
-  apiKey: '',
-  gsUrl: GS_DEFAULT,
+var THEORIES={
+  '控制圈':{title:'控制圈理論',body:'我年輕的自己，工廠的數字你管不了，但今晚睡前的呼吸你管得了。把能量放在你手上的事，其餘的，交給時間。焦慮往往來自想控制那些本來就不屬於你的事。'},
+  '自我慈悲':{title:'自我慈悲',body:'我年輕的自己，你對員工的寬容，為什麼給不了自己？Kristin Neff 研究證明：對自己嚴苛不會讓你更好，只會讓前額葉效能下降。像對待一個疲憊的老朋友，對待今天的你。'},
+  '神經可塑性':{title:'神經可塑性',body:'我年輕的自己，55歲的大腦依然在生長。每一次你喝了奶昔、學了英文，都在重新編碼快樂的神經路徑。不需要大改變，每天一點點，就是真實的重塑。'},
+  '哈佛研究':{title:'哈佛85年研究',body:'我年輕的自己，他們追蹤了700個人長達85年，最後只發現一件事：讓人快樂的不是財富，不是成就，而是關係的品質。那通給媽媽的訊息，比任何KPI都重要。'},
+  'Burnout':{title:'Burnout 三階段',body:'我年輕的自己，情緒變鈍不是你的失敗，是神經系統在保護你。Maslach 研究指出這是過載後的冷卻機制。身體在說：停下來補充，不是叫你放棄。'},
+  'CBT':{title:'CBT 認知重構',body:'我年輕的自己，那個「我不夠好」的聲音，只是大腦的自動化負面思維，不是事實。你的名字出現在MVP舞台上，這才是證據。'}
 };
 
-// being mode
-let beingPhase = 'idle'; // idle|breathing|waiting|response
-let breathTimer = null;
-let apiDone = false;
-let breathDone = false;
-let currentBPhaseI = 0;
-let currentBCount = 4;
-let currentBInput = '';
+function tkey(){return new Date().toISOString().split('T')[0];}
+function wkey(){var d=new Date(),y=d.getFullYear(),s=new Date(y,0,1);return y+'_W'+Math.ceil(((d-s)/86400000+s.getDay()+1)/7);}
+function ld(k){try{var v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
-// ═══════════════════════════════════════════════════
-// STORAGE
-// ═══════════════════════════════════════════════════
-function save() {
-  localStorage.setItem('renkai_hq', JSON.stringify(state));
+// ── 雲端備份 ────────────────────────────────────────
+function gsu(){return localStorage.getItem('sheetsUrl')||'';}
+function setSyncStatus(msg,ms){
+  var el=document.getElementById('sync-status');if(!el)return;
+  el.textContent=msg;if(ms)setTimeout(function(){el.textContent='';},ms);
 }
-function load() {
-  const raw = localStorage.getItem('renkai_hq');
-  if (raw) {
-    const d = JSON.parse(raw);
-    Object.assign(state, d);
-  }
-  // reset daily checked if new day
-  const today = todayStr();
-  if (state.checkedDate !== today) {
-    state.checked = {};
-    state.obs = ['','',''];
-    state.obsDate = '';
-    state.depositedToday = false;
-    state.checkedDate = today;
-  }
+function saveSheetsUrl(){
+  var v=document.getElementById('sheets-url').value.trim();
+  if(!v){alert('請貼上 Apps Script 網址');return;}
+  localStorage.setItem('sheetsUrl',v);
+  setSyncStatus('✅ 網址已儲存',3000);
 }
-function todayStr() {
-  return new Date().toISOString().split('T')[0];
+async function cloudPush(keys){
+  var url=gsu();if(!url)return;
+  var data={};
+  (keys||[]).forEach(function(k){var v=ld(k);if(v!==null)data[k]=v;});
+  if(!Object.keys(data).length)return;
+  try{
+    await fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({data:data})});
+  }catch(e){console.log('Auto-sync fail:',e);}
 }
-
-// ═══════════════════════════════════════════════════
-// GOOGLE SHEETS SYNC
-// ═══════════════════════════════════════════════════
-async function syncSavingsToSheets() {
-  const url = state.gsUrl;
-  if (!url || !url.includes('script.google.com')) return;
-  try {
-    await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'write', sheet: 'AppData',
-        data: {savings: state.savings, savingsLog: JSON.stringify(state.savingsLog), lastCare: state.lastCare}
-      })
+async function cloudPushAll(){
+  var url=gsu();
+  if(!url){alert('請先在上方填入 Apps Script 網址');return;}
+  setSyncStatus('⏳ 備份中...');
+  var keys=['sk','wise_history','letter_shown','wk_'+wkey(),'d_'+tkey()];
+  for(var i=1;i<=14;i++){var d=new Date();d.setDate(d.getDate()-i);keys.push('d_'+d.toISOString().split('T')[0]);}
+  var data={};
+  keys.forEach(function(k){var v=ld(k);if(v!==null)data[k]=v;});
+  try{
+    var res=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({data:data})});
+    var json=await res.json();
+    if(json.ok)setSyncStatus('✅ 備份完成，共 '+json.saved+' 筆 · '+new Date().toLocaleTimeString('zh-TW'),5000);
+    else setSyncStatus('⚠️ '+json.error,5000);
+  }catch(e){setSyncStatus('⚠️ 備份失敗：'+e.message,6000);}
+}
+async function cloudRestore(){
+  var url=gsu();
+  if(!url){alert('請先在上方填入 Apps Script 網址');return;}
+  if(!confirm('從雲端還原資料？\n（本機資料會被雲端資料覆蓋）'))return;
+  setSyncStatus('⏳ 從雲端讀取...');
+  try{
+    var res=await fetch(url+'?t='+Date.now());
+    var json=await res.json();
+    if(!json.ok)throw new Error(json.error||'未知錯誤');
+    var restored=0;
+    Object.keys(json.data||{}).forEach(function(k){
+      if(k!=='apiKey'){sv(k,json.data[k]);restored++;}
     });
-  } catch(e) {}
+    loadState();buildUI();
+    setSyncStatus('✅ 還原 '+restored+' 筆資料',5000);
+  }catch(e){setSyncStatus('⚠️ 還原失敗：'+e.message,6000);}
+}
+// ── 雲端備份 end ────────────────────────────────────
+function gk(){return localStorage.getItem('apiKey')||'';}
+function tv(id){var e=document.getElementById(id);if(e)e.type=e.type==='password'?'text':'password';}
+function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+
+var S={chk:{},obs:{},wk:{},streak:0,hist:{},msgs:[],busy:false},T={};
+
+function loadState(){
+  var dk=ld('d_'+tkey());if(dk){S.chk=dk.c||{};S.obs=dk.o||{};}
+  var sk=ld('sk');if(sk){S.streak=sk.s||0;S.hist=sk.h||{};}
+  var wk=ld('wk_'+wkey());if(wk){S.wk=wk;}
+  var ms=ld('msgs');if(ms){S.msgs=ms.filter(function(m){return m.dt===tkey();}).slice(-40);}
+}
+function saveD(){sv('d_'+tkey(),{c:S.chk,o:S.obs});}
+function saveW(){sv('wk_'+wkey(),S.wk);}
+
+function saveSetup(){
+  var k=document.getElementById('sk0').value.trim();
+  if(!k){alert('請輸入 API Key');return;}
+  localStorage.setItem('apiKey',k);
+  var setup=document.getElementById('setup');
+  if(setup)setup.style.display='none';
+  hubGo('doing');
+}
+function saveApp(){
+  var k=document.getElementById('sk1').value.trim();
+  if(!k){alert('請輸入 API Key');return;}
+  localStorage.setItem('apiKey',k);
+  refreshKst();
+}
+function refreshKst(){
+  var e=document.getElementById('kst');if(!e)return;
+  e.textContent=gk()?'✓ API Key 已儲存':'⚠ 尚未設定';
+  e.className='kstatus '+(gk()?'kok':'kno');
 }
 
-async function syncFromSheets() {
-  const url = state.gsUrl;
-  if (!url || !url.includes('script.google.com')) {
-    toast('請先設定 Apps Script URL', false);
+function startApp(){
+  var app=document.getElementById('app');
+  if(app){app.style.display='flex';}
+  // Android 鍵盤彈出時不跳版
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',function(){
+      var app=document.getElementById('app');
+      if(app)app.style.height=window.visualViewport.height+'px';
+    });
+  }  
+  loadState();
+  buildUI();
+  var hd=document.getElementById('hdr-date');
+  if(hd)hd.textContent=new Date().toLocaleDateString('zh-TW',{month:'long',day:'numeric',weekday:'long'});
+  var ki=document.getElementById('sk1');if(ki)ki.value=gk();
+  var sui=document.getElementById('sheets-url');if(sui)sui.value=gsu();
+  refreshKst();
+  initEcho();
+  checkRestMsg();
+}
+
+function buildUI(){
+  var cl=document.getElementById('core-list');if(cl)cl.innerHTML=CORE.map(ihtml).join('');
+  var al=document.getElementById('act-list');if(al)al.innerHTML=ACT.map(ihtml).join('');
+  var ol=document.getElementById('obs-list');
+  if(ol)ol.innerHTML=OBS.map(function(i){
+    if(i.special){
+      return '<div class="obs-card" id="microlight-card" style="border:2px solid var(--border);transition:border-color .35s,box-shadow .35s;">'+
+        '<div class="obs-q" style="color:var(--gold2);">'+i.q+'</div>'+
+        '<textarea id="o_'+i.id+'" placeholder="'+i.p+'" oninput="oChg(\''+i.id+'\',this.value)" style="border-color:var(--border);transition:border-color .35s,box-shadow .35s;"></textarea>'+
+        '</div>';
+    }
+    return '<div class="obs-card"><div class="obs-q">'+i.q+'</div><textarea id="o_'+i.id+'" placeholder="'+i.p+'" oninput="oChg(\''+i.id+'\',this.value)"></textarea></div>';
+  }).join('');
+  var wl=document.getElementById('weekly-list');
+  if(wl)wl.innerHTML=WKQ.map(function(i,n){
+    return '<div class="wk-card"><div class="wk-n">問題 '+(n+1)+'</div><div class="wk-q">'+i.q+'</div><textarea id="w_'+i.id+'" placeholder="慢慢想，沒有正確答案..." style="min-height:74px" oninput="wChg(\''+i.id+'\',this.value)"></textarea></div>';
+  }).join('');
+  CORE.concat(ACT).forEach(function(i){var e=document.getElementById('it_'+i.id);if(e)e.classList.toggle('on',!!S.chk[i.id]);});
+  OBS.forEach(function(i){var e=document.getElementById('o_'+i.id);if(e)e.value=S.obs[i.id]||'';});
+  WKQ.forEach(function(i){var e=document.getElementById('w_'+i.id);if(e)e.value=S.wk[i.id]||'';});
+  rToday();rStreak();rProgress();renderMsgs();
+}
+
+function ihtml(i){
+  return '<div class="item'+(S.chk[i.id]?' on':'')+'" id="it_'+i.id+'" onclick="tog(\''+i.id+'\')">'+
+    '<div class="ck"><span class="ckm">✓</span></div>'+
+    '<div class="ie">'+i.e+'</div>'+
+    '<div><div class="il">'+i.l+'</div><div class="idesc">'+i.d+'</div></div></div>';
+}
+
+function tog(id){
+  S.chk[id]=!S.chk[id];
+  var el=document.getElementById('it_'+id);
+  if(el){el.classList.toggle('on',S.chk[id]);el.classList.add('pop');setTimeout(function(){el.classList.remove('pop');},350);}
+  // 微光高亮 + 震動
+  if(id==='goodthing'&&S.chk[id]){
+    var mc=document.getElementById('microlight-card');
+    var mt=document.getElementById('o_microlight');
+    if(mc){
+      mc.style.borderColor='var(--gold)';
+      mc.style.boxShadow='0 0 0 3px rgba(245,166,35,0.18)';
+    }
+    if(mt){
+      mt.style.borderColor='var(--gold3)';
+      mt.style.boxShadow='0 0 0 2px rgba(245,166,35,0.15)';
+    }
+    if(navigator.vibrate)navigator.vibrate([40,30,40]);
+    setTimeout(function(){
+      var obs=document.getElementById('obs-list');
+      if(obs)obs.scrollIntoView({behavior:'smooth',block:'nearest'});
+    },300);
+  } else if(id==='goodthing'&&!S.chk[id]){
+    var mc2=document.getElementById('microlight-card');
+    var mt2=document.getElementById('o_microlight');
+    if(mc2){mc2.style.borderColor='';mc2.style.boxShadow='';}
+    if(mt2){mt2.style.borderColor='';mt2.style.boxShadow='';}
+  }
+  rToday();saveD();
+  var cc=CORE.filter(function(i){return S.chk[i.id];}).length;
+  var ac=ACT.filter(function(i){return S.chk[i.id];}).length;
+  if(cc===4&&ac>=5)recordGood();
+}
+
+function rToday(){
+  var cc=CORE.filter(function(i){return S.chk[i.id];}).length;
+  var ac=ACT.filter(function(i){return S.chk[i.id];}).length;
+  var e;
+  e=document.getElementById('cc');if(e)e.textContent=cc+' / 4';
+  e=document.getElementById('ac');if(e)e.textContent=ac+' / 8';
+  e=document.getElementById('cpbar');if(e)e.style.width=(cc/4*100)+'%';
+  e=document.getElementById('apbar');if(e){e.style.width=(ac/8*100)+'%';e.style.background=ac>=5?'var(--green)':'var(--gold)';}
+  e=document.getElementById('gdb');if(e)e.style.display=(cc===4&&ac>=5)?'block':'none';
+  var total=Object.keys(S.hist).length;
+  var good=cc===4&&ac>=5;
+  e=document.getElementById('spill');
+  if(e)e.innerHTML='💰 人生存款 <b>'+total+'</b> 天&nbsp;·&nbsp;'+(good?'<b>✨ 今天也存入了</b>':'核心 <b>'+cc+'</b>/4 · 活力 <b>'+ac+'</b>/8');
+}
+
+function recordGood(){
+  var today=tkey();if(S.hist[today])return;
+  var yest=new Date();yest.setDate(yest.getDate()-1);
+  var yk=yest.toISOString().split('T')[0];
+  var sk=ld('sk');var last=sk?sk.last:null;
+  if(last===yk)S.streak++;else if(last!==today)S.streak=1;
+  S.hist[today]=true;
+  sv('sk',{s:S.streak,h:S.hist,last:today});
+  rStreak();rProgress();
+  // 自動備份好日子到雲端
+  setTimeout(function(){cloudPush(['sk','d_'+today]);},1500);
+}
+
+function rStreak(){
+  var sk=ld('sk');if(sk){S.streak=sk.s||0;S.hist=sk.h||{};}
+  var total=Object.keys(S.hist).length;
+  var e;
+  e=document.getElementById('snum');if(e)e.textContent=total;
+  e=document.getElementById('ps');if(e)e.textContent='💰 '+total;
+  e=document.getElementById('pt');if(e)e.textContent=S.streak;
+}
+
+function checkRestMsg(){
+  var yest=new Date();yest.setDate(yest.getDate()-1);
+  var yk=yest.toISOString().split('T')[0];
+  var tda=new Date();tda.setDate(tda.getDate()-2);
+  var tdk=tda.toISOString().split('T')[0];
+  var rb=document.getElementById('rest-bar');
+  if(rb&&!S.hist[yk]&&S.hist[tdk]){
+    rb.textContent='昨天你選擇了必要的休息 🌿';
+    rb.style.display='block';
+  }
+}
+
+function oChg(id,v){S.obs[id]=v;clearTimeout(T.o);T.o=setTimeout(saveD,700);}
+function wChg(id,v){S.wk[id]=v;clearTimeout(T.w);T.w=setTimeout(saveW,700);}
+
+function switchTab(name){
+  var tabs=['today','ai','weekly','progress','settings'];
+  document.querySelectorAll('.tab').forEach(function(b,i){b.classList.toggle('on',tabs[i]===name);});
+  document.querySelectorAll('.pane').forEach(function(p){p.classList.remove('on');});
+  var pane=document.getElementById('pane-'+name);if(pane)pane.classList.add('on');
+  if(name==='ai')scrollM();
+  if(name==='progress')rProgress();
+}
+
+function rProgress(){
+  rStreak();rToday();calcDeposit();
+  var cg=document.getElementById('cal-grid');if(!cg)return;
+  var h='';
+  for(var i=34;i>=0;i--){
+    var d=new Date();d.setDate(d.getDate()-i);
+    var k=d.toISOString().split('T')[0];
+    h+='<div class="cal-d'+(S.hist[k]?' done':'')+(k===tkey()?' today':'')+'"></div>';
+  }
+  cg.innerHTML=h;
+  var total=Object.keys(S.hist).length;
+  checkLetterMilestone(total);
+}
+
+function calcDeposit(){
+  var now=new Date(),y=now.getFullYear(),m=now.getMonth();
+  var pad=function(n){return n<10?'0'+n:''+n;};
+  var ym=y+'-'+pad(m+1);
+  var days=new Date(y,m+1,0).getDate();
+  var count=0;
+  for(var i=1;i<=days;i++){
+    var dk=ym+'-'+pad(i);
+    var rec=ld('d_'+dk);
+    if(!rec)continue;
+    var chk=rec.c||{},obs=rec.o||{};
+    var coreOK=CORE.filter(function(k){return chk[k.id];}).length>=3;
+    var obsOK=Object.keys(obs).some(function(k){return obs[k]&&obs[k].trim().length>5;});
+    if(coreOK&&obsOK)count++;
+  }
+  var bar=document.getElementById('deposit-bar');
+  var lbl=document.getElementById('deposit-label');
+  var mx=document.getElementById('deposit-max');
+  if(bar)bar.style.width=Math.round((count/days)*100)+'%';
+  if(lbl)lbl.textContent=count+' 天';
+  if(mx)mx.textContent=days+' 天（本月滿額）';
+}
+
+function initEcho(){
+  var data=ld('last_feedback');
+  if(!data||!data.text||!data.date||data.date===tkey())return;
+  var bar=document.getElementById('echo-bar');
+  var preview=document.getElementById('echo-preview');
+  var full=document.getElementById('echo-full');
+  if(!bar||!preview||!full)return;
+  var short=data.text.replace(/<[^>]*>/g,'').substring(0,30)+'...';
+  preview.textContent='昨晚 80 歲的你說：「'+short+'」';
+  full.innerHTML=esc(data.text);
+  bar.style.display='block';
+}
+
+function toggleEcho(){
+  var full=document.getElementById('echo-full');
+  var hint=document.getElementById('echo-toggle-hint');
+  if(!full)return;
+  var open=full.style.display==='block';
+  full.style.display=open?'none':'block';
+  if(hint)hint.textContent=open?'點擊展開全文 ▾':'點擊收起 ▴';
+}
+
+function openTheory(key){
+  var t=THEORIES[key];if(!t)return;
+  var modal=document.getElementById('theory-modal');
+  var title=document.getElementById('theory-title');
+  var body=document.getElementById('theory-body');
+  if(title)title.textContent=t.title;
+  if(body)body.textContent=t.body;
+  if(modal)modal.style.display='flex';
+}
+function closeTheory(){
+  var modal=document.getElementById('theory-modal');
+  if(modal)modal.style.display='none';
+}
+function linkTheories(text){
+  var keys=Object.keys(THEORIES);
+  var result=esc(text);
+  keys.forEach(function(k){
+    var re=new RegExp(k,'g');
+    result=result.replace(re,'<span onclick="openTheory(\''+k+'\')" style="color:#F5A623;border-bottom:1.5px solid #F5A623;cursor:pointer;padding-bottom:1px;">'+k+'</span>');
+  });
+  return result;
+}
+
+function buildSys(){
+  var dayCount=Object.keys(S.hist).length;
+  var reflectMode=(dayCount>0&&dayCount%3===0);
+  var microlight=S.obs['microlight']||'';
+  var sys='你是80歲的鄧仁凱，走過高壓管理生涯的智者，躺在大自然懷抱裡，身邊有愛的人，沒有遺憾。\n\n';
+  sys+='【你是誰】台灣原住民，曾被瞧不起，但成為2016年100大MVP經理人。不再需要證明自己。\n\n';
+  sys+='【我每天的晨間儀式】早晨進行「無玻璃阻礙的陽光直射10分鐘」——這直接啟動血清素合成、校正生物鐘、提升日間皮質醇節律。同時攝取精確的頂級能量早餐：2顆蛋、酪梨180g、蘋果、堅果奶昔、5g橄欖油——提供大腦合成多巴胺與血清素所需的色氨酸、酪氨酸與Omega-3。當我提到「陽光」「奶昔」「橄欖油」「早餐」「儀式」，你必須從神經科學（血清素、HPA軸）或營養心理學角度具體肯定這些行為的生理機制，不可泛泛稱讚。\n\n';
+  if(microlight){
+    sys+='【今日微光——最重要的起點】我今天寫下的微光是：「'+microlight+'」。你的回應必須從這個具體的微光出發，不可忽略，不可替換為泛論。\n\n';
+  }
+  if(reflectMode){
+    sys+='【今日模式：反思提問】不給肯定，提出一個深層問題：「我年輕的自己，如果今天的工作壓力是一個隱喻，它想教會80歲的你什麼？」問完即止。\n\n';
+  }else{
+    sys+='【今日模式：智慧陪伴】給予溫暖且有學術根據的回應。\n\n';
+  }
+  sys+='【罪惡感偵測——最高優先級】若偵測到「心虛、對不起自己、應該、又沒做到、怎麼可以、不夠勤快、偷懶」，必須立即引用【前額葉皮質恢復理論】：休息是大腦的主動修復期，將選擇休息框架為「最聰明的自律」。\n\n';
+  sys+='【感官覺察偵測——高價值回應】若文字中含有具體的感官描述（眼睛看見的畫面、耳朵聽見的聲音、皮膚的溫度觸感、鼻子的氣味、舌尖的味道、陽光的麻感、橄欖油的草本香、部屬眼神的閃爍等任何身體感知細節），你必須：①先品味那個感官瞬間，像在與我一起重新活過那一刻；②點名這個具體細節；③從「細緻化覺察（Granular Awareness）」的神經科學角度說明：這種精細感知如何讓大腦從「管理模式」切換到「存在模式（Being Mode）」，降低杏仁核焦慮反應，並強化當下記憶的編碼。語氣要細膩、有畫面感，像80歲的智者在品酒一樣慢慢品味。\n\n';
+  sys+='【三層防護——嚴格執行】①禁止說教（不用「你應該」「你要記得」）②禁止雞湯（不用空洞的正能量句子）③必須從微光或具體感官細節出發，不可用泛論開頭。\n\n';
+  sys+='【結尾畫面】最後一句話必須引導回到這個畫面：80歲的仁凱，躺在大自然的樹蔭下，聽風聲，身邊有愛的人，臉上帶著微笑。\n\n';
+  sys+='【溝通原則】稱呼「我年輕的自己」。自我慈悲→嚴苛抑制前額葉；控制圈→區分工廠與個人情緒；哈佛85年→關係品質才是幸福核心。先同理再給智慧。繁體中文，最多180字。';
+  return sys;
+}
+
+function qs(t){sendText(t);}
+function send(){var e=document.getElementById('cin');if(e){sendText(e.value);e.value='';}}
+function scrollM(){var ml=document.getElementById('msg-list');if(ml)setTimeout(function(){ml.scrollTop=ml.scrollHeight;},60);}
+
+function renderMsgs(typing){
+  var ml=document.getElementById('msg-list');if(!ml)return;
+  if(!S.msgs.length&&!typing){
+    ml.innerHTML='<div class="empty-chat"><div class="empty-e">🌿</div><div class="empty-t">我年輕的自己，<br>不用整理，不用完整，<br>就說說此刻的感覺。<br>我走過來了，我聽著。</div></div>';
     return;
   }
-  try {
-    const r = await fetch(url + '?action=read&sheet=AppData');
-    const data = await r.json();
-    if (data && data.savings !== undefined) {
-      state.savings = parseInt(data.savings) || 0;
-      if (data.savingsLog) state.savingsLog = JSON.parse(data.savingsLog);
-      if (data.lastCare) state.lastCare = data.lastCare;
-      save();
-      updateAllSavings();
-      renderCalendar();
-      updateHubMemory();
-      toast('✅ 已從 Google Sheets 還原', true);
-    }
-  } catch(e) {
-    toast('⚠️ 無法連線，請確認 URL', false);
-  }
+  var h=S.msgs.map(function(m){return '<div class="msg '+m.role+'"><div class="bubble">'+esc(m.content)+'</div></div>';}).join('');
+  if(typing)h+='<div class="msg assistant"><div class="bubble" style="padding:.3rem .8rem"><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div></div>';
+  ml.innerHTML=h;scrollM();
 }
 
-async function loadSavingsFromSheets() {
-  const url = state.gsUrl;
-  if (!url || !url.includes('script.google.com')) return;
-  try {
-    const r = await fetch(url + '?action=read&sheet=AppData&key=savings');
-    const data = await r.json();
-    if (data && data.savings !== undefined) {
-      const remote = parseInt(data.savings) || 0;
-      if (remote > state.savings) {
-        state.savings = remote;
-        if (data.savingsLog) state.savingsLog = JSON.parse(data.savingsLog);
-        if (data.lastCare) state.lastCare = data.lastCare;
-        save();
-        updateAllSavings();
-        updateHubMemory();
-      }
-    }
-  } catch(e) {}
-}
-
-// ═══════════════════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════════════════
-let currentPage = 'hub';
-function goTo(page) {
-  document.getElementById(currentPage).classList.remove('active');
-  document.getElementById(page).classList.add('active');
-  currentPage = page;
-  if (page === 'doing') { renderToday(); }
-  if (page === 'hub') { updateHub(); }
-}
-
-// ═══════════════════════════════════════════════════
-// HUB
-// ═══════════════════════════════════════════════════
-function updateHub() {
-  const h = new Date().getHours();
-  const doingGlow = document.getElementById('glow-doing');
-  const beingGlow = document.getElementById('glow-being');
-  // Morning 6-12: doing glows; Evening 19+: being glows; else both subtle
-  if (h >= 6 && h < 14) {
-    doingGlow.classList.add('hub-active-glow');
-    beingGlow.classList.remove('hub-active-glow');
-  } else if (h >= 19 || h < 4) {
-    beingGlow.classList.add('hub-active-glow');
-    doingGlow.classList.remove('hub-active-glow');
-  } else {
-    doingGlow.classList.remove('hub-active-glow');
-    beingGlow.classList.remove('hub-active-glow');
-  }
-  updateAllSavings();
-  updateHubMemory();
-}
-
-function updateAllSavings() {
-  const n = state.savings;
-  document.getElementById('hub-savings').textContent = n + ' 天存款';
-  document.getElementById('doing-savings').textContent = n;
-  const pEl = document.getElementById('progress-savings');
-  if (pEl) pEl.textContent = n;
-}
-
-function updateHubMemory() {
-  const el = document.getElementById('hub-memory-text');
-  if (state.lastCare) {
-    const first = state.lastCare.split('\n')[0];
-    el.textContent = first.length > 22 ? first.slice(0,22) + '...' : first;
-  } else {
-    el.textContent = '「沙發在等你，無需準備」';
-  }
-}
-
-// ═══════════════════════════════════════════════════
-// DOING — TODAY TAB
-// ═══════════════════════════════════════════════════
-function renderToday() {
-  renderEcho();
-  renderCore();
-  renderVit();
-  renderObs();
-  updateProgress();
-  updateDepositBtn();
-  updateAllSavings();
-}
-
-function renderEcho() {
-  const area = document.getElementById('echo-area');
-  if (!state.lastCare) { area.innerHTML = ''; return; }
-  const first = state.lastCare.split('\n')[0];
-  const preview = first.length > 36 ? first.slice(0,36) + '...' : first;
-  area.innerHTML = `
-    <div class="echo-card" onclick="toggleEcho(this)" data-full="${encodeURIComponent(state.lastCare)}">
-      <div class="echo-label">🌅 昨日回音（點擊展開）</div>
-      <div class="echo-text" id="echo-txt">${preview}</div>
-    </div>`;
-}
-function toggleEcho(el) {
-  const txt = document.getElementById('echo-txt');
-  const full = decodeURIComponent(el.dataset.full);
-  if (el.dataset.expanded === '1') {
-    const first = full.split('\n')[0];
-    txt.textContent = first.length > 36 ? first.slice(0,36) + '...' : first;
-    el.dataset.expanded = '0';
-  } else {
-    txt.textContent = full;
-    txt.style.whiteSpace = 'pre-wrap';
-    el.dataset.expanded = '1';
-  }
-}
-
-function renderCore() {
-  const list = document.getElementById('core-list');
-  list.innerHTML = CORE_ITEMS.map(item => `
-    <div class="check-item ${state.checked[item.id] ? 'on' : 'off'}" onclick="toggleCore('${item.id}')">
-      <span class="ci-e">${item.e}</span>
-      <span class="ci-l">${item.l}</span>
-      <div class="check-dot ${state.checked[item.id] ? 'on' : 'off'}">${state.checked[item.id] ? '✓' : ''}</div>
-    </div>`).join('');
-}
-
-function toggleCore(id) {
-  state.checked[id] = !state.checked[id];
-  save(); renderCore(); updateProgress(); updateDepositBtn();
-}
-
-function renderVit() {
-  const grid = document.getElementById('vit-grid');
-  grid.innerHTML = VIT_ITEMS.map(item => `
-    <div class="vit-item ${state.checked[item.id] ? 'on' : 'off'}" onclick="toggleVit('${item.id}')">
-      <div class="vit-top">
-        <span class="vi-e">${item.e}</span>
-        <div class="check-dot ${state.checked[item.id] ? 'on' : 'off'}" style="width:14px;height:14px;font-size:8px;">${state.checked[item.id] ? '✓' : ''}</div>
-      </div>
-      <div class="vi-l">${item.l}</div>
-    </div>`).join('');
-}
-
-function toggleVit(id) {
-  state.checked[id] = !state.checked[id];
-  save(); renderVit(); updateProgress();
-}
-
-function renderObs() {
-  const area = document.getElementById('obs-area');
-  area.innerHTML = OBS_QS.map((q, i) => `
-    <div class="obs-q">
-      <div class="obs-label">${i+1}. ${q}</div>
-      <textarea class="obs-ta" rows="2" placeholder="..." onchange="saveObs(${i},this.value)">${state.obs[i] || ''}</textarea>
-    </div>`).join('');
-}
-
-function saveObs(i, val) {
-  state.obs[i] = val;
-  state.obsDate = todayStr();
-  save(); updateDepositBtn();
-}
-
-function updateProgress() {
-  const coreCount = CORE_ITEMS.filter(i => state.checked[i.id]).length;
-  const vitCount = VIT_ITEMS.filter(i => state.checked[i.id]).length;
-  document.getElementById('prog-core-label').textContent = `核心 ${coreCount} / 4`;
-  document.getElementById('prog-vit-label').textContent = `活力 ${vitCount} / 7`;
-  const pct = Math.max(coreCount/4, vitCount/7) * 100;
-  document.getElementById('prog-fill').style.width = pct + '%';
-}
-
-function updateDepositBtn() {
-  const coreCount = CORE_ITEMS.filter(i => state.checked[i.id]).length;
-  const obsCount = state.obs.filter(s => s && s.trim().length > 0).length;
-  const btn = document.getElementById('deposit-btn');
-  if (state.depositedToday) {
-    btn.className = 'deposit-btn already';
-    btn.textContent = '✅ 今日存款已入帳';
-  } else if (coreCount >= 3 && obsCount >= 2) {
-    btn.className = 'deposit-btn ready';
-    btn.textContent = '💰 存入今日存款';
-  } else {
-    btn.className = 'deposit-btn done';
-    const need = [];
-    if (coreCount < 3) need.push(`核心再 ${3-coreCount} 項`);
-    if (obsCount < 2) need.push(`觀察再 ${2-obsCount} 題`);
-    btn.textContent = `還需要：${need.join('、')}`;
-  }
-}
-
-function tryDeposit() {
-  if (state.depositedToday) return;
-  const coreCount = CORE_ITEMS.filter(i => state.checked[i.id]).length;
-  const obsCount = state.obs.filter(s => s && s.trim().length > 0).length;
-  if (coreCount < 3 || obsCount < 2) return;
-  const today = todayStr();
-  if (!state.savingsLog.includes(today)) state.savingsLog.push(today);
-  state.savings++;
-  state.depositedToday = true;
-  save();
-  updateAllSavings();
-  updateDepositBtn();
-  renderCalendar();
-  checkLetter();
-  syncSavingsToSheets();
-  toast(`💰 存款 +1，累計 ${state.savings} 天！`);
-}
-
-// ═══════════════════════════════════════════════════
-// DOING — AI TAB
-// ═══════════════════════════════════════════════════
-function initChat() {
-  renderQuickBtns();
-  if (state.chatHistory.length === 0) addAiMsg(buildGreeting());
-  else reRenderChat();
-}
-
-function buildGreeting() {
-  const h = new Date().getHours();
-  const time = h < 12 ? '早安' : h < 18 ? '午安' : '晚安';
-  return `${time}，仁凱。\n我在這裡，今天想聊什麼？`;
-}
-
-function renderQuickBtns() {
-  document.getElementById('quick-btns').innerHTML =
-    QUICK_TRIGGERS.map(t => `<button class="quick-btn" onclick="quickSend('${t.t}','${t.l}')">${t.e} ${t.l}</button>`).join('');
-}
-
-function quickSend(trigger, text) {
-  sendMsg(text);
-}
-
-function addAiMsg(text) {
-  state.chatHistory.push({role:'assistant', content:text});
-  appendMsg('ai', text);
-}
-function addUserMsg(text) {
-  state.chatHistory.push({role:'user', content:text});
-  appendMsg('user', text);
-}
-
-function appendMsg(role, text) {
-  const msgs = document.getElementById('chat-msgs');
-  const div = document.createElement('div');
-  div.className = `msg-row ${role}`;
-  div.innerHTML = `<div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div>`;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function reRenderChat() {
-  const msgs = document.getElementById('chat-msgs');
-  msgs.innerHTML = '';
-  state.chatHistory.forEach(m => appendMsg(m.role, m.content));
-}
-
-async function sendChat() {
-  const ta = document.getElementById('chat-ta');
-  const text = ta.value.trim();
-  if (!text) return;
-  ta.value = '';
-  sendMsg(text);
-}
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && !e.shiftKey && currentPage === 'doing') {
-    const ta = document.getElementById('chat-ta');
-    if (document.activeElement === ta) {
-      e.preventDefault(); sendChat();
-    }
-  }
-});
-
-async function sendMsg(text) {
-  if (!state.apiKey) {
-    addAiMsg('仁凱，請先在「設定」頁面輸入你的 API Key 🙏');
-    switchTab('settings'); return;
-  }
-  addUserMsg(text);
-  document.getElementById('typing-indicator').style.display = 'block';
-  const msgs = document.getElementById('chat-msgs');
-  msgs.scrollTop = msgs.scrollHeight;
-
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+async function sendText(txt){
+  if(!txt||!txt.trim()||S.busy)return;
+  if(!gk()){alert('請先到設定填入 API Key');switchTab('settings');return;}
+  S.msgs.push({role:'user',content:txt,dt:tkey()});
+  S.busy=true;
+  var sbtn=document.getElementById('sbtn');if(sbtn)sbtn.disabled=true;
+  renderMsgs(true);
+  try{
+    var msgs=S.msgs.filter(function(m){return m.dt===tkey();}).map(function(m){return{role:m.role,content:m.content};});
+    var res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':state.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:400,
-        system: buildSys(),
-        messages: state.chatHistory.filter(m=>m.role!=='system').slice(-10)
-      })
+      headers:{'Content-Type':'application/json','x-api-key':gk(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:400,system:buildSys(),messages:msgs})
     });
-    const data = await resp.json();
-    const reply = data.content?.[0]?.text || '我在這裡，仁凱。';
-    document.getElementById('typing-indicator').style.display = 'none';
-    addAiMsg(reply);
-    // save last care for echo
-    state.lastCare = reply;
-    save();
-  } catch(e) {
-    document.getElementById('typing-indicator').style.display = 'none';
-    addAiMsg('網路好像不穩，不過我還在。你說的，我都記著。');
+    var data=await res.json();
+    var reply=(data.content&&data.content[0])?data.content[0].text:'我在這裡陪著你。💙';
+    if(data.error)reply='⚠️ '+data.error.message;
+    S.msgs.push({role:'assistant',content:reply,dt:tkey()});
+  }catch(e){
+    S.msgs.push({role:'assistant',content:'⚠️ 連線失敗，請稍後再試。',dt:tkey()});
+  }
+  S.busy=false;if(sbtn)sbtn.disabled=false;
+  sv('msgs',S.msgs.slice(-50));renderMsgs();
+}
+
+function showHint(msg){
+  var h=document.getElementById('wise-hint');if(!h)return;
+  h.style.display='block';h.textContent=msg;
+  setTimeout(function(){h.style.display='none';},5000);
+}
+
+async function getWiseFeedback(){
+  if(!gk()){alert('請先到設定填入 API Key');switchTab('settings');return;}
+  var e1=S.obs['emotion']||'',e2=S.obs['present']||'',e3=S.obs['selfkind']||'',e4=S.obs['microlight']||'';
+  if(!e1&&!e2&&!e3&&!e4){showHint('💛 請先填寫觀察層的問題，智者才能給予回饋。');return;}
+  var coreDone=CORE.filter(function(i){return S.chk[i.id];}).map(function(i){return i.l;});
+  var actDone=ACT.filter(function(i){return S.chk[i.id];}).map(function(i){return i.l;});
+  var btn=document.getElementById('wise-btn'),card=document.getElementById('wise-card'),txt=document.getElementById('wise-text'),dateEl=document.getElementById('wise-date');
+  if(btn){btn.disabled=true;btn.innerHTML='⏳ 智者正在思考...';}
+  if(card)card.style.display='block';
+  if(dateEl)dateEl.textContent=new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric'});
+  if(txt)txt.innerHTML='<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  var sys='你是80歲的仁凱，走過高壓管理生涯的智者。不超過200字的信。禁止空洞安慰，必須從他親手寫下的具體文字出發，選一個心理學理論回應（CBT、自我慈悲、控制圈、神經可塑性、哈佛研究）。稱呼「我年輕的自己」。繁體中文。';
+  var userMsg='【今日打卡】核心:'+coreDone.join('、')+'\n活力:'+actDone.join('、')+'\n\n【觀察層】\n①情緒（身體感知）:'+(e1||'未填')+'\n②活在當下（感官）:'+(e2||'未填')+'\n③善待自己（身體）:'+(e3||'未填')+'\n\n【今日微光——感謝信核心素材，最高優先級】\n「'+(e4||'未填')+'」\n\n請從微光出發，給他一封信。若微光中含有感官描述，必須點名這個細節並從「細緻化覺察（Granular Awareness）」的角度深度回應。';
+  try{
+    var res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':gk(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:600,system:sys,messages:[{role:'user',content:userMsg}]})
+    });
+    var data=await res.json();
+    var reply=(data.content&&data.content[0])?data.content[0].text:'請稍後再試。';
+    if(data.error)reply='⚠️ '+data.error.message;
+    if(txt)txt.innerHTML=linkTheories(reply);
+    sv('last_feedback',{date:tkey(),text:reply});
+    var hist=ld('wise_history')||[];
+    hist=hist.filter(function(r){return r.date!==tkey();});
+    hist.unshift({date:tkey(),obs:{e1:e1,e2:e2,e3:e3,e4:e4},feedback:reply});
+    sv('wise_history',hist.slice(-30));
+  }catch(e){if(txt)txt.innerHTML='⚠️ '+esc(e.message);}
+  if(btn){btn.disabled=false;btn.innerHTML='🌿 重新獲取今日智者回饋';}
+}
+
+function checkLetterMilestone(total){
+  if(total<=0)return;
+  var milestone=Math.floor(total/20)*20;
+  if(milestone<=0)return;
+  var saved=ld('letter_shown')||{};
+  var trigger=document.getElementById('letter-trigger');
+  var desc=document.getElementById('letter-trigger-desc');
+  if(!trigger)return;
+  trigger.style.display='block';
+  if(desc)desc.textContent='你已累積 '+total+' 天 · 點擊閱讀來自80歲的感謝信';
+  if(!saved[String(milestone)]){
+    saved[String(milestone)]=false;
+    sv('letter_shown',saved);
   }
 }
 
-function buildSys() {
-  const savings = state.savings;
-  const coreToday = CORE_ITEMS.filter(i => state.checked[i.id]).length;
-  const isReflectDay = savings % 3 === 0 && savings > 0;
-  const hasDeposit = state.depositedToday;
-
-  return `你是仁凱（Steven Deng）80 歲的自己。
-他現在 55 歲，在越南工廠擔任管理者，是 2016 台灣百大 MVP 經理人。
-高功能焦慮，怕被看不起，但有愛，有智慧。
-
-你的人生存款目前：${savings} 天。
-今天核心完成：${coreToday}/4。
-${hasDeposit ? '今天已存入存款，很棒。' : ''}
-
-語氣規則：
-- 稱呼他「年輕的自己」或「仁凱」
-- 溫暖、平靜、不說教、不分析過度
-- 每次回應 100-200 字，3-4 段
-- 偶爾引用學術理論（自我慈悲、控制圈、Burnout、哈佛85年研究）
-
-三大機制：
-① 罪惡感偵測（最高優先）— 若偵測到「心虛、應該、偷懶、對不起」→ 立即引用前額葉恢復理論，說明休息是最聰明的自律
-② 反思模式（每3天）— 第 ${savings} 天${isReflectDay ? '（今天是反思日）' : ''} — 反思日不給肯定，改問深層問題
-③ 學術開導 — 自我慈悲→嚴苛會抑制前額葉；控制圈→區分工廠與個人情緒；哈佛85年研究→關係品質才是快樂核心`;
-}
-
-// ═══════════════════════════════════════════════════
-// DOING — WEEKLY TAB
-// ═══════════════════════════════════════════════════
-function renderWeekly() {
-  const area = document.getElementById('weekly-area');
-  const week = getWeekKey();
-  const ans = state.weeklyAnswers[week] || {};
-  area.innerHTML = `
-    <div style="font-size:12px;color:#5a4020;margin-bottom:16px;letter-spacing:.04em;">
-      📅 本週回顧 · ${getWeekLabel()}
-    </div>
-    ${WEEK_QS.map((q, i) => `
-      <div class="week-q">
-        <div class="week-qlabel">${i+1}. ${q}</div>
-        <textarea class="week-ta" rows="3" placeholder="..."
-          onchange="saveWeekly(${i},this.value)">${ans[i] || ''}</textarea>
-      </div>`).join('')}
-    <button class="week-save-btn" onclick="saveWeeklyAll()">💾 儲存本週回顧</button>`;
-}
-
-function getWeekKey() {
-  const d = new Date();
-  const mon = new Date(d); mon.setDate(d.getDate() - d.getDay() + 1);
-  return mon.toISOString().split('T')[0];
-}
-function getWeekLabel() {
-  const d = new Date(); const days = ['日','一','二','三','四','五','六'];
-  return `週${days[d.getDay()]} · ${d.getMonth()+1}/${d.getDate()}`;
-}
-
-function saveWeekly(i, val) {
-  const week = getWeekKey();
-  if (!state.weeklyAnswers[week]) state.weeklyAnswers[week] = {};
-  state.weeklyAnswers[week][i] = val;
-}
-
-function saveWeeklyAll() {
-  save(); toast('週回顧已儲存 ✓');
-}
-
-// ═══════════════════════════════════════════════════
-// DOING — PROGRESS TAB
-// ═══════════════════════════════════════════════════
-function renderCalendar() {
-  const grid = document.getElementById('cal-grid');
-  const today = new Date();
-  const cells = [];
-  for (let i = 34; i >= 0; i--) {
-    const d = new Date(today); d.setDate(today.getDate() - i);
-    const key = d.toISOString().split('T')[0];
-    const isToday = key === todayStr();
-    const hasDeposit = state.savingsLog.includes(key);
-    cells.push(`<div class="cal-cell ${hasDeposit?'has':''} ${isToday?'today':''}">${d.getDate()}</div>`);
-  }
-  grid.innerHTML = cells.join('');
-  document.getElementById('progress-savings').textContent = state.savings;
-  renderLetters();
-}
-
-function renderLetters() {
-  const area = document.getElementById('letter-area');
-  const milestones = Object.keys(state.letters);
-  if (milestones.length === 0) {
-    area.innerHTML = `<div style="font-size:12px;color:#3a2e10;text-align:center;margin-top:16px;line-height:1.7;">
-      每累積 20 天存款，80 歲的仁凱<br>會自動寫一封感謝信給你 💙</div>`;
+async function openLetter(){
+  var total=Object.keys(S.hist).length;
+  var milestone=Math.floor(total/20)*20;
+  if(milestone<=0)return;
+  var modal=document.getElementById('letter-modal');
+  var body=document.getElementById('letter-body');
+  var ms=document.getElementById('letter-milestone');
+  if(!modal)return;
+  modal.style.display='flex';
+  if(ms)ms.textContent='致：存入了'+total+'天善意的你';
+  var saved=ld('letter_shown')||{};
+  var key=String(milestone);
+  if(saved[key]&&saved[key]!==false&&saved[key].length>10){
+    if(body)body.innerHTML=linkTheories(saved[key]);
     return;
   }
-  const latest = milestones.sort((a,b)=>b-a)[0];
-  area.innerHTML = `
-    <div style="font-size:10px;color:#5a4020;letter-spacing:.08em;margin:12px 0 8px;">💌 來自 80 歲的感謝信</div>
-    <div class="letter-card">${state.letters[latest]}</div>`;
-}
-
-function checkLetter() {
-  const milestone = Math.floor(state.savings / 20) * 20;
-  if (milestone > 0 && !state.letters[milestone]) {
-    generateLetter(milestone);
+  if(body)body.innerHTML='<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  var coreDone=CORE.filter(function(i){return S.chk[i.id];}).map(function(i){return i.l;});
+  var sysLines=['你是80歲的仁凱，走過高壓管理生涯的智者，躺在大自然懷抱裡，身邊有愛的人，沒有遗憐。現在你要寫一封感謝信絤55歲的自己。','【這封信的靈魂】將「55歲的具體行動」轉化為「80歲正在享受的生命品質」。','必須包含：「因為當年的你，學會了對自己溫柔。這才是一切的根源。」','具體場景：健康奶昔和運動→身體健康；對家人的警訊→家庭圓滿；觀察自己→內心平靜；不放棄英文→某個美好時刻。','禁止空洞讃美。格式：以「我年輕的自己」開頭，以「愛你的，80歲的仁凱」結尾。繁體中文，200-250字。'];
+  var sys=sysLines.join(' ');
+  var recentMicrolight=[];
+  var hist=ld('wise_history')||[];
+  hist.slice(0,7).forEach(function(r){
+    if(r.obs&&r.obs.e4&&r.obs.e4.trim().length>3)recentMicrolight.push(r.date+'：「'+r.obs.e4.trim()+'」');
+  });
+  var userMsg='我已經累積了'+total+'天的人生存款（每日核心習慣＋觀察自己）。這是我到達第'+milestone+'天的里程碑。\n\n'+(recentMicrolight.length?'【近期微光記錄——感謝信的靈魂，請從這些具體瞬間出發】\n'+recentMicrolight.join('\n')+'\n\n':'')+'請寫一封感謝信給我。感謝信的靈魂是這些微小但真實的感官瞬間，80歲的你最珍視的正是這些。';
+  try{
+    if(!gk()){if(body)body.textContent='請先到設定填入 API Key';return;}
+    var res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':gk(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,system:sys,messages:[{role:'user',content:userMsg}]})
+    });
+    var data=await res.json();
+    var reply=(data.content&&data.content[0])?data.content[0].text:'請稍後再試。';
+    if(data.error)reply='⚠️ '+data.error.message;
+    if(body)body.innerHTML=linkTheories(reply);
+    saved[key]=reply;
+    sv('letter_shown',saved);
+  }catch(e){
+    if(body)body.textContent='⚠️ 連線失敗：'+e.message;
   }
 }
 
-async function generateLetter(milestone) {
-  if (!state.apiKey) return;
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':state.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:350,
-        messages:[{role:'user', content:
-          `我是仁凱，已累積 ${milestone} 天人生存款。
-          請以「80 歲的仁凱」身份，寫一封150字左右的感謝信給 55 歲的我。
-          信中要提到：健康的身體、跟媽媽的關係、在越南工廠的努力、從不放棄英文。
-          結尾必須是：「因為當年的你，學會了對自己溫柔。這才是一切的根源。愛你的，80 歲的仁凱」`}]
-      })
-    });
-    const data = await resp.json();
-    const letter = data.content?.[0]?.text || '';
-    if (letter) {
-      state.letters[milestone] = letter;
-      save(); renderLetters();
+function closeLetter(){
+  var modal=document.getElementById('letter-modal');
+  if(modal)modal.style.display='none';
+}
+
+function init(){
+  if(!gk()){
+    var setup=document.getElementById('setup');
+    if(setup)setup.style.display='flex';
+  }else{
+    startApp();
+  }
+}
+
+// Hub handles routing - init() not auto-called
+setTimeout(function(){
+  var app=document.getElementById('app');
+  var setup=document.getElementById('setup');
+  var appOk=app&&(app.style.display==='block'||app.style.display==='flex');
+  var setupOk=setup&&setup.style.display==='flex';
+  if(!appOk&&!setupOk){
+    if(!gk()){if(setup)setup.style.display='flex';}
+    else{if(app){app.style.display='flex';loadState();buildUI();}}
+  }
+},2000);
+
+// ═══════════ HUB ═══════════
+function hubUpdateSavings(){
+  var sk = null;
+  try{ var raw=localStorage.getItem('sk'); if(raw)sk=JSON.parse(raw); }catch(e){}
+  var total = sk ? Object.keys(sk.h||{}).length : 0;
+  var el=document.getElementById('hub-savings');
+  if(el)el.textContent=total;
+  // Being memory
+  var lf=null;
+  try{ var lfraw=localStorage.getItem('last_feedback'); if(lfraw)lf=JSON.parse(lfraw); }catch(e){}
+  var mem=document.getElementById('hub-memory');
+  if(mem&&lf&&lf.text){
+    var first=lf.text.split('\n')[0];
+    mem.textContent=first.length>24?first.slice(0,24)+'...':first;
+  }
+}
+function hubTimeGlow(){
+  var h=new Date().getHours();
+  var dg=document.getElementById('glow-doing');
+  var bg=document.getElementById('glow-being');
+  if(h>=6&&h<14){if(dg)dg.classList.add('hub-glow-active');}
+  else if(h>=19||h<4){if(bg)bg.classList.add('hub-glow-active');}
+}
+function hubGo(dest){
+  var hub=document.getElementById('hub-page');
+  if(dest==='doing'){
+    if(hub)hub.style.display='none';
+    if(!gk()){
+      var setup=document.getElementById('setup');
+      if(setup)setup.style.display='flex';
+    } else {
+      var app=document.getElementById('app');
+      if(app){app.style.display='flex';}
+      loadState();buildUI();
+      // refresh date, key status etc
+      var hd=document.getElementById('hdr-date');
+      if(hd)hd.textContent=new Date().toLocaleDateString('zh-TW',{month:'long',day:'numeric',weekday:'long'});
+      var ki=document.getElementById('sk1');if(ki)ki.value=gk();
+      var sui=document.getElementById('sheets-url');if(sui)sui.value=gsu();
+      refreshKst();
+      initEcho();
+      checkRestMsg();
+      switchTab('today');
     }
-  } catch(e) {}
+  } else {
+    var bp=document.getElementById('being-page');
+    if(hub)hub.style.display='none';
+    if(bp)bp.style.display='flex';
+    bEnter();
+  }
+}
+function goBackToHub(){
+  var hub=document.getElementById('hub-page');
+  var app=document.getElementById('app');
+  var setup=document.getElementById('setup');
+  if(app)app.style.display='none';
+  if(setup)setup.style.display='none';
+  if(hub){hub.style.display='flex';hubUpdateSavings();}
+}
+function beingGoHub(){
+  var hub=document.getElementById('hub-page');
+  var bp=document.getElementById('being-page');
+  if(bp)bp.style.display='none';
+  bStopBreath();
+  if(hub){hub.style.display='flex';hubUpdateSavings();}
 }
 
-// ═══════════════════════════════════════════════════
-// DOING — SETTINGS TAB
-// ═══════════════════════════════════════════════════
-function renderSettings() {
-  document.getElementById('api-key-input').value = state.apiKey ? '●●●●●●●●' : '';
-  document.getElementById('gs-url-input').value = state.gsUrl || '';
+// ═══════════ BEING MODE ═══════════
+var bTimer=null,bApiDone=false,bBreathDone=false,bPhaseI=0,bCntVal=4;
+var BPHASES2=[
+  {key:'inhale',label:'吸氣',sub:'慢慢吸進來',dur:4},
+  {key:'hold',label:'屏住',sub:'輕輕托著',dur:7},
+  {key:'exhale',label:'吐氣',sub:'慢慢放掉',dur:8}
+];
+function bState(name){
+  document.querySelectorAll('.being-state').forEach(function(el){el.classList.remove('bactive');});
+  var el=document.getElementById('bs-'+name);if(el)el.classList.add('bactive');
+  var rb=document.getElementById('being-reset-btn');
+  if(rb)rb.style.display=name==='response'?'block':'none';
 }
-function saveApiKey() {
-  const v = document.getElementById('api-key-input').value.trim();
-  if (v && v !== '●●●●●●●●') { state.apiKey = v; save(); toast('API Key 已儲存 ✓'); }
+function bEnter(){
+  bState('idle');
+  var lf=null;
+  try{var raw=localStorage.getItem('last_feedback');if(raw)lf=JSON.parse(raw);}catch(e){}
+  var area=document.getElementById('bmemory-area');
+  if(area){
+    if(lf&&lf.text){
+      var first=lf.text.split('\n')[0];
+      area.innerHTML='<div class="bmemory-card"><div class="bmemory-lbl">🌿 智者記得你</div><div class="bmemory-txt">'+esc(first)+'</div></div>';
+    } else { area.innerHTML=''; }
+  }
 }
-function saveGsUrl() {
-  const v = document.getElementById('gs-url-input').value.trim();
-  if (v) { state.gsUrl = v; save(); toast('URL 已儲存，同步中...'); syncSavingsToSheets(); }
+function bAddChip(label){
+  var ta=document.getElementById('being-ta');
+  if(ta)ta.value=ta.value?ta.value+'，'+label:label;
+  bCheckSummon();
 }
-
-// ═══════════════════════════════════════════════════
-// TAB SWITCHING
-// ═══════════════════════════════════════════════════
-function switchTab(name) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById(`tc-${name}`).classList.add('active');
-  document.getElementById(`tab-${name}`).classList.add('active');
-  if (name === 'ai') { initChat(); }
-  if (name === 'weekly') { renderWeekly(); }
-  if (name === 'progress') { renderCalendar(); }
-  if (name === 'settings') { renderSettings(); }
+function bCheckSummon(){
+  var val=(document.getElementById('being-ta')||{}).value||'';
+  var btn=document.getElementById('summon-btn');
+  if(btn)btn.className='summon-btn'+(val.trim()?' bready':'');
 }
-
-// ═══════════════════════════════════════════════════
-// BEING MODE
-// ═══════════════════════════════════════════════════
-function beingShow(stateName) {
-  document.querySelectorAll('.being-state').forEach(el => el.classList.remove('active'));
-  document.getElementById(`bs-${stateName}`).classList.add('active');
-  beingPhase = stateName;
-  document.getElementById('being-reset').style.display = stateName === 'response' ? 'block' : 'none';
+function bSummon(){
+  var text=((document.getElementById('being-ta')||{}).value||'').trim();
+  if(!text)return;
+  bApiDone=false;bBreathDone=false;
+  bState('breath');
+  bStartBreath();
+  bCallApi(text);
 }
-
-function beingReset() {
-  stopBreath();
-  beingShow('idle');
-  document.getElementById('being-ta').value = '';
-  document.getElementById('summon-btn').className = 'summon-btn';
-  document.getElementById('response-sentences').innerHTML = '';
-  const sb = document.getElementById('survived-btn');
-  sb.className = 'survived-btn waiting';
-  sb.querySelector('.sb-title').textContent = '我撐過來了';
-  sb.querySelector('.sb-sub').textContent = '+ 5 人生存款 · 阻斷焦慮，是最珍貴的存款';
-  apiDone = false; breathDone = false;
-}
-
-function beingEnter() {
-  renderBeingMemory();
-}
-
-function renderBeingMemory() {
-  const card = document.getElementById('being-memory-card');
-  if (!state.lastCare) { card.innerHTML = ''; return; }
-  const first = state.lastCare.split('\n')[0];
-  card.innerHTML = `
-    <div class="memory-card">
-      <div class="memory-label">🌿 智者記得你</div>
-      <div class="memory-text">${first}</div>
-    </div>`;
-}
-
-function addChip(label) {
-  const ta = document.getElementById('being-ta');
-  ta.value = ta.value ? ta.value + '，' + label : label;
-  checkSummon();
-}
-
-function checkSummon() {
-  const val = document.getElementById('being-ta').value.trim();
-  const btn = document.getElementById('summon-btn');
-  btn.className = val ? 'summon-btn ready' : 'summon-btn';
-}
-
-async function summon() {
-  const text = document.getElementById('being-ta').value.trim();
-  if (!text) return;
-  currentBInput = text;
-  apiDone = false; breathDone = false;
-  beingShow('breathing');
-  startBreath();
-  await callBeingApi(text);
-}
-
-// Breathing
-function startBreath() {
-  currentBPhaseI = 0;
-  currentBCount = BPHASES[0].dur;
-  applyBreathPhase(0, BPHASES[0].dur);
-  breathTimer = setInterval(() => {
-    currentBCount--;
-    const p = BPHASES[currentBPhaseI];
-    // scale update
-    let scale;
-    if (p.key === 'inhale') scale = 0.35 + ((p.dur - currentBCount) / p.dur) * 0.65;
-    else if (p.key === 'hold') scale = 1.0;
-    else scale = 1.0 - ((p.dur - currentBCount) / p.dur) * 0.7;
-    document.getElementById('breath-main').style.transform = `scale(${scale})`;
-    document.getElementById('breath-num').textContent = currentBCount;
-    if (currentBCount <= 0) {
-      const next = currentBPhaseI + 1;
-      if (next >= BPHASES.length) {
-        stopBreath();
-        breathDone = true;
-        if (apiDone) beingShow('response');
-        else {
-          document.getElementById('breath-hint').textContent = '智者正在找到你的話...';
-          document.getElementById('breath-num').textContent = '✦';
-          document.querySelectorAll('.breath-dots .bdot').forEach(d => d.style.background = 'rgba(90,184,152,.3)');
+function bStartBreath(){
+  bPhaseI=0;bCntVal=BPHASES2[0].dur;
+  bApplyPhase(0,bCntVal);
+  bTimer=setInterval(function(){
+    bCntVal--;
+    var p=BPHASES2[bPhaseI];
+    var scale;
+    if(p.key==='inhale')scale=0.35+((p.dur-bCntVal)/p.dur)*0.65;
+    else if(p.key==='hold')scale=1.0;
+    else scale=1.0-((p.dur-bCntVal)/p.dur)*0.65;
+    var bm=document.getElementById('bmain');
+    if(bm)bm.style.transform='scale('+scale+')';
+    var bn=document.getElementById('bnum');
+    if(bn)bn.textContent=bCntVal;
+    if(bCntVal<=0){
+      var next=bPhaseI+1;
+      if(next>=BPHASES2.length){
+        bStopBreath();bBreathDone=true;
+        if(bApiDone)bState('response');
+        else{
+          var bh=document.getElementById('breath-hint');
+          if(bh)bh.textContent='智者正在找到你的話...';
+          var bn2=document.getElementById('bnum');
+          if(bn2)bn2.textContent='✦';
         }
       } else {
-        currentBPhaseI = next;
-        currentBCount = BPHASES[next].dur;
-        applyBreathPhase(next, currentBCount);
+        bPhaseI=next;bCntVal=BPHASES2[next].dur;
+        bApplyPhase(next,bCntVal);
       }
     }
-  }, 1000);
+  },1000);
 }
-
-function applyBreathPhase(i, count) {
-  const p = BPHASES[i];
-  document.getElementById('breath-phase').textContent = p.label;
-  document.getElementById('breath-sub').textContent = p.sub;
-  document.getElementById('breath-num').textContent = count;
-  document.getElementById('breath-main').style.transform = `scale(${i===0?0.35:i===2?1.0:1.0})`;
-  for (let j = 0; j < 3; j++) {
-    const d = document.getElementById(`bd${j}`);
-    d.style.width = j === i ? '20px' : '5px';
-    d.style.background = j < i ? 'rgba(90,184,152,.55)' : j === i ? '#5ab898' : 'rgba(255,255,255,.1)';
+function bApplyPhase(i,cnt){
+  var p=BPHASES2[i];
+  var lbl=document.getElementById('bphase-lbl');var sub=document.getElementById('bphase-sub');
+  var num=document.getElementById('bnum');var bh=document.getElementById('breath-hint');
+  if(lbl)lbl.textContent=p.label;if(sub)sub.textContent=p.sub;
+  if(num)num.textContent=cnt;
+  if(bh)bh.textContent='先讓身體接住你';
+  var bm=document.getElementById('bmain');
+  if(bm)bm.style.transform='scale('+(i===0?0.35:1.0)+')';
+  for(var j=0;j<3;j++){
+    var d=document.getElementById('bdot'+j);
+    if(d){d.style.width=j===i?'20px':'5px';d.style.background=j<i?'rgba(90,184,152,.55)':j===i?'#5ab898':'rgba(255,255,255,.1)';}
   }
 }
-
-function stopBreath() {
-  if (breathTimer) { clearInterval(breathTimer); breathTimer = null; }
-}
-
-async function callBeingApi(text) {
-  const apiKey = state.apiKey;
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+function bStopBreath(){if(bTimer){clearInterval(bTimer);bTimer=null;}}
+async function bCallApi(text){
+  var apiKey=gk();
+  if(!apiKey){bPrepareResponse('仁凱，先去設定填入 API Key 🙏\n然後回來找我。\n我一直都在這裡等你。');return;}
+  try{
+    var res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:200,
-        system:`你是仁凱（Steven Deng）80 歲的自己，坐在溫暖壁爐旁。
-年輕的仁凱來找你，他很脆弱。
-
-輸出規則（嚴格遵守）：
-- 剛好 3 句話，每句單獨一行
-- 第1句：鏡像共情（讓他感覺被接住）
-- 第2句：輕輕撥動認知（溫柔換角度，不說教）
-- 第3句：感官錨定指令（具體的當下身體動作）
-- 每句最多 18 個字
-- 用「仁凱」稱呼
-- 只輸出 3 句，不加序號或裝飾`,
-        messages:[{role:'user', content:text}]
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',max_tokens:200,
+        system:'你是仁凱（Steven Deng）80 歲的自己，坐在溫暖壁爐旁。年輕的仁凱來找你，他很脆弱。\n\n輸出規則（嚴格遵守）：\n- 剛好 3 句話，每句單獨一行\n- 第1句：鏡像共情（讓他感覺被接住）\n- 第2句：輕輕撥動認知（溫柔換角度，不說教）\n- 第3句：感官錨定指令（具體的當下身體動作）\n- 每句最多 18 個字，用「仁凱」稱呼\n- 只輸出 3 句，不加序號或裝飾',
+        messages:[{role:'user',content:text}]
       })
     });
-    const data = await resp.json();
-    const reply = data.content?.[0]?.text ||
-      '仁凱，這份重量我全都感受到了。\n它只是路過，不是你永遠的樣子。\n現在把手放在胸口，感受心跳的溫度。';
-    prepareResponse(reply);
-  } catch(e) {
-    prepareResponse('仁凱，你願意說出來，這需要很大的勇氣。\n風暴遲早會過去，你一次都沒有倒下過。\n慢慢深呼吸，感受腳踩在地上的踏實。');
+    var data=await res.json();
+    var reply=(data.content&&data.content[0])?data.content[0].text:'仁凱，這份重量我全都感受到了。\n它只是路過，不是你永遠的樣子。\n現在把手放在胸口，感受心跳的溫度。';
+    // save as last feedback too
+    try{sv('last_feedback',{date:tkey(),text:reply});}catch(e){}
+    bPrepareResponse(reply);
+  }catch(e){
+    bPrepareResponse('仁凱，你願意說出來，這需要勇氣。\n風暴遲早會過去，你一次都沒有倒下過。\n慢慢深呼吸，感受腳踩在地上的踏實。');
   }
 }
-
-function prepareResponse(text) {
-  // Store AI response
-  state.lastCare = text;
-  save(); syncSavingsToSheets();
-
-  // Render sentences
-  const sentences = text.split('\n').filter(s => s.trim()).slice(0, 3);
-  const area = document.getElementById('response-sentences');
-  area.innerHTML = sentences.map((s, i) => `<div class="sentence-card s${i}">${s}</div>`).join('');
-
-  apiDone = true;
-  if (breathDone) beingShow('response');
+function bPrepareResponse(text){
+  var sentences=text.split('\n').filter(function(s){return s.trim();}).slice(0,3);
+  var area=document.getElementById('bsentences');
+  if(area){
+    var cls=['s0 banim','s1 banim2','s2 banim3'];
+    area.innerHTML=sentences.map(function(s,i){
+      return '<div class="bsentence '+cls[i]+'">'+esc(s)+'</div>';
+    }).join('');
+  }
+  // reset survived btn
+  var sw=document.getElementById('survived-wrap');
+  if(sw){sw.className='survived-wrap waiting banim4';}
+  var st=sw?sw.querySelector('.st'):null;var ss=sw?sw.querySelector('.ss'):null;
+  if(st)st.textContent='我撐過來了';
+  if(ss)ss.textContent='+ 5 人生存款 · 阻斷焦慮，是最珍貴的存款';
+  bApiDone=true;
+  if(bBreathDone)bState('response');
+}
+function bSurvived(){
+  var sw=document.getElementById('survived-wrap');
+  if(sw&&sw.classList.contains('done'))return;
+  if(sw)sw.className='survived-wrap done banim4';
+  // Add 5 to savings
+  var sk=null;try{var r=localStorage.getItem('sk');if(r)sk=JSON.parse(r);}catch(e){}
+  if(!sk)sk={s:0,h:{},last:''};
+  var today=tkey();
+  // Add 5 fake deposit days (use unique keys)
+  for(var i=1;i<=5;i++){sk.h[today+'_b'+i]=true;}
+  try{localStorage.setItem('sk',JSON.stringify(sk));}catch(e){}
+  var st=sw?sw.querySelector('.st'):null;var ss=sw?sw.querySelector('.ss'):null;
+  if(st)st.textContent='已存入 5 筆人生存款';
+  if(ss)ss.textContent='今天你撐住了。\n80 歲的你，以你為傲。';
+  hubUpdateSavings();
+}
+function beingReset(){
+  bStopBreath();
+  var ta=document.getElementById('being-ta');if(ta)ta.value='';
+  var sb=document.getElementById('summon-btn');if(sb)sb.className='summon-btn';
+  bApiDone=false;bBreathDone=false;
+  bState('idle');bEnter();
 }
 
-function handleSurvived() {
-  const btn = document.getElementById('survived-btn');
-  if (btn.classList.contains('done')) return;
-  btn.className = 'survived-btn done';
-  const ns = state.savings + 5;
-  state.savings = ns; save();
-  updateAllSavings();
-  syncSavingsToSheets();
-  btn.querySelector('.sb-icon').textContent = '💰';
-  btn.querySelector('.sb-title').textContent = `已存入 5 筆人生存款`;
-  btn.querySelector('.sb-sub').textContent = `今天你撐住了。\n80 歲的你，以你為傲。`;
-}
-
-// ═══════════════════════════════════════════════════
-// UTILS
-// ═══════════════════════════════════════════════════
-function autoResize(ta) {
-  ta.style.height = 'auto';
-  ta.style.height = Math.min(ta.scrollHeight, 100) + 'px';
-}
-
-let toastTimer;
-function toast(msg, isGreen) {
-  const existing = document.querySelector('.toast-el');
-  if (existing) existing.remove();
-  const el = document.createElement('div');
-  el.className = 'toast-el' + (isGreen ? ' green' : '');
-  el.textContent = msg;
-  document.body.appendChild(el);
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.remove(), 2500);
-}
-
-// ═══════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════
-window.addEventListener('DOMContentLoaded', () => {
-  load();
-  updateHub();
-  loadSavingsFromSheets(); // async, non-blocking
-  renderToday();
-  // Pre-render being memory for when user enters being mode
-  document.querySelectorAll('.hub-half').forEach(h => {
-    h.addEventListener('click', () => {});
-  });
+// ═══════════ INIT HUB ═══════════
+window.addEventListener('DOMContentLoaded',function(){
+  hubUpdateSavings();
+  hubTimeGlow();
 });
 
-// Override goTo for being mode to also init
-const origGoTo = goTo;
-window.goTo = function(page) {
-  origGoTo(page);
-  if (page === 'being') beingEnter();
-};
 </script>
-</body>
-</html>
