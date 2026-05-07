@@ -225,7 +225,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
 .bng-wise-head{text-align:center;margin-bottom:22px;}
 .bng-avatar{width:60px;height:60px;border-radius:50%;margin:0 auto 8px;background:radial-gradient(circle,rgba(58,138,106,.2) 0%,transparent 70%);border:1px solid rgba(90,184,152,.26);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 0 24px rgba(58,138,106,.1);}
 .bng-wise-lbl{font-size:10px;color:#2a6a52;letter-spacing:.1em;}
-.bng-sentence{padding:16px 18px;border-radius:13px;margin-bottom:10px;font-size:16px;line-height:1.9;white-space:pre-line;}
+.bng-sentence{padding:16px 18px;border-radius:13px;margin-bottom:0;font-size:16px;line-height:1.9;white-space:pre-line;}
 .bng-sentence.bs0{background:rgba(38,90,70,.08);border:1px solid rgba(48,100,78,.14);color:#9ac8b8;}
 .bng-sentence.bs1{background:rgba(38,90,70,.06);border:1px solid rgba(48,100,78,.12);color:#c8e8dc;font-weight:500;}
 .bng-sentence.bs2{background:rgba(58,138,106,.12);border:1px solid rgba(90,184,152,.25);border-left:3px solid rgba(90,184,152,.5);padding-left:14px;color:#a8ecd8;font-weight:600;}
@@ -241,8 +241,9 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
 .bng-si{font-size:22px;margin-bottom:3px;}
 .bng-st{font-size:16px;color:#5ab898;font-weight:600;}
 .bng-ss{font-size:11px;color:#2a6a52;margin-top:4px;line-height:1.7;white-space:pre-line;}
-#v57-back{position:absolute;left:0;top:0;bottom:0;display:flex;align-items:flex-end;padding:0 4px 8px 4px;padding-top:calc(env(safe-area-inset-top,0px) + 4px);font-size:18px;color:rgba(90,60,10,.35);cursor:pointer;background:none;border:none;font-family:inherit;transition:color .2s;}
+#v57-back{position:absolute;left:0;top:0;bottom:0;display:flex;align-items:flex-end;padding:0 6px 8px 6px;padding-top:calc(env(safe-area-inset-top,0px) + 4px);font-size:12px;color:rgba(180,130,40,.7);cursor:pointer;background:none;border:none;font-family:'Noto Serif TC',serif;transition:color .2s;flex-direction:column;justify-content:flex-end;gap:1px;letter-spacing:.03em;}
 #v57-back:active{color:#F5A623;}
+#v57-back::before{content:"⌂";font-size:16px;display:block;line-height:1;}
 
 /* ══ 第二層對話 ══ */
 .bng-more-btn{
@@ -347,7 +348,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
     <div class="hub-badge" id="badge-doing">💰 <span id="hub-savings">--</span> 天人生存款</div>
     <div class="hub-hint" id="hint-doing">點擊進入 ›</div>
   </div>
-  <div class="hub-divider"><span style="position:absolute;left:50%;transform:translateX(-50%);background:#111;color:#444;font-size:10px;padding:2px 10px;border-radius:20px;letter-spacing:1px;font-family:monospace;white-space:nowrap;">v6.0 · CBT守護者 · 200錦囊</span></div>
+  <div class="hub-divider"><span style="position:absolute;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#888;font-size:10px;padding:3px 12px;border-radius:20px;letter-spacing:1px;font-family:monospace;white-space:nowrap;border:1px solid #333;">v6.0 · CBT守護者 · 200錦囊</span></div>
   <div id="hub-being" class="hub-half" onclick="hubGo('being')">
     <div class="hub-glow" id="glow-being"></div>
     <div class="hub-icon">🌿</div>
@@ -465,7 +466,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
 <div id="app" style="display:none;flex-direction:column;">
   <div class="hdr">
     <div class="hdr-top" style="position:relative;">
-    <button id="v57-back" onclick="goBackToHub()">‹</button>
+    <button id="v57-back" onclick="goBackToHub()">首頁</button>
       <div class="hdr-date" id="hdr-date"></div>
       <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v6.0 ☁️</div>
     </div>
