@@ -164,7 +164,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
 .hub-hint{position:absolute;bottom:14px;font-size:10px;letter-spacing:.06em;font-family:"Noto Serif TC",serif;}
 #hint-doing{color:rgba(90,60,10,.4);}
 #hint-being{color:rgba(20,70,50,.4);}
-.hub-divider{height:2px;flex-shrink:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent);}
+.hub-divider{height:2px;flex-shrink:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent);position:relative;overflow:visible;}
 @keyframes hubGlow{0%,100%{opacity:.4}50%{opacity:1}}
 .hub-glow-active{animation:hubGlow 3s ease infinite;}
 /* ══ BEING PAGE ══ */
@@ -347,7 +347,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
     <div class="hub-badge" id="badge-doing">💰 <span id="hub-savings">--</span> 天人生存款</div>
     <div class="hub-hint" id="hint-doing">點擊進入 ›</div>
   </div>
-  <div class="hub-divider"></div>
+  <div class="hub-divider"><span style="position:absolute;left:50%;transform:translateX(-50%);background:#111;color:#444;font-size:10px;padding:2px 10px;border-radius:20px;letter-spacing:1px;font-family:monospace;white-space:nowrap;">v6.0 · CBT守護者 · 200錦囊</span></div>
   <div id="hub-being" class="hub-half" onclick="hubGo('being')">
     <div class="hub-glow" id="glow-being"></div>
     <div class="hub-icon">🌿</div>
@@ -467,7 +467,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
     <div class="hdr-top" style="position:relative;">
     <button id="v57-back" onclick="goBackToHub()">‹</button>
       <div class="hdr-date" id="hdr-date"></div>
-      <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v5.9 ☁️</div>
+      <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v6.0 ☁️</div>
     </div>
     <div class="hdr-title">充實的一天</div>
     <div class="hdr-sub">Every Day Counts</div>
@@ -646,7 +646,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
     </div>
     <div class="set-card">
       <div class="set-t">關於這款 APP</div>
-      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>版本 v5.9 · GitHub Pages · ☁️ 雲端備份</span></div>
+      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>版本 v6.0 · GitHub Pages · ☁️ 雲端備份</span></div>
     </div>
   </div>
   </div><!-- /content-wrap -->
