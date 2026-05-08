@@ -239,14 +239,17 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
 .bng-thinking-dot:nth-child(2){animation-delay:.18s;}
 .bng-thinking-dot:nth-child(3){animation-delay:.36s;}
 @keyframes bngSlide{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-.bng-chat-input-wrap{display:flex;gap:8px;padding:10px 14px;background:rgba(2,12,8,.9);border-top:1px solid rgba(40,110,76,.1);flex-shrink:0;}
-.bng-chat-ta{flex:1;background:rgba(50,120,90,.06);border:1.5px solid rgba(50,120,90,.18);border-radius:20px;padding:10px 16px;color:#c8e8de;font-size:14px;line-height:1.7;font-family:"Noto Serif TC",serif;resize:none;outline:none;max-height:120px;overflow-y:auto;}
-.bng-chat-ta:focus{border-color:rgba(90,184,152,.35);}
-.bng-chat-ta::placeholder{color:#1e4030;font-size:13px;}
-.bng-chat-send{width:44px;height:44px;border-radius:50%;background:rgba(58,138,106,.15);border:1.5px solid rgba(90,184,152,.25);color:#5ab898;font-size:14px;cursor:pointer;font-family:inherit;flex-shrink:0;align-self:flex-end;transition:all .2s;display:flex;align-items:center;justify-content:center;}
-.bng-chat-send:disabled{opacity:.25;cursor:default;}
-.bng-chat-send:not(:disabled):active{background:rgba(58,138,106,.3);}
-.bng-chat-actions{padding:10px 14px 24px;display:flex;flex-direction:column;gap:8px;flex-shrink:0;}
+.bng-chat-input-wrap{display:flex;flex-direction:column;gap:8px;padding:10px 14px 4px;flex-shrink:0;}
+.bng-chat-ta{width:100%;background:rgba(50,120,90,.08);border:1.5px solid rgba(50,120,90,.25);border-radius:14px;padding:12px 16px;color:#e8f8f2;font-size:15px;line-height:1.8;font-family:"Noto Serif TC",serif;resize:none;outline:none;max-height:160px;overflow-y:auto;box-sizing:border-box;}
+.bng-chat-ta:focus{border-color:rgba(90,184,152,.45);}
+.bng-chat-ta::placeholder{color:#3a6a52;font-size:14px;}
+.bng-chat-send{align-self:flex-end;padding:10px 24px;border-radius:20px;background:rgba(58,138,106,.2);border:1.5px solid rgba(90,184,152,.35);color:#c8f0e0;font-size:14px;font-family:inherit;cursor:pointer;transition:all .2s;font-weight:600;}
+.bng-chat-send:disabled{opacity:.2;cursor:default;}
+.bng-chat-send:not(:disabled){background:rgba(58,138,106,.3);color:#e8f8f2;}
+.bng-chat-send:not(:disabled):active{background:rgba(58,138,106,.5);}
+.bng-chat-actions{padding:8px 14px 28px;display:flex;flex-direction:column;gap:8px;flex-shrink:0;}
+.bng-more-toggle{padding:12px;border-radius:12px;background:none;border:1px dashed rgba(58,138,106,.2);color:#3a7a60;font-size:13px;font-family:inherit;cursor:pointer;text-align:center;letter-spacing:.04em;transition:all .2s;}
+.bng-more-toggle:active{background:rgba(58,138,106,.08);}
 .bng-upload-btn{padding:11px;border-radius:12px;background:rgba(58,138,106,.04);border:1px solid rgba(58,138,106,.15);color:#3a7a60;font-size:12px;font-family:inherit;cursor:pointer;text-align:center;letter-spacing:.04em;transition:all .2s;}
 .bng-upload-btn:active{background:rgba(58,138,106,.12);}
 .bng-upload-btn.uploading{color:#2a6a52;pointer-events:none;}
@@ -414,13 +417,14 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
   <!-- 對話主頁面 -->
   <div class="bng-state" id="bng-chat">
     <div id="bng-chat-messages"></div>
-    <div class="bng-chat-input-wrap" id="bng-chat-input-wrap">
-      <textarea class="bng-chat-ta" id="bng-chat-ta"
-        placeholder="繼續說…"
-        oninput="bngChatCheck()" rows="2"></textarea>
-      <button class="bng-chat-send" id="bng-chat-send" onclick="bngChatSend()">送</button>
-    </div>
-    <div class="bng-chat-actions">
+    <div class="bng-chat-actions" id="bng-chat-actions">
+      <button class="bng-more-toggle" id="bng-more-toggle" onclick="bngToggleInput()">還想說點什麼 ›</button>
+      <div class="bng-chat-input-wrap" id="bng-chat-input-wrap" style="display:none;">
+        <textarea class="bng-chat-ta" id="bng-chat-ta"
+          placeholder="說吧…"
+          oninput="bngChatCheck()" rows="3"></textarea>
+        <button class="bng-chat-send" id="bng-chat-send" onclick="bngChatSend()" disabled>送出</button>
+      </div>
       <button class="bng-upload-btn" onclick="bngUploadToSheets()">☁️ 存到雲端</button>
       <button class="bng-survived bng-wait" id="bng-survived" onclick="bngSurvived()">
         <div class="bng-si">✅</div>
@@ -1254,7 +1258,7 @@ function bngGoHub(){
   bngStopBreath();clearInterval(_bngAutoReturn);
   var bp=document.getElementById('being-page'),hub=document.getElementById('hub-page');
   if(bp)bp.classList.remove('visible');
-  if(hub){hub.classList.remove('hidden');if(typeof hubRefresh==='function')hubRefresh();}
+  if(hub){hub.classList.remove('hidden');hubRefresh();}
 }
 // ══════════ BEING ══════════
 var _bngTimer=null,_bngApiDone=false,_bngBreathDone=false,_bngAutoReturn=null,_bngPI=0,_bngCnt=4,_bngApiReply='';
@@ -1277,6 +1281,7 @@ function bngEnter(){
   var area=document.getElementById('bng-memory-area');
   var lf=null;try{var r=localStorage.getItem('last_feedback');if(r)lf=JSON.parse(r);}catch(e){}
   if(area){area.innerHTML=(lf&&lf.text)?'<div class="bng-memory"><div class="bng-memory-lbl">🌿 上次守護者說</div><div class="bng-memory-txt">'+esc(lf.text.split('\n')[0].slice(0,40))+'…</div></div>':'';}
+  bngPushState();
 }
 function bngChip(el,label){
   var wasOn=el.classList.contains('bng-chip-on');
@@ -1352,7 +1357,7 @@ async function bngCallApiNew(userText){
   var engine=getAiEngine();
   var gemKey=getGeminiKey();
   var claudeKey=gk();
-  var fb='仁凱，先停一下。\n\n你說的這個，我聽見了一個訊號：模糊的威脅比明確的威脅更折磨人。\n\n先幫它開燈——什麼事讓你睡不著？是真有一隻蚊子，還是你自己著相了？說清楚，它就從怪物降級成待解決事項。';
+  var fb='仁凱，先停一下。\n\n你腦子裡現在是一團亂麻——模糊的威脅比明確的威脅更折磨人。不是因為事情真的有多大，是因為你還沒開燈。\n\n先問自己一個問題：什麼事讓你睡不著？不是症狀，是那件具體的事。把它說清楚，它就從怪物降級成待解決事項。\n\n除了生死，其餘皆是小事。梅大哥對抗肺癌還能豁達——他現在看著你糾結這件事，會說什麼？';
 
   var matched=window._matchWisdom?window._matchWisdom(userText):{wild:null,capsule:null};
   var wisdomInject='';
@@ -1388,12 +1393,11 @@ async function bngCallApiNew(userText){
 function bngRenderChat(guardianText,isFirst){
   var msgs=document.getElementById('bng-chat-messages');
   if(!msgs)return;
-  if(isFirst){msgs.innerHTML='';bngSetState('chat');}
+  if(isFirst){msgs.innerHTML='';bngSetState('chat');bngPushState();}
 
-  // 如果是繼續對話，先加用戶泡泡（已在送出時加了，跳過）
   var div=document.createElement('div');
   div.className='bng-msg-guardian';
-  div.innerHTML='<div class="bng-msg-guardian-lbl">🌿 80歲的你</div><div class="bng-msg-guardian-bubble">'+esc(guardianText)+'</div>';
+  div.innerHTML='<div class="bng-msg-guardian-lbl">🌿 80歲的你說</div><div class="bng-msg-guardian-bubble">'+esc(guardianText)+'</div>';
   msgs.appendChild(div);
 
   // 移除loading泡泡
@@ -1403,11 +1407,8 @@ function bngRenderChat(guardianText,isFirst){
   // scroll to bottom
   setTimeout(function(){msgs.scrollTop=msgs.scrollHeight;},100);
 
-  // 解鎖輸入
-  var ta=document.getElementById('bng-chat-ta');
-  var send=document.getElementById('bng-chat-send');
-  if(ta){ta.disabled=false;ta.value='';}
-  if(send)send.disabled=false;
+  // 重置輸入區：收起，讓用戶自己選擇要不要繼續說
+  bngResetChatInput();
 }
 
 function bngChatCheck(){
@@ -1428,6 +1429,12 @@ async function bngChatSend(){
   userDiv.innerHTML='<div class="bng-msg-user-bubble">'+esc(text)+'</div>';
   msgs.appendChild(userDiv);
 
+  // 收起輸入框，顯示loading
+  var wrap=document.getElementById('bng-chat-input-wrap');
+  var btn=document.getElementById('bng-more-toggle');
+  if(wrap)wrap.style.display='none';
+  if(btn)btn.style.display='none';
+
   // 加loading
   var thinkDiv=document.createElement('div');
   thinkDiv.id='bng-thinking';
@@ -1436,14 +1443,8 @@ async function bngChatSend(){
   msgs.appendChild(thinkDiv);
   msgs.scrollTop=msgs.scrollHeight;
 
-  // 鎖定輸入
-  if(ta){ta.disabled=true;ta.value='';}
-  var send=document.getElementById('bng-chat-send');
-  if(send)send.disabled=true;
-
   _bngChatHistory.push({role:'user',text:text});
 
-  // 構建對話歷史給AI
   var engine=getAiEngine();
   var gemKey=getGeminiKey();
   var claudeKey=gk();
@@ -1456,9 +1457,9 @@ async function bngChatSend(){
   if(matched.capsule){wisdomInject+='\n\n【可用素材】標題：'+matched.capsule[2]+'\n內容：'+matched.capsule[3];}
   if(matched.wild){wisdomInject+='\n\n【深層素材】主題：'+matched.wild.theme+'\n內容：'+matched.wild.content.slice(0,300);}
 
-  var continueSys='你是仁凱80歲的自己，繼續對話中。\n\n【對話脈絡】\n'+contextLines+'\n\n【這輪繼續用殯葬師四部曲邏輯】找到它→改變它→遠離它→忽略它。生死視角永遠在底下。絕對禁止：我聽到了、我理解你、這很正常、你已經很棒了、放下、沒關係。不加---分隔線。稱呼仁凱，長短由情感決定。'+wisdomInject;
+  var continueSys='你是仁凱80歲的自己，繼續對話中。\n\n【對話脈絡】\n'+contextLines+'\n\n繼續用殯葬師四部曲邏輯：找到它→改變它→遠離它→忽略它。生死視角永遠在底下。\n絕對禁止：我聽到了、我理解你、這很正常、你已經很棒了、放下、沒關係。\n不加---分隔線。稱呼仁凱，長短由情感決定，不限制。'+wisdomInject;
 
-  var fb='仁凱，繼續說。';
+  var fb='繼續說。';
   try{
     var reply=null;
     if(engine==='gemini'&&gemKey){
@@ -1501,6 +1502,12 @@ function bngSurvived(){
   },1000);
 }
 
+function bngReset(){
+  bngStopBreath();clearInterval(_bngAutoReturn);
+  bngEnter();
+}
+window.addEventListener('DOMContentLoaded',function(){hubRefresh();});
+
 async function bngUploadToSheets(){
   var btn=document.querySelector('.bng-upload-btn');
   var url=localStorage.getItem('sheets_url')||'';
@@ -1525,11 +1532,51 @@ async function bngUploadToSheets(){
   }
 }
 
-function bngReset(){
-  bngStopBreath();clearInterval(_bngAutoReturn);
-  bngEnter();
+function bngToggleInput(){
+  var wrap=document.getElementById('bng-chat-input-wrap');
+  var btn=document.getElementById('bng-more-toggle');
+  if(!wrap)return;
+  if(wrap.style.display==='none'){
+    wrap.style.display='flex';
+    if(btn)btn.style.display='none';
+    var ta=document.getElementById('bng-chat-ta');
+    if(ta){ta.disabled=false;ta.focus();}
+  } else {
+    wrap.style.display='none';
+    if(btn)btn.style.display='block';
+  }
 }
-window.addEventListener('DOMContentLoaded',function(){hubRefresh();});
+
+function bngResetChatInput(){
+  var wrap=document.getElementById('bng-chat-input-wrap');
+  var btn=document.getElementById('bng-more-toggle');
+  var ta=document.getElementById('bng-chat-ta');
+  var send=document.getElementById('bng-chat-send');
+  if(wrap)wrap.style.display='none';
+  if(btn){btn.style.display='block';btn.textContent='還想說點什麼 ›';}
+  if(ta){ta.value='';ta.disabled=false;}
+  if(send)send.disabled=true;
+}
+
+// Android 返回鍵攔截——防止誤觸手機導覽返回重置頁面
+function bngPushState(){
+  if(window.history&&window.history.pushState){
+    window.history.pushState({bng:true},'','');
+  }
+}
+window.addEventListener('popstate',function(e){
+  if(document.getElementById('being-page')&&
+     document.getElementById('being-page').classList.contains('visible')){
+    // 攔截返回，不做任何事，或回到 idle
+    var chatOn=document.getElementById('bng-chat')&&document.getElementById('bng-chat').classList.contains('bng-on');
+    if(chatOn){
+      // 在對話中按返回：推一個新狀態，繼續留在頁面
+      bngPushState();
+    } else {
+      bngGoHub();
+    }
+  }
+});
 
 
 // ════════ Gemini API 支援 ════════
