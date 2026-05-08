@@ -1254,7 +1254,7 @@ function bngGoHub(){
   bngStopBreath();clearInterval(_bngAutoReturn);
   var bp=document.getElementById('being-page'),hub=document.getElementById('hub-page');
   if(bp)bp.classList.remove('visible');
-  if(hub){hub.classList.remove('hidden');hubRefresh();}
+  if(hub){hub.classList.remove('hidden');if(typeof hubRefresh==='function')hubRefresh();}
 }
 // ══════════ BEING ══════════
 var _bngTimer=null,_bngApiDone=false,_bngBreathDone=false,_bngAutoReturn=null,_bngPI=0,_bngCnt=4,_bngApiReply='';
