@@ -1448,27 +1448,26 @@ async function bngChatSend(){
   var engine=getAiEngine();
   var gemKey=getGeminiKey();
   var claudeKey=gk();
-  var contextLines=_bngChatHistory.slice(-6).map(function(h){
-    return(h.role==='user'?'仁凱說：':'守護者說：')+h.text.slice(0,200);
-  }).join('\n\n');
 
   var matched=window._matchWisdom?window._matchWisdom(text):{wild:null,capsule:null};
   var wisdomInject='';
   if(matched.capsule){wisdomInject+='\n\n【可用素材】標題：'+matched.capsule[2]+'\n內容：'+matched.capsule[3];}
   if(matched.wild){wisdomInject+='\n\n【深層素材】主題：'+matched.wild.theme+'\n內容：'+matched.wild.content.slice(0,300);}
 
-  var continueSys=(window._bngSystemPrompt||'你是仁凱80歲的自己。稱呼仁凱，壁爐邊說話，有厚度有留白。')+'\n\n【這是繼續對話，以下是前幾輪脈絡】\n'+contextLines+'\n\n他剛才說的這句話，用殯葬師四部曲繼續往下走：找到它→改變它→遠離它→忽略它。生死視角永遠在底下。絕對禁止：我聽到了、我理解你、這很正常、放下、沒關係。不加---分隔線。長短由情感決定，不限制。'+wisdomInject;
+  // 精簡的守護者身份——不帶全文，靠對話歷史延續
+  var shortGuardianSys='你是仁凱80歲的自己。壁爐邊，見過生死，除了生死其餘皆是小事。\n繼續對話，用殯葬師四部曲：找到它→改變它→遠離它→忽略它。\n絕對禁止：我聽到了、我理解你、這很正常、你已經很棒了、放下、沒關係。\n不加---分隔線。稱呼仁凱，長短由情感決定，不限制。有重量，不是幾句話了事。'+wisdomInject;
 
-  var fb='你說感覺沒開好——先停下來，問自己：是真的開得差，還是你用了一個別人的標準在量自己？那個「應該做得更好」的聲音，是你自己訂的，還是借來住在腦子裡的？';
+  var fb='你說的這個——先問自己一件事：這件事在你生命最後一天回望，還有這個重量嗎？除了生死，其餘皆是小事。梅大哥對抗肺癌還能豁達，他現在看著你，會說什麼？';
   try{
     var reply=null;
     if(engine==='gemini'&&gemKey){
-      reply=await callGeminiApi(continueSys,text,1500);
+      // 用多輪格式，把歷史傳進去，system instruction 只用精簡版
+      reply=await callGeminiMultiTurn(shortGuardianSys, _bngChatHistory.slice(0,-1), text, 1500);
     } else if(claudeKey){
       var res=await fetch('https://api.anthropic.com/v1/messages',{
         method:'POST',
         headers:{'Content-Type':'application/json','x-api-key':claudeKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-        body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,system:continueSys,messages:[{role:'user',content:text}]})
+        body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,system:(window._bngSystemPrompt||'')+wisdomInject,messages:[{role:'user',content:text}]})
       });
       var data=await res.json();
       reply=(data.content&&data.content[0]&&!data.error)?data.content[0].text:null;
@@ -1604,21 +1603,59 @@ function updateEngineStatus(){
 async function callGeminiApi(systemPrompt, userText, maxTokens){
   var key=getGeminiKey();
   if(!key)return null;
-  var url='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key;
-  var enhancedPrompt = buildGeminiSystemPrompt(systemPrompt);
-  var res=await fetch(url,{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      system_instruction:{parts:[{text:enhancedPrompt}]},
-      contents:[{role:'user',parts:[{text:userText}]}],
-      generationConfig:{maxOutputTokens:maxTokens||1500,temperature:0.9,topP:0.95,topK:40}
-    })
-  });
-  var data=await res.json();
-  if(data.error){console.error('Gemini error:',JSON.stringify(data.error));return null;}
-  if(data.candidates&&data.candidates[0]){return data.candidates[0].content.parts[0].text;}
-  return null;
+  try{
+    var url='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key;
+    var enhancedPrompt = buildGeminiSystemPrompt(systemPrompt);
+    var res=await fetch(url,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        system_instruction:{parts:[{text:enhancedPrompt}]},
+        contents:[{role:'user',parts:[{text:userText}]}],
+        generationConfig:{maxOutputTokens:maxTokens||1500,temperature:0.9,topP:0.95,topK:40}
+      })
+    });
+    var data=await res.json();
+    if(data.error){console.error('Gemini error:',JSON.stringify(data.error));return null;}
+    if(data.candidates&&data.candidates[0]&&data.candidates[0].content&&data.candidates[0].content.parts){
+      return data.candidates[0].content.parts[0].text;
+    }
+    return null;
+  }catch(e){console.error('callGeminiApi error:',e);return null;}
+}
+
+// 多輪對話版本（continuation 使用）
+async function callGeminiMultiTurn(shortSysPrompt, history, newUserText, maxTokens){
+  var key=getGeminiKey();
+  if(!key)return null;
+  try{
+    var url='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key;
+    // 把歷史轉成 Gemini multi-turn 格式
+    var contents=[];
+    for(var i=0;i<history.length;i++){
+      var h=history[i];
+      contents.push({
+        role: h.role==='user'?'user':'model',
+        parts:[{text:h.text}]
+      });
+    }
+    contents.push({role:'user',parts:[{text:newUserText}]});
+    var res=await fetch(url,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        system_instruction:{parts:[{text:shortSysPrompt}]},
+        contents:contents,
+        generationConfig:{maxOutputTokens:maxTokens||1500,temperature:0.9,topP:0.95,topK:40}
+      })
+    });
+    var data=await res.json();
+    if(data.error){console.error('Gemini multi-turn error:',JSON.stringify(data.error));return null;}
+    if(data.candidates&&data.candidates[0]&&data.candidates[0].content&&data.candidates[0].content.parts){
+      return data.candidates[0].content.parts[0].text;
+    }
+    return null;
+  }catch(e){console.error('callGeminiMultiTurn error:',e);return null;}
 }
 
 async function callClaudeApi(systemPrompt, userText, maxTokens){
