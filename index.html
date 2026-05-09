@@ -231,9 +231,9 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
 #bng-chat-messages{flex:1;overflow-y:auto;padding:20px 18px 8px;}
 .bng-msg-guardian{margin-bottom:20px;animation:bngSlide .5s ease both;}
 .bng-msg-guardian-lbl{font-size:9px;color:#2a6a52;letter-spacing:.1em;margin-bottom:8px;padding-left:2px;}
-.bng-msg-guardian-bubble{background:rgba(38,90,70,.08);border:1px solid rgba(48,100,78,.16);border-radius:4px 16px 16px 16px;padding:18px 20px;font-size:15.5px;line-height:2;color:#c4e8da;white-space:pre-line;}
-.bng-msg-user{margin-bottom:16px;display:flex;justify-content:flex-end;animation:bngSlide .3s ease both;}
-.bng-msg-user-bubble{background:rgba(50,120,90,.12);border:1px solid rgba(58,138,106,.2);border-radius:16px 16px 4px 16px;padding:12px 16px;font-size:14px;line-height:1.8;color:#8acaaa;max-width:80%;}
+.bng-msg-guardian-bubble{background:rgba(38,90,70,.08);border:1px solid rgba(48,100,78,.16);border-radius:4px 16px 16px 16px;padding:14px 16px;font-size:15px;line-height:1.65;color:#c4e8da;white-space:pre-line;}
+.bng-msg-user{margin-bottom:12px;display:flex;justify-content:flex-end;animation:bngSlide .3s ease both;}
+.bng-msg-user-bubble{background:rgba(50,120,90,.12);border:1px solid rgba(58,138,106,.2);border-radius:16px 16px 4px 16px;padding:10px 14px;font-size:14px;line-height:1.6;color:#8acaaa;max-width:80%;}
 .bng-thinking{display:flex;gap:5px;align-items:center;padding:14px 18px;}
 .bng-thinking-dot{width:6px;height:6px;border-radius:50%;background:rgba(90,184,152,.4);animation:bngBounce 1.2s ease infinite;}
 .bng-thinking-dot:nth-child(2){animation-delay:.18s;}
@@ -1397,7 +1397,9 @@ function bngRenderChat(guardianText,isFirst){
 
   var div=document.createElement('div');
   div.className='bng-msg-guardian';
-  div.innerHTML='<div class="bng-msg-guardian-lbl">🌿 80歲的你說</div><div class="bng-msg-guardian-bubble">'+esc(guardianText)+'</div>';
+  // 壓縮多餘空行：連續兩個換行變一個，讓段落更緊湊
+  var compactText=guardianText.replace(/\n{3,}/g,'\n\n').replace(/\n\n/g,'\n');
+  div.innerHTML='<div class="bng-msg-guardian-lbl">🌿 80歲的你說</div><div class="bng-msg-guardian-bubble">'+esc(compactText)+'</div>';
   msgs.appendChild(div);
 
   // 移除loading泡泡
