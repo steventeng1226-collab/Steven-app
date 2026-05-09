@@ -1020,12 +1020,14 @@ function ihtml(i){
   var pts=PURPOSES[i.id];
   var ptext=pts?pts[dayIdx]:'';
   var isOn=!!S.chk[i.id];
-  return '<div class="item'+(isOn?' on':'')+'\" id="it_'+i.id+'" onclick="tog(\''+i.id+'\')">'+
-    '<div class="ck"><span class="ckm">✓</span></div>'+
-    '<div class="ie">'+i.e+'</div>'+
-    '<div style="flex:1"><div class="il">'+i.l+'</div><div class="idesc">'+i.d+'</div>'+
+  return '<div class="item'+(isOn?' on':'')+'\" id="it_'+i.id+'" onclick="tog(\''+i.id+'\')" style="flex-direction:column;align-items:stretch;">'+
+    '<div style="display:flex;align-items:flex-start;gap:.85rem;">'+
+      '<div class="ck"><span class="ckm">✓</span></div>'+
+      '<div class="ie" style="margin-top:2px;">'+i.e+'</div>'+
+      '<div style="flex:1"><div class="il">'+i.l+'</div><div class="idesc">'+i.d+'</div></div>'+
+    '</div>'+
     '<div class="purpose-bubble'+(isOn&&ptext?' bubble-in':'')+'" id="bubble_'+i.id+'"'+(isOn&&ptext?'':' style="display:none"')+'>'+ptext+'</div>'+
-    '</div></div>';
+    '</div>';
 }
 
 function tog(id){
