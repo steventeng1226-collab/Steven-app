@@ -66,6 +66,9 @@ body{font-family:'Noto Serif TC',serif;color:var(--text1);max-width:430px;margin
 .item.on{background:var(--bg3);border-color:var(--border2);}
 .item.pop{animation:pop .3s ease;}
 @keyframes pop{50%{transform:scale(1.018)}}
+.purpose-bubble{margin-top:.6rem;padding:.55rem .8rem;background:rgba(245,166,35,.05);border:1px solid rgba(245,166,35,.15);border-radius:10px;font-size:.73rem;color:rgba(245,166,35,.82);line-height:1.75;display:none;}
+.purpose-bubble.bubble-in{display:block;animation:bubbleFloat .45s ease;}
+@keyframes bubbleFloat{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
 .ck{width:26px;height:26px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .25s;}
 .item.on .ck{background:var(--gold);border-color:var(--gold);}
 .ckm{color:#1A0F00;font-size:.75rem;font-weight:900;display:none;}
@@ -164,7 +167,8 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
 .hub-hint{position:absolute;bottom:14px;font-size:10px;letter-spacing:.06em;font-family:"Noto Serif TC",serif;}
 #hint-doing{color:rgba(180,120,30,.75);}
 #hint-being{color:rgba(80,180,140,.75);}
-.hub-divider{height:2px;flex-shrink:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent);position:relative;overflow:visible;}
+.hub-divider{height:30px;flex-shrink:0;background:transparent;position:relative;display:flex;align-items:center;justify-content:center;}
+.hub-divider::before{content:'';position:absolute;left:0;right:0;top:50%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);}
 @keyframes hubGlow{0%,100%{opacity:.4}50%{opacity:1}}
 .hub-glow-active{animation:hubGlow 3s ease infinite;}
 /* ══ BEING PAGE ══ */
@@ -335,7 +339,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
     <div class="hub-hint" id="hint-doing">點擊進入 ›</div>
   </div>
   <div class="hub-divider">
-    <span style="position:absolute;left:50%;transform:translateX(-50%);background:#111;color:#d4a84b;font-size:9px;padding:2px 10px;border-radius:20px;letter-spacing:1px;font-family:monospace;white-space:nowrap;border:1px solid #5a4020;top:-9px;">v6.2 · 除了生死，其餘皆是小事</span>
+    <span style="background:#111;color:#d4a84b;font-size:11px;padding:3px 14px;border-radius:20px;letter-spacing:.5px;font-family:'Noto Serif TC',serif;white-space:nowrap;border:1px solid #5a4020;z-index:1;position:relative;"><span style="font-size:9px;font-family:monospace;opacity:.7;">v6.3</span> · <b style="font-size:12px;letter-spacing:.03em;">除了生死，其餘皆是小事</b></span>
   </div>
   <div id="hub-being" class="hub-half" onclick="hubGo('being')">
     <div class="hub-glow" id="glow-being"></div>
@@ -352,7 +356,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
     <button class="bng-back" onclick="bngGoHub()">‹ 返回</button>
     <div class="bng-hdr-mid">
       <div class="t1">🌿 避風模式</div>
-      <div class="t2">除了生死，其餘皆是小事</div>
+      <div class="t2" style="font-size:11px;font-weight:700;letter-spacing:.04em;">除了生死，其餘皆是小事</div>
     </div>
     <button class="bng-restart" id="bng-restart" onclick="bngReset()">重來</button>
   </div>
@@ -465,7 +469,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
     <div class="hdr-top" style="position:relative;">
     <button id="v57-back" onclick="goBackToHub()">首頁</button>
       <div class="hdr-date" id="hdr-date"></div>
-      <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v6.1 ☁️</div>
+      <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v6.3 ☁️</div>
     </div>
     <div class="hdr-title">充實的一天</div>
     <div class="hdr-sub">Every Day Counts</div>
@@ -495,6 +499,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
 
   <div id="content-wrap">
   <div id="pane-today" class="pane on">
+    <div style="text-align:center;padding:.5rem 0 1.2rem;font-size:.72rem;color:var(--text4);letter-spacing:.1em;">每一個勾選，都是在建構大腦正向思維</div>
     <div class="sec"><div class="sdot" style="background:var(--red)"></div><div class="slabel" style="color:var(--red)">核心層 — 每天必做</div><div class="scount" id="cc">0 / 4</div></div>
     <div class="pbar"><div class="pfill" id="cpbar" style="width:0%;background:var(--red)"></div></div>
     <div id="core-list"></div>
@@ -644,7 +649,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
     </div>
     <div class="set-card">
       <div class="set-t">關於這款 APP</div>
-      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>版本 v6.1 · GitHub Pages · ☁️ 雲端備份</span></div>
+      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>版本 v6.3 · GitHub Pages · ☁️ 雲端備份</span></div>
     </div>
   </div>
   </div><!-- /content-wrap -->
@@ -704,6 +709,117 @@ var OBS=[
   {id:'selfkind',q:'今天，我有沒有對自己好一點？',p:'那件事做完，身體的哪個部位最先放鬆？'},
   {id:'microlight',q:'✨ 今天的微光：寫下一件好事',p:'試著加上一個感官細節：我看見、我聽見、我皮膚感受到...',special:true}
 ];
+
+var PURPOSES={
+  smoothie:[
+    '核桃Omega-3直接參與腦細胞訊號傳遞，對記憶與學習最有感；亞麻籽改善腦部微循環，長時間用腦更持久',
+    '橄欖油抗發炎脂肪護腦血管；薑黃強效抗發炎保護神經細胞——這一杯是每天的慢性腦部保養',
+    '南瓜子的鋅與鎂支持神經穩定與荷爾蒙平衡；青菜的鎂減少焦躁與腦疲勞——情緒穩定從早餐開始',
+    '雞蛋膽鹼是神經傳導物質的原料，讓思考清晰反應快；杏仁維生素E抗氧化，保護腦細胞不被氧化壓力破壞',
+    '腦子清醒、情緒穩定的你，對家人與身邊的人是完全不同的存在',
+    '每天這一杯，是用食物對抗腦部老化。神經細胞的長期保養，從這裡開始',
+    '食材備好，按下攪拌機。5分鐘，這一杯值得'
+  ],
+  water:[
+    '大腦75%是水，脫水1%認知能力下降20%——每一口都在維護大腦運算效能',
+    '水分讓血液黏稠度下降，心臟輸送壓力減輕，血壓因此趨於穩定',
+    '脫水狀態下皮質醇升高——喝水本身就是一種生理降壓動作',
+    '腎臟每天過濾180公升血液，充足水分讓這個系統長期維持高效',
+    '你保持清醒有精力，身邊的人就少承受你煩躁的時刻',
+    '那些堅持喝水的年份，腎功能數字比同齡人好看得多',
+    '一杯接一杯。不需要意志力，只需要水杯放在眼前'
+  ],
+  english:[
+    '雙語訓練持續激活前額葉皮質——決策力、衝動控制、注意力同步強化',
+    '認知活動增加腦血流量，海馬迴的神經新生速度因此加快',
+    '完成一個小目標的瞬間多巴胺釋放——哪怕只是聽懂一句話',
+    '雙語使用者失智症發病時間平均延後5年——這5分鐘是最便宜的保險',
+    '語言能力讓你在更大的世界移動，那個世界有更多人值得認識',
+    '80歲的你，因為沒有停下來，依然能用另一種語言思考——這是驕傲',
+    '哪怕只聽一句，習慣的神經迴路就在悄悄加深。5分鐘而已'
+  ],
+  exercise:[
+    'BDNF（腦源性神經營養因子）正在分泌，海馬迴新的神經元正在生長',
+    '重訓後收縮壓平均下降5-7mmHg，深蹲划船弓步同時動員大肌群，充血是肌肉生長的訊號',
+    '接近力竭的最後2-3下讓皮質醇劇降——訓練後那種平靜感，有完整的生物學根據',
+    '55歲重訓是對抗肌少症最有效的方法——10年後的行動力在今天每一組裡被存入',
+    '情緒穩定的你，對家人說話的方式會完全不一樣',
+    '能抱孫子、能爬山、能自己走路——80歲這些能力，在今天被一點一點存入',
+    '穿上鞋，走出去。不需要計畫，只需要開始'
+  ],
+  sunshine:[
+    '視網膜接收藍光，血清素合成啟動——快樂的化學反應從這個動作開始',
+    '皮膚合成維生素D3，轉化為骨質保護、免疫調節、血壓穩定的關鍵激素',
+    '陽光抑制褪黑激素，讓你從「想繼續躺著」切換到真正清醒的狀態',
+    '生物鐘被陽光校準，今晚的深度睡眠品質，正在現在被決定',
+    '心情好的你，對每個遇見的人都是更好的存在',
+    '那些曬太陽的年份，骨密度與情緒基準線，都比沒曬的同齡人更好',
+    '站在窗邊，臉朝向光。就這樣，什麼都不用做'
+  ],
+  reading:[
+    '閱讀＋複誦同時激活視覺皮層、語言中樞、運動皮層、海馬迴——四區同時運作是最有效的抗老訓練',
+    '專注閱讀降低皮質醇，心率趨穩，血壓在閱讀後平均下降6-10mmHg',
+    '沉浸閱讀讓大腦進入心流前置狀態，焦慮的雜訊被排擠出去',
+    '認知儲備越豐富，失智症臨床症狀出現越晚——每天20分鐘是對抗老化的複利',
+    '閱讀讓你有更多東西可以說，有更多角度可以理解別人',
+    '那些讀過的書，最終都變成了你說話的方式和看世界的眼睛',
+    '翻開，讀幾行，大聲說一句。不需要讀完，只需要開始'
+  ],
+  family:[
+    '社會連結激活前扣帶迴皮質——這是大腦處理歸屬感的核心區域',
+    '催產素分泌，心率下降，血壓平穩——一句訊息，生理都在改變',
+    '孤立感是情緒最大的毒，一句話就在打破孤島',
+    '哈佛追蹤700人85年，最終答案：關係品質是長壽與幸福唯一最強的預測因子',
+    '你發出的這個訊息，在對方那裡可能是今天最溫暖的時刻',
+    '80歲最珍惜的記憶裡，有每一次你主動說了那句話',
+    '一句話就夠。不需要長篇，只需要讓對方知道你想到他了'
+  ],
+  help:[
+    '利他行為激活腹側被蓋區——大腦獎勵迴路的核心，比吃糖更純粹',
+    '助人後免疫球蛋白A分泌增加，免疫防線在這個動作後悄悄升高',
+    '多巴胺＋血清素＋催產素三重分泌——「助人者的愉悅感」有完整的生物學依據',
+    '長期助人行為與更低抑鬱風險、更長壽命直接相關',
+    '你的影響力，在某人今天的記憶裡留下了真實的痕跡',
+    '人生終點，讓你驕傲的不是你得到了什麼，是你給出去了什麼',
+    '一個動作，一句話，一個微笑。不需要偉大，只需要真實'
+  ],
+  learn:[
+    '新知識在海馬迴形成新的突觸連結——大腦正在長出新的物理結構',
+    '認知挑戰增加大腦血流量，神經元存活率因此提高',
+    '好奇心激活多巴胺系統——「想知道更多」本身就是快樂的狀態',
+    '認知儲備越豐富，失智症臨床症狀出現越晚——學習是在幫未來的自己買時間',
+    '你學到的東西，有一天會在某個對話裡點亮另一個人',
+    '那個一直在學習的人，到老了眼睛裡還有光',
+    '任何形式都算。聽說讀看，都是在餵養大腦'
+  ],
+  breathe:[
+    '延長吐氣激活迷走神經，副交感神經上線，杏仁核的警報系統在這一刻關閉',
+    '4-7-8呼吸讓收縮壓在5分鐘內平均下降8mmHg，心率變異性同步提升',
+    '每一次刻意呼吸都在訓練你：你是情緒的觀察者，不是被情緒淹沒的人',
+    '呼吸調節能力越強，面對壓力時自律神經的恢復速度越快',
+    '能調節自己呼吸的人，在衝突中不會失控——這是給所有關係的禮物',
+    '那些練習靜下來的時刻，一點一點鑿出了一個更穩定的自己',
+    '吸4秒，停7秒，呼8秒。只要三輪，身體就會有感覺'
+  ],
+  goodthing:[
+    '大腦有負面偏誤（Negativity Bias），主動記錄好事是在矯正這個進化遺留的偏差',
+    '感恩情緒降低皮質醇，睡前寫好事讓入睡時間縮短、睡眠深度增加',
+    '每寫一條，多巴胺釋放一次——你在訓練大腦主動搜尋幸福的能力',
+    '睡前記錄的正面記憶在睡眠中被海馬迴鞏固，明天醒來情緒基準線更高',
+    '當你開始注意好事，對身邊人的欣賞也會增加，關係品質跟著改善',
+    '那些年積累的微光記錄，最終構成了一個快樂人生的真實證據',
+    '哪怕只是「今天喝了一杯好咖啡」，也算。一件事，一句話就夠'
+  ],
+  sleep:[
+    '11點前入睡獲得最多慢波睡眠——大腦清除β-澱粉樣蛋白的黃金時段',
+    '睡眠中生長激素大量分泌，肌肉修復與細胞更新都在這個時段完成',
+    '明天80%的情緒穩定度由今晚睡眠品質決定——這是最便宜的情緒管理',
+    '長期睡眠不足是高血壓、糖尿病、失智症的獨立風險因子——睡好是在預防',
+    '睡飽的你，明天對家人說話的語氣會不一樣',
+    '那些按時睡覺的年份，心血管數據比熬夜的同齡人好看許多',
+    '不需要馬上睡著，只需要11點躺下，放下手機，讓身體知道該休息了'
+  ]
+};
 var WKQ=[
   {id:'w1',q:'這週我發現自己一個新的模式或反應？'},
   {id:'w2',q:'這週感覺最好的時刻是什麼？是什麼造成的？'},
@@ -865,16 +981,39 @@ function buildUI(){
 }
 
 function ihtml(i){
-  return '<div class="item'+(S.chk[i.id]?' on':'')+'" id="it_'+i.id+'" onclick="tog(\''+i.id+'\')">'+
+  var dayIdx=new Date().getDate()%7;
+  var pts=PURPOSES[i.id];
+  var ptext=pts?pts[dayIdx]:'';
+  var isOn=!!S.chk[i.id];
+  return '<div class="item'+(isOn?' on':'')+'\" id="it_'+i.id+'" onclick="tog(\''+i.id+'\')">'+
     '<div class="ck"><span class="ckm">✓</span></div>'+
     '<div class="ie">'+i.e+'</div>'+
-    '<div><div class="il">'+i.l+'</div><div class="idesc">'+i.d+'</div></div></div>';
+    '<div style="flex:1"><div class="il">'+i.l+'</div><div class="idesc">'+i.d+'</div>'+
+    '<div class="purpose-bubble'+(isOn&&ptext?' bubble-in':'')+'" id="bubble_'+i.id+'"'+(isOn&&ptext?'':' style="display:none"')+'>'+ptext+'</div>'+
+    '</div></div>';
 }
 
 function tog(id){
   S.chk[id]=!S.chk[id];
   var el=document.getElementById('it_'+id);
   if(el){el.classList.toggle('on',S.chk[id]);el.classList.add('pop');setTimeout(function(){el.classList.remove('pop');},350);}
+  // 目的氣泡
+  var bubble=document.getElementById('bubble_'+id);
+  if(bubble){
+    var dayIdx=new Date().getDate()%7;
+    var pts=PURPOSES[id];
+    var ptext=pts?pts[dayIdx]:'';
+    if(S.chk[id]&&ptext){
+      bubble.textContent=ptext;
+      bubble.style.display='block';
+      bubble.classList.remove('bubble-in');
+      void bubble.offsetWidth;
+      bubble.classList.add('bubble-in');
+    } else {
+      bubble.style.display='none';
+      bubble.classList.remove('bubble-in');
+    }
+  }
   // 微光高亮 + 震動
   if(id==='goodthing'&&S.chk[id]){
     var mc=document.getElementById('microlight-card');
