@@ -50,8 +50,8 @@ body{font-family:'Noto Serif TC',serif;color:var(--text1);max-width:430px;margin
 .spill{display:inline-flex;align-items:center;gap:.5rem;margin-top:1rem;background:var(--bg3);border:2px solid var(--border2);border-radius:30px;padding:.42rem 1.1rem;font-size:.82rem;color:#FFF;}
 .spill b{color:var(--gold);font-weight:700;}
 #rest-bar{display:none;margin-top:.6rem;padding:.5rem 1rem;background:#1A1500;border:1px solid #3D2500;border-radius:20px;font-size:.78rem;color:#C8A870;font-style:italic;}
-#echo-bar{display:none;margin:0;background:#1A1000;border-bottom:1px solid #3D2500;padding:.75rem 1.4rem;cursor:pointer;}
-.tab{flex:1;padding:.9rem .1rem;background:none;border:none;border-bottom:3px solid transparent;color:var(--text4);font-family:'Noto Serif TC',serif;font-size:.73rem;cursor:pointer;transition:all .2s;}
+#echo-bar{display:none;margin:0;background:#1A1000;border-bottom:1px solid #3D2500;padding:.75rem 1.4rem;cursor:pointer;max-height:35vh;overflow-y:auto;}
+.tab{flex:1;padding:.9rem .05rem;background:none;border:none;border-bottom:3px solid transparent;color:var(--text4);font-family:'Noto Serif TC',serif;font-size:.68rem;cursor:pointer;transition:all .2s;}
 .tab.on{color:var(--gold);border-bottom-color:var(--gold);}
 .sec{display:flex;align-items:center;gap:.65rem;margin:1.9rem 0 .7rem;}
 .sec:first-child{margin-top:0;}
@@ -66,7 +66,7 @@ body{font-family:'Noto Serif TC',serif;color:var(--text1);max-width:430px;margin
 .item.on{background:var(--bg3);border-color:var(--border2);}
 .item.pop{animation:pop .3s ease;}
 @keyframes pop{50%{transform:scale(1.018)}}
-.purpose-bubble{margin-top:.6rem;padding:.55rem .8rem;background:rgba(245,166,35,.05);border:1px solid rgba(245,166,35,.15);border-radius:10px;font-size:.73rem;color:rgba(245,166,35,.82);line-height:1.75;display:none;}
+.purpose-bubble{width:100%;margin-top:.65rem;padding:.65rem .9rem;background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.2);border-radius:10px;font-size:.82rem;color:#fff;line-height:1.8;display:none;box-sizing:border-box;}
 .purpose-bubble.bubble-in{display:block;animation:bubbleFloat .45s ease;}
 @keyframes bubbleFloat{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
 .ck{width:26px;height:26px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .25s;}
@@ -140,6 +140,21 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
 .qb{font-size:.9rem;color:var(--text2);line-height:2.8;font-style:italic;}
 .qb em{color:#FFF;font-style:normal;}
 .set-h{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--gold);margin-bottom:1.4rem;}
+/* ── Journal ── */
+.j-hdr{text-align:center;padding:.5rem 0 1.2rem;}
+.j-ht{font-family:'Cormorant Garamond',serif;font-size:1.7rem;color:var(--gold);}
+.j-hs{font-size:.73rem;color:var(--text2);font-style:italic;margin-top:.3rem;}
+.j-input-card{background:var(--card);border:2px solid var(--border);border-radius:13px;padding:1.2rem;margin-bottom:1rem;}
+.j-label{font-size:.72rem;color:var(--text2);letter-spacing:.12em;margin-bottom:.6rem;font-weight:700;}
+.j-btn{width:100%;padding:1rem;background:linear-gradient(135deg,#8A5A20,#6A3A08);border:none;border-radius:12px;color:#FFE0A0;font-family:'Noto Serif TC',serif;font-size:.95rem;font-weight:700;cursor:pointer;margin-top:.8rem;display:flex;align-items:center;justify-content:center;gap:.5rem;}
+.j-btn:disabled{opacity:.4;}
+.j-entry{background:var(--card);border:2px solid var(--border);border-radius:13px;margin-bottom:1rem;overflow:hidden;}
+.j-entry-date{font-size:.68rem;color:var(--text2);letter-spacing:.1em;padding:.7rem 1.1rem .4rem;border-bottom:1px solid var(--border);}
+.j-entry-text{font-size:.88rem;color:#F0DEB0;line-height:2;padding:.9rem 1.1rem .5rem;font-style:italic;}
+.j-voice-card{padding:.8rem 1.1rem;border-top:1px solid var(--border);}
+.j-voice-name{font-size:.7rem;color:var(--gold);letter-spacing:.1em;margin-bottom:.4rem;font-weight:700;}
+.j-voice-text{font-size:.86rem;color:#FFF;line-height:2.1;}
+.j-empty{text-align:center;padding:3rem 1rem;color:var(--text2);font-size:.88rem;line-height:2.5;}
 .set-card{background:var(--card);border:2px solid var(--border);border-radius:13px;padding:1.3rem;margin-bottom:.95rem;}
 .set-t{font-size:.76rem;color:var(--text2);letter-spacing:.13em;margin-bottom:.95rem;font-weight:700;}
 .kstatus{font-size:.82rem;margin-top:.7rem;}
@@ -339,7 +354,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
     <div class="hub-hint" id="hint-doing">點擊進入 ›</div>
   </div>
   <div class="hub-divider">
-    <span style="background:#111;color:#d4a84b;font-size:11px;padding:3px 14px;border-radius:20px;letter-spacing:.5px;font-family:'Noto Serif TC',serif;white-space:nowrap;border:1px solid #5a4020;z-index:1;position:relative;"><span style="font-size:9px;font-family:monospace;opacity:.7;">v6.3</span> · <b style="font-size:12px;letter-spacing:.03em;">除了生死，其餘皆是小事</b></span>
+    <span style="background:#111;color:#d4a84b;font-size:11px;padding:3px 14px;border-radius:20px;letter-spacing:.5px;font-family:'Noto Serif TC',serif;white-space:nowrap;border:1px solid #5a4020;z-index:1;position:relative;"><span style="font-size:9px;font-family:monospace;opacity:.7;">v6.4</span> · <b style="font-size:12px;letter-spacing:.03em;">除了生死，其餘皆是小事</b></span>
   </div>
   <div id="hub-being" class="hub-half" onclick="hubGo('being')">
     <div class="hub-glow" id="glow-being"></div>
@@ -469,7 +484,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
     <div class="hdr-top" style="position:relative;">
     <button id="v57-back" onclick="goBackToHub()">首頁</button>
       <div class="hdr-date" id="hdr-date"></div>
-      <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v6.3 ☁️</div>
+      <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v6.4 ☁️</div>
     </div>
     <div class="hdr-title">充實的一天</div>
     <div class="hdr-sub">Every Day Counts</div>
@@ -494,6 +509,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
     <button class="tab" onclick="switchTab('ai')">心靈</button>
     <button class="tab" onclick="switchTab('weekly')">回顧</button>
     <button class="tab" onclick="switchTab('progress')">進步</button>
+    <button class="tab" onclick="switchTab('journal')">📓筆記</button>
     <button class="tab" onclick="switchTab('settings')">設定</button>
   </div>
 
@@ -649,9 +665,28 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
     </div>
     <div class="set-card">
       <div class="set-t">關於這款 APP</div>
-      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>版本 v6.3 · GitHub Pages · ☁️ 雲端備份</span></div>
+      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>版本 v6.4 · GitHub Pages · ☁️ 雲端備份</span></div>
     </div>
   </div>
+  </div><!-- /pane-settings -->
+
+  <!-- ════ 生命筆記 分頁 ════ -->
+  <div id="pane-journal" class="pane">
+    <div class="j-hdr">
+      <div class="j-ht">📓 生命筆記</div>
+      <div class="j-hs">此刻的觸動，值得被記下來</div>
+    </div>
+    <div class="j-input-card">
+      <div class="j-label">此刻的感觸</div>
+      <textarea id="journal-input" style="min-height:110px;" placeholder="寫下任何觸動你的事——一個瞬間、一個念頭、一件讓你想到人生的事..."></textarea>
+      <button class="j-btn" id="journal-btn" onclick="getJournalFeedback()">
+        🌸 請智者回應
+      </button>
+      <div id="journal-hint" style="display:none;font-size:.78rem;color:var(--red);margin-top:.5rem;text-align:center;"></div>
+    </div>
+    <div id="journal-list"></div>
+  </div>
+
   </div><!-- /content-wrap -->
 </div>
 
@@ -1096,12 +1131,13 @@ function oChg(id,v){S.obs[id]=v;clearTimeout(T.o);T.o=setTimeout(saveD,700);}
 function wChg(id,v){S.wk[id]=v;clearTimeout(T.w);T.w=setTimeout(saveW,700);}
 
 function switchTab(name){
-  var tabs=['today','ai','weekly','progress','settings'];
+  var tabs=['today','ai','weekly','progress','journal','settings'];
   document.querySelectorAll('.tab').forEach(function(b,i){b.classList.toggle('on',tabs[i]===name);});
   document.querySelectorAll('.pane').forEach(function(p){p.classList.remove('on');});
   var pane=document.getElementById('pane-'+name);if(pane)pane.classList.add('on');
   if(name==='ai')scrollM();
   if(name==='progress')rProgress();
+  if(name==='journal')renderJournal();
 }
 
 function rProgress(){
@@ -1247,6 +1283,93 @@ async function sendText(txt){
   }
   S.busy=false;if(sbtn)sbtn.disabled=false;
   sv('msgs',S.msgs.slice(-50));renderMsgs();
+}
+
+// ════ 生命筆記 ════
+var VOICES=[
+  {key:'yangjiang',name:'楊絳',emoji:'🌸',
+   sys:'你是楊絳先生。百歲老人，中國文學家，見過民國動亂、文化大革命，丈夫錢鍾書已逝，女兒先你而去。你對人生有透徹的從容。\n風格：不說教、不煽情、一針見血、帶著百歲的平靜。偶爾一句話讓人停住。不超過120字。繁體中文。不加署名。'},
+  {key:'thoreau',name:'梭羅',emoji:'🌿',
+   sys:'你是亨利·梭羅。曾獨居瓦爾登湖兩年，《湖濱散記》作者。你相信簡單、自然、回歸本質。\n風格：帶著森林和湖水的氣息，看見自然中的真理，用自然意象回應人生問題。不超過120字。繁體中文。不加署名。'},
+  {key:'frankl',name:'弗蘭克',emoji:'🕯️',
+   sys:'你是維克多·弗蘭克。猶太心理學家，納粹集中營倖存者，《活出意義來》作者。你在最黑暗處找到意義。\n風格：沉穩、有力量、從苦難中提煉出生命的重量。幫助對方在觸動裡找到意義。不超過120字。繁體中文。不加署名。'},
+  {key:'elder',name:'無名老人',emoji:'☕',
+   sys:'你是一個無名的百歲老人，說話像鄰居的老奶奶，大白話，但每句話都字字入心。你見過太多，但不說大道理，只說最真實的那句話。\n風格：親切、樸實、有時幽默、不裝高深。就說那一句最真的話。不超過100字。繁體中文。不加署名。'}
+];
+
+function ldJournals(){return ld('journals')||[];}
+function svJournals(arr){sv('journals',arr);}
+
+function renderJournal(){
+  var list=document.getElementById('journal-list');
+  if(!list)return;
+  var entries=ldJournals();
+  if(!entries.length){
+    list.innerHTML='<div class="j-empty">還沒有筆記。<br>寫下此刻讓你停住的那個念頭。</div>';
+    return;
+  }
+  var html='';
+  entries.slice().reverse().forEach(function(e){
+    var dateStr=e.date?new Date(e.date).toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric'}):'';
+    html+='<div class="j-entry">';
+    html+='<div class="j-entry-date">'+dateStr+'</div>';
+    html+='<div class="j-entry-text">「'+e.text+'」</div>';
+    if(e.responses&&e.responses.length){
+      e.responses.forEach(function(r){
+        html+='<div class="j-voice-card"><div class="j-voice-name">'+r.emoji+' '+r.voice+'</div><div class="j-voice-text">'+r.text+'</div></div>';
+      });
+    }
+    html+='</div>';
+  });
+  list.innerHTML=html;
+}
+
+async function callVoice(voice,userText){
+  try{
+    var res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':gk(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:300,system:voice.sys,messages:[{role:'user',content:userText}]})
+    });
+    var data=await res.json();
+    if(data.error)return null;
+    return (data.content&&data.content[0])?data.content[0].text:null;
+  }catch(e){return null;}
+}
+
+async function getJournalFeedback(){
+  if(!gk()){alert('請先到設定填入 API Key');switchTab('settings');return;}
+  var input=document.getElementById('journal-input');
+  var hint=document.getElementById('journal-hint');
+  var btn=document.getElementById('journal-btn');
+  var text=(input?input.value:'').trim();
+  if(!text){
+    if(hint){hint.style.display='block';hint.textContent='請先寫下你的感觸。';}
+    return;
+  }
+  if(hint)hint.style.display='none';
+  if(btn){btn.disabled=true;btn.innerHTML='⏳ 智者們正在思考...';}
+  // 隨機選2-3個聲音
+  var shuffled=VOICES.slice().sort(function(){return Math.random()-.5;});
+  var count=Math.random()<.4?2:3;
+  var selected=shuffled.slice(0,count);
+  // 並行呼叫
+  var results=await Promise.all(selected.map(function(v){return callVoice(v,text);}));
+  var responses=[];
+  selected.forEach(function(v,i){
+    if(results[i])responses.push({voice:v.name,emoji:v.emoji,text:results[i]});
+  });
+  if(!responses.length){
+    if(btn){btn.disabled=false;btn.innerHTML='🌸 請智者回應';}
+    if(hint){hint.style.display='block';hint.textContent='連線失敗，請稍後再試。';}
+    return;
+  }
+  var entries=ldJournals();
+  entries.push({date:new Date().toISOString(),text:text,responses:responses});
+  svJournals(entries);
+  if(input)input.value='';
+  if(btn){btn.disabled=false;btn.innerHTML='🌸 請智者回應';}
+  renderJournal();
 }
 
 function showHint(msg){
@@ -2209,7 +2332,34 @@ window._wisdomExtra = [
    trigger:["沒意思","空虛","不快樂","得到了也沒感覺","努力卻不開心","成功但","達到了但"]},
   {id:"W29", theme:"去愛吧，熱氣騰騰地活著",
    content:"如果你只能保留一個記憶，你會保護哪一個？不是銀行卡餘額變多的瞬間。是某個下午落在肩膀上的一縷陽光，或某人無意間看向你的一個微笑。構成你這個存在的，是這樣一座微笑瞬間的畫廊。人生從來不是設定好終點的狹窄軌道，而是一片曠野。羅曼·羅蘭說：世界上只有一種真正的英雄主義，就是在認清生活的真相後，依然熱愛生活。去愛吧，去感受，去犯錯，熱氣騰騰地活著。",
-   trigger:["活著有什麼用","麻木","沒感覺","過一天算一天","失去熱情","不想做什麼","冷漠"]}
+   trigger:["活著有什麼用","麻木","沒感覺","過一天算一天","失去熱情","不想做什麼","冷漠"]},
+  {id:"W30", theme:"世界是自己的，與他人毫無關係",
+   content:"楊絳說：我們爭不過歲月，也跑不過時間。唯有以自己喜歡的方式，過好每一個日升日落。世界是自己的，與他人毫無關係。你花了多少精力在意別人怎麼看你？那些人今晚都在想自己的事——你在他們腦海裡停留的時間，遠比你以為的短。把那些精力還給自己。",
+   trigger:["別人怎麼看","在意別人","外界評價","被說","被批評","不被理解"]},
+  {id:"W31", theme:"讀書不多，想得太多",
+   content:"楊絳說：你的問題在於讀書不多而想得太多。腦子裡的念頭是靠自己餵養的——你不輸入新的東西，它就只能反覆咀嚼那幾個舊念頭，越嚼越苦。書是一個出口，一個讓腦子換頻道的地方。不用讀大部頭，翻開，讀幾頁，念頭就換了位置。",
+   trigger:["想太多","腦子停不下來","反覆想","焦慮","睡不著","胡思亂想"]},
+  {id:"W32", theme:"走好選擇的路，別選擇好走的路",
+   content:"楊絳說：走好選擇的路，別選擇好走的路。既然選了，錯了就錯了，別一遍一遍地去後悔。不要去美化那條你沒走的路——人生路上每條路都硌腳，區別只是方式不一樣而已。眼睛長在前面，別總往後看。你在當時那個沒閱歷的年紀，誰都會犯錯。就算重新來，你還會選擇那條路。",
+   trigger:["後悔","選錯了","當初","如果","要是","悔恨","走錯路"]},
+  {id:"W33", theme:"人生除了生死，其餘都是擦傷",
+   content:"楊絳說：人生除了生死，其餘都是擦傷。那些讓你以為過不去的事，事後再看看，天也沒有塌下來。你已經不知不覺地挺過了很多磨難，練出了一邊崩潰一邊自癒的好心態。當初覺得天大的事，現在回頭看——不過是一道擦傷的印記，提醒你曾經走過。",
+   trigger:["過不去","崩潰","快撐不住","很嚴重","天塌了","完了"]},
+  {id:"W34", theme:"人生最美妙的風景，是內心的淡定",
+   content:"楊絳說：人生最美妙的風景，其實是內心的淡定與從容。我們曾如此期盼外界對自己的認可，可是到最後才知道，世界是自己的，與他人毫無關係。想開了就會明白：在這個世界上你就是你。最後收拾殘局的，還是要靠你自己。那個從容，不是不在乎，是在乎的事少了，心就大了。",
+   trigger:["焦慮","不平靜","心亂","煩躁","靜不下來","急"]},
+  {id:"W35", theme:"你所有的痛苦，都是因為太較真",
+   content:"楊絳說：你所有的壓力，都是因為你太想要；你所有的痛苦，都是因為你太較真。不是叫你不在乎，是叫你分清楚哪些值得較真，哪些是自己給自己加的枷鎖。歲月靜好是片刻，一地雞毛是日常——誰都一樣。即使世界偶爾涼薄，內心也要繁華似錦。",
+   trigger:["較真","壓力","太在意","想太多","放不下","執著"]},
+  {id:"W36", theme:"我和誰都不爭，和誰爭我都不屑",
+   content:"楊絳說：我和誰都不爭，和誰爭我都不屑。既然上了生活的賊船，那就做個快樂的海盜。不經歷點破事，那算什麼人生？只要傷不了命，只要還能喘氣，就是最好的人生。少生氣，少計較，多開心。輸了健康，贏了世界又能如何？心隨境轉則煩，心隨己轉則悅。",
+   trigger:["比較","競爭","輸贏","不服","生氣","計較","爭"]},
+  {id:"W37", theme:"人生各有渡口，各有歸舟",
+   content:"楊絳說：人間沒有永遠。如果有一天有人突然從你的生命中消失了，不要問為什麼，只是他到了該離開的時候。人生各有渡口，各有歸舟。有些事情終究是無能為力的，不要害怕遇見，不要害怕失去。別人如何待我，是我的因果；我待別人如何，那是我的修行。",
+   trigger:["離開","失去","分離","告別","消失","結束","再見"]},
+  {id:"W38", theme:"人生的意義就是獨自穿越悲喜",
+   content:"楊絳說：人生的意義就是獨自穿越悲喜，見天地、見眾生、見自己。那個見天地，是說你得走出去，不能只活在自己的腦袋裡。那個見眾生，是說每個人都是一個世界，值得你好奇。那個見自己，才是最難的——不帶評判，只是看清楚你是誰，你真正想要什麼。",
+   trigger:["人生意義","為什麼活著","目的","方向","迷失","不知道要什麼"]}
 ];
 
 // 升級匹配函數——加入 _wisdomExtra 的匹配
