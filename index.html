@@ -1519,12 +1519,12 @@ function hubRefresh(){
 function hubGo(dest){
   var hub=document.getElementById('hub-page');
   if(dest==='doing'){
-    if(hub)hub.classList.add('hidden');
+    if(hub){hub.classList.add('hidden');hub.style.display='none';}
     if(!gk()){var s=document.getElementById('setup');if(s)s.classList.add('show');}
     else{var a=document.getElementById('app');if(a)a.style.display='flex';loadState();buildUI();var hd=document.getElementById('hdr-date');if(hd)hd.textContent=new Date().toLocaleDateString('zh-TW',{month:'long',day:'numeric',weekday:'long'});var ki=document.getElementById('sk1');if(ki)ki.value=gk();var sui=document.getElementById('sheets-url');if(sui)sui.value=gsu();refreshKst();initEcho();checkRestMsg();switchTab('today');}
   }else{
-    if(hub)hub.classList.add('hidden');
-    var bp=document.getElementById('being-page');if(bp)bp.classList.add('visible');
+    if(hub){hub.classList.add('hidden');hub.style.display='none';}
+    var bp=document.getElementById('being-page');if(bp){bp.classList.add('visible');bp.style.display='flex';}
     bngEnter();
   }
 }
@@ -1536,8 +1536,8 @@ function goBackToHub(){
 function bngGoHub(){
   bngStopBreath();clearInterval(_bngAutoReturn);
   var bp=document.getElementById('being-page'),hub=document.getElementById('hub-page');
-  if(bp)bp.classList.remove('visible');
-  if(hub){hub.classList.remove('hidden');hubRefresh();}
+  if(bp){bp.classList.remove('visible');bp.style.display='none';}
+  if(hub){hub.classList.remove('hidden');hub.style.display='flex';hubRefresh();}
 }
 // ══════════ BEING ══════════
 var _bngTimer=null,_bngApiDone=false,_bngBreathDone=false,_bngAutoReturn=null,_bngPI=0,_bngCnt=4,_bngApiReply='';
@@ -1855,7 +1855,13 @@ function bngSurvived(){
   _bngAutoReturn=setInterval(function(){
     count--;
     if(ss)ss.textContent='除了生死，其餘皆是小事。\n'+count+'秒後回主畫面…';
-    if(count<=0){clearInterval(_bngAutoReturn);bngGoHub();}
+    if(count<=0){
+      clearInterval(_bngAutoReturn);
+      bngGoHub();
+      // 萬一自動跳轉失效，讓按鈕可手動點擊
+      if(ss)ss.textContent='除了生死，其餘皆是小事。\n點此回主畫面 ›';
+      if(btn)btn.onclick=function(){bngGoHub();};
+    }
   },1000);
 }
 
