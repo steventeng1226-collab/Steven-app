@@ -96,7 +96,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
 .chat-hdr{text-align:center;padding:.65rem 1.4rem .55rem;border-bottom:1.5px solid var(--border);flex-shrink:0;}
 .chat-ht{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--gold);}
 .chat-hs{font-size:.72rem;color:var(--text2);font-style:italic;margin-top:.15rem;}
-#msg-list{flex:1;overflow-y:auto;padding:.5rem 1.4rem;scrollbar-width:none;min-height:0;}
+#msg-list{padding:.5rem 1.4rem;scrollbar-width:none;min-height:0;}
 #msg-list::-webkit-scrollbar{display:none;}
 .empty-chat{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:0 1rem;}
 .empty-e{font-size:1.6rem;margin-bottom:.55rem;}
@@ -359,7 +359,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
   </div>
   <div class="hub-divider">
     <span style="background:#111;color:#d4a84b;padding:5px 14px;border-radius:20px;border:1px solid #5a4020;z-index:1;position:relative;text-align:center;display:inline-block;">
-      <div style="font-size:9px;font-family:monospace;opacity:.6;letter-spacing:.08em;">v6.7</div>
+      <div style="font-size:9px;font-family:monospace;opacity:.6;letter-spacing:.08em;">v6.8</div>
       <div style="font-size:12px;font-weight:700;letter-spacing:.03em;font-family:'Noto Serif TC',serif;margin-top:1px;">除了生死，其餘皆是小事</div>
       <div style="font-size:13px;font-weight:900;letter-spacing:.02em;font-family:'Noto Serif TC',serif;margin-top:2px;color:#FFD070;">反正最後都是一堆灰，你怕個毛啊？</div>
     </span>
@@ -500,7 +500,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
     <div class="hdr-top" style="position:relative;">
     <button id="v57-back" onclick="goBackToHub()">首頁</button>
       <div class="hdr-date" id="hdr-date"></div>
-      <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v6.7 ☁️</div>
+      <div class="hdr-ver" id="hdr-ver" onclick="switchTab('settings')">v6.8 ☁️</div>
     </div>
     <div class="hdr-title">充實的一天</div>
     <div class="hdr-sub">Every Day Counts</div>
@@ -722,7 +722,7 @@ textarea::placeholder{color:var(--muted);font-size:.85rem;line-height:1.8;}
     </div>
     <div class="set-card">
       <div class="set-t">關於這款 APP</div>
-      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>版本 v6.7 · GitHub Pages · ☁️ 雲端備份</span></div>
+      <div class="about">這款 APP 不負責讓工廠更成功<br>它只負責讓我更快樂<br><br><span>版本 v6.8 · GitHub Pages · ☁️ 雲端備份</span></div>
     </div>
   </div><!-- /pane-settings -->
 
@@ -1552,13 +1552,18 @@ function initAiPane(){
     if(wt)wt.innerHTML=md2html(w.quote.length>100?w.quote.slice(0,100)+'…':w.quote);
     if(ws)ws.textContent=w.src||'';
   }
-  // 感謝信入口同步
+  // 感謝信入口 - 直接讀 localStorage 判斷里程碑
   var lt=document.getElementById('ai-letter-trigger');
   var ld2=document.getElementById('ai-letter-desc');
-  var origTrigger=document.getElementById('letter-trigger');
-  if(origTrigger&&lt){
-    lt.style.display=origTrigger.style.display;
-    if(ld2){var od=document.getElementById('letter-trigger-desc');if(od)ld2.textContent=od.textContent;}
+  if(lt){
+    var total=Object.keys(S.hist||{}).length;
+    var milestone=Math.floor(total/20)*20;
+    if(milestone>0){
+      lt.style.display='block';
+      if(ld2)ld2.textContent='你已累積 '+total+' 天 · 點擊閱讀來自80歲的感謝信';
+    } else {
+      lt.style.display='none';
+    }
   }
 }
 
@@ -2515,57 +2520,6 @@ window._wildernessWisdom = [
   }
 ];
 
-// ════════════════════════════════════════
-// 智慧素材匹配函數
-// ════════════════════════════════════════
-window._matchWisdom = function(userText){
-  var text = userText || '';
-
-  // Step1: 從曠野庫找相關（存在性主題優先）
-  var wildMatch = null;
-  var wildScore = 0;
-  window._wildernessWisdom.forEach(function(w){
-    var score = 0;
-    w.trigger.forEach(function(t){ if(text.indexOf(t) > -1) score++; });
-    if(score > wildScore){ wildScore = score; wildMatch = w; }
-  });
-
-  // Step2: 從錦囊庫找相關
-  var capsuleMatch = null;
-  var capsuleScore = 0;
-  var keywordMap = {
-    "主管|老闆|開會|廠長|會議|績效|考核": [59,60,61,62,63],
-    "下屬|員工|工廠|產線|管理": [54,55,56,57,58],
-    "比較|不如|輸|贏|面子|別人": [77,80,74,79,2,3],
-    "自卑|不夠好|不行|沒用|差": [69,70,71,72,73,37,52,100],
-    "焦慮|擔心|害怕|緊張|壓力": [31,33,35,44,45,59,95],
-    "累|不想|撐|放棄|沒力": [28,32,41,88,89,90],
-    "意義|人生|為什麼|活著": [21,25,26,82,92,93,94],
-    "後悔|選擇|錯|遺憾": [75,76,51,50],
-    "自信|表達|說話|發言": [64,65,66,67,68,83,84,85,86],
-    "情緒|憤怒|生氣|難過": [5,6,13,27,35,38]
-  };
-
-  Object.keys(keywordMap).forEach(function(pattern){
-    var regex = new RegExp(pattern);
-    if(regex.test(text)){
-      var ids = keywordMap[pattern];
-      var picked = ids[Math.floor(Math.random() * ids.length)];
-      var found = window._wisdomSeed.find(function(w){ return w[0] === picked; });
-      if(found && !capsuleMatch){ capsuleMatch = found; }
-    }
-  });
-
-  // 若兩者都沒匹配，隨機從心靈急救箱抽一條
-  if(!capsuleMatch){
-    var emergency = window._wisdomSeed.filter(function(w){
-      return w[1].indexOf('急救') > -1 || w[1].indexOf('心靈') > -1;
-    });
-    capsuleMatch = emergency[Math.floor(Math.random() * emergency.length)];
-  }
-
-  return { wild: wildMatch, capsule: capsuleMatch };
-};
 
 // ════════════════════════════════════════
 // 素材資料庫（W12-W81）共70條
